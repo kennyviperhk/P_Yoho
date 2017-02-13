@@ -6,22 +6,29 @@ void ofApp::setup(){
 
     
     string path = "presetMusic/";
-    ofDirectory dir(path);
+    dir.open(path);
     dir.allowExt("mp3");
     dir.listDir();
     
+    currentTrack = 0;
     //go through and print out all the paths
     for(int i = 0; i < dir.size(); i++){
         ofLogNotice(dir.getPath(i));
-        if(i==0){
-            mp3.load(dir.getPath(i));
+        if(i==currentTrack){
+            mp3.load(dir.getPath(currentTrack));
+            //trackName = dir.getName(currentTrack);
         }
     }
     playButton.addListener(this,&ofApp::playButtonPressed);
+    nextButton.addListener(this,&ofApp::nextButtonPressed);
+    volume.addListener(this, &ofApp::volumeChanged);
     
 	gui.setup("panel");
     gui.add(playButton.setup("Play"));
-
+    gui.add(nextButton.setup("Next"));
+    gui.add(volume.setup("Volume", 0.8, 0, 1));
+    gui.add(trackFileName.setup("Now Playing", dir.getName(currentTrack)));
+    
 	// the fft needs to be smoothed out, so we create an array of floats
 	// for that purpose:
 	fftSmoothed = new float[8192];
@@ -30,11 +37,18 @@ void ofApp::setup(){
 	}
 	
 	nBandsToGet = 128;
+    
+    gui.loadFromFile("musicPlayerSettings.xml");
+
+
+
 }
 
 //--------------------------------------------------------------
 void ofApp::exit(){
     playButton.removeListener(this,&ofApp::playButtonPressed);
+    trackFileName.setup("Now Playing", dir.getName(0));
+    gui.saveToFile("musicPlayerSettings.xml");
 }
 
 
@@ -44,14 +58,35 @@ void ofApp::playButtonPressed(){
 }
 
 //--------------------------------------------------------------
+void ofApp::nextButtonPressed(){
+
+    if(currentTrack < dir.size() -1)
+    {
+        currentTrack++;
+    }else{
+        currentTrack=0;
+    }
+    mp3.load(dir.getPath(currentTrack));
+    mp3.play();
+    trackFileName.setup("Now Playing", dir.getName(currentTrack));
+
+    ofLog() << "CurrentTrack : " << currentTrack;
+}
+
+
+//--------------------------------------------------------------
+void ofApp::volumeChanged(float &setVolume){
+    mp3.setVolume(setVolume);
+}
+
+
+//--------------------------------------------------------------
 void ofApp::update(){
 	
 	ofBackground(80,80,20);
 
 	// update the sound playing system:
 	ofSoundUpdate();	
-
-	//rooster.setVolume(MIN(vel/5.0f, 1));
 
 	// (5) grab the fft, and put in into a "smoothed" array,
 	//		by taking maximums, as peaks and then smoothing downward

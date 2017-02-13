@@ -22,14 +22,27 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+    
+        ofDirectory dir;
 
 		ofSoundPlayer 		mp3;
+        int currentTrack;
     
         ofxButton playButton;
+        ofxButton nextButton;
+    
+        ofxLabel trackFileName;
+        //ofxToggle repeatAllToggle; //TODO
+        ofxToggle repeatThisToggle; //TODO
+    
+        ofxFloatSlider volume;
+    
         ofxPanel gui;
     
-    void playButtonPressed();
-    void exit();
+        void playButtonPressed();
+        void nextButtonPressed();
+        void volumeChanged(float &setVolume);
+        void exit();
 
 		float 				* fftSmoothed;
 		// we will draw a rectangle, bouncing off the wall:
