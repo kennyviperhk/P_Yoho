@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "ofxGui.h"
 
 class ofApp : public ofBaseApp{
 
@@ -22,10 +23,13 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
-		ofSoundPlayer 		beat;
-		ofSoundPlayer		ow;
-		ofSoundPlayer		dog;
-		ofSoundPlayer		rooster;
+		ofSoundPlayer 		mp3;
+    
+        ofxButton playButton;
+        ofxPanel gui;
+    
+    void playButtonPressed();
+    void exit();
 
 		float 				* fftSmoothed;
 		// we will draw a rectangle, bouncing off the wall:
