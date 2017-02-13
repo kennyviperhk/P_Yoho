@@ -4,6 +4,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){	 
 
+    //-----------------------     MP3 Player      -------------------
     
     string path = "presetMusic/";
     dir.open(path);
@@ -18,18 +19,8 @@ void ofApp::setup(){
             mp3.load(dir.getPath(currentTrack));
         }
     }
-    playButton.addListener(this,&ofApp::playButtonPressed);
-    nextButton.addListener(this,&ofApp::nextButtonPressed);
-    volume.addListener(this, &ofApp::volumeChanged);
     
-	gui.setup("panel");
-    gui.setDefaultWidth(400);
-    gui.add(playButton.setup("Play"));
-    gui.add(nextButton.setup("Next"));
-    gui.add(volume.setup("Volume", 0.8, 0, 1));
-    gui.add(trackFileName.setup("Now Playing", ""));
-    
-    gui.loadFromFile("musicPlayerSettings.xml");
+    //-----------------------     FFT      -------------------
     
 	// the fft needs to be smoothed out, so we create an array of floats
 	// for that purpose:
@@ -39,6 +30,22 @@ void ofApp::setup(){
 	}
 	
 	nBandsToGet = 128;
+    
+    //-----------------------     GUI      -------------------
+    
+    playButton.addListener(this,&ofApp::playButtonPressed);
+    nextButton.addListener(this,&ofApp::nextButtonPressed);
+    volume.addListener(this, &ofApp::volumeChanged);
+    
+    gui.setup("panel");
+    gui.setDefaultWidth(400);
+    gui.add(playButton.setup("Play"));
+    gui.add(nextButton.setup("Next"));
+    gui.add(repeatThisToggle.setup("Repeat Current Track", false));
+    gui.add(volume.setup("Volume", 0.8, 0, 1));
+    gui.add(trackFileName.setup("Now Playing", ""));
+    
+    gui.loadFromFile("musicPlayerSettings.xml");
 }
 
 //--------------------------------------------------------------
@@ -46,8 +53,14 @@ void ofApp::update(){
 	
 	ofBackground(80,80,20);
 
+    //-----------------------     MP3 Player      -------------------
+    
 	// update the sound playing system:
-	ofSoundUpdate();	
+	ofSoundUpdate();
+    
+
+    
+    //-----------------------     FFT      -------------------
 
 	// (5) grab the fft, and put in into a "smoothed" array,
 	//		by taking maximums, as peaks and then smoothing downward
@@ -62,13 +75,20 @@ void ofApp::update(){
 		
 	}
 
-
+    
+    //-----------------------     GUI      -------------------
+    
+    mp3.setLoop(repeatThisToggle);
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	
+
+    
+    //-----------------------     FFT      -------------------
+    
 	ofEnableAlphaBlending();
 		ofSetColor(255,255,255,100);
 		ofDrawRectangle(100,ofGetHeight()-300,5*128,200);
@@ -83,24 +103,13 @@ void ofApp::draw(){
 		// because the top corner is 0,0)
 		ofDrawRectangle(100+i*width,ofGetHeight()-100,width,-(fftSmoothed[i] * 200));
 	}
-	
-	// finally draw the playing circle:
+    
+    
+    //-----------------------     GUI      -------------------
     
     gui.draw();
 
 }
-
-//--------------------------------------------------------------
-//-----------------------     ON EXIT        -------------------
-//--------------------------------------------------------------
-
-//--------------------------------------------------------------
-void ofApp::exit(){
-    playButton.removeListener(this,&ofApp::playButtonPressed);
-    trackFileName.setup("Now Playing", "");
-    gui.saveToFile("musicPlayerSettings.xml");
-}
-
 
 //--------------------------------------------------------------
 //-----------------------     GUI EVENTS     -------------------
@@ -133,6 +142,19 @@ void ofApp::nextButtonPressed(){
 void ofApp::volumeChanged(float &setVolume){
     mp3.setVolume(setVolume);
 }
+
+
+//--------------------------------------------------------------
+//-----------------------     ON EXIT        -------------------
+//--------------------------------------------------------------
+
+//--------------------------------------------------------------
+void ofApp::exit(){
+    playButton.removeListener(this,&ofApp::playButtonPressed);
+    trackFileName.setup("Now Playing", "");
+    gui.saveToFile("musicPlayerSettings.xml");
+}
+
 
 //--------------------------------------------------------------
 //-----------------------     UNUSED     -----------------------
