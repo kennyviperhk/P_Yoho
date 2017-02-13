@@ -16,7 +16,6 @@ void ofApp::setup(){
         ofLogNotice(dir.getPath(i));
         if(i==currentTrack){
             mp3.load(dir.getPath(currentTrack));
-            //trackName = dir.getName(currentTrack);
         }
     }
     playButton.addListener(this,&ofApp::playButtonPressed);
@@ -24,10 +23,13 @@ void ofApp::setup(){
     volume.addListener(this, &ofApp::volumeChanged);
     
 	gui.setup("panel");
+    gui.setDefaultWidth(400);
     gui.add(playButton.setup("Play"));
     gui.add(nextButton.setup("Next"));
     gui.add(volume.setup("Volume", 0.8, 0, 1));
-    gui.add(trackFileName.setup("Now Playing", dir.getName(currentTrack)));
+    gui.add(trackFileName.setup("Now Playing", ""));
+    
+    gui.loadFromFile("musicPlayerSettings.xml");
     
 	// the fft needs to be smoothed out, so we create an array of floats
 	// for that purpose:
@@ -37,48 +39,7 @@ void ofApp::setup(){
 	}
 	
 	nBandsToGet = 128;
-    
-    gui.loadFromFile("musicPlayerSettings.xml");
-
-
-
 }
-
-//--------------------------------------------------------------
-void ofApp::exit(){
-    playButton.removeListener(this,&ofApp::playButtonPressed);
-    trackFileName.setup("Now Playing", dir.getName(0));
-    gui.saveToFile("musicPlayerSettings.xml");
-}
-
-
-//--------------------------------------------------------------
-void ofApp::playButtonPressed(){
-    mp3.play();
-}
-
-//--------------------------------------------------------------
-void ofApp::nextButtonPressed(){
-
-    if(currentTrack < dir.size() -1)
-    {
-        currentTrack++;
-    }else{
-        currentTrack=0;
-    }
-    mp3.load(dir.getPath(currentTrack));
-    mp3.play();
-    trackFileName.setup("Now Playing", dir.getName(currentTrack));
-
-    ofLog() << "CurrentTrack : " << currentTrack;
-}
-
-
-//--------------------------------------------------------------
-void ofApp::volumeChanged(float &setVolume){
-    mp3.setVolume(setVolume);
-}
-
 
 //--------------------------------------------------------------
 void ofApp::update(){
@@ -129,6 +90,53 @@ void ofApp::draw(){
 
 }
 
+//--------------------------------------------------------------
+//-----------------------     ON EXIT        -------------------
+//--------------------------------------------------------------
+
+//--------------------------------------------------------------
+void ofApp::exit(){
+    playButton.removeListener(this,&ofApp::playButtonPressed);
+    trackFileName.setup("Now Playing", "");
+    gui.saveToFile("musicPlayerSettings.xml");
+}
+
+
+//--------------------------------------------------------------
+//-----------------------     GUI EVENTS     -------------------
+//--------------------------------------------------------------
+
+//--------------------------------------------------------------
+void ofApp::playButtonPressed(){
+    mp3.play();
+    trackFileName.setup("Now Playing", dir.getName(currentTrack));
+}
+
+//--------------------------------------------------------------
+void ofApp::nextButtonPressed(){
+    
+    if(currentTrack < dir.size() -1)
+    {
+        currentTrack++;
+    }else{
+        currentTrack=0;
+    }
+    mp3.load(dir.getPath(currentTrack));
+    mp3.play();
+    trackFileName.setup("Now Playing", dir.getName(currentTrack));
+    
+    ofLog() << "CurrentTrack : " << currentTrack;
+}
+
+
+//--------------------------------------------------------------
+void ofApp::volumeChanged(float &setVolume){
+    mp3.setVolume(setVolume);
+}
+
+//--------------------------------------------------------------
+//-----------------------     UNUSED     -----------------------
+//--------------------------------------------------------------
 
 //--------------------------------------------------------------
 void ofApp::keyPressed  (int key){ 
@@ -146,18 +154,12 @@ void ofApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-	// add into vx and vy a small amount of the change in mouse:
-	vx += (x - prevx) / 20.0f;
-	vy += (y - prevy) / 20.0f;
-	// store the previous mouse position:
-	prevx = x;
-	prevy = y;
+
 }
  
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-	prevx = x;
-	prevy = y;
+
 }
 
 //--------------------------------------------------------------
