@@ -4,6 +4,7 @@ OSX: 10.12.3 <br/>
 <br/>
 <br/>
 AddOns:<br/>
+ofxDmx<br/>
 ofxGui<br/>
 ofxIO<br/>
 ofxSerial<br/>
