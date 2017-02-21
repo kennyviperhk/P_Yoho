@@ -24,7 +24,9 @@
    |  Control Room    |
    |__________________|
 
-
+  //Todo
+  -Linkage Serial To Here
+  -Test Actual code with 4 motor and switches
 */
 
 
