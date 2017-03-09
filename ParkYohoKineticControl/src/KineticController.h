@@ -20,9 +20,9 @@ class Cable
      ?might also do interpolation to from one position?
      */
 public:
-    float linearRailLeft = 1;//0 is center
-    float linearRailRight = 1;//0 is center
-    float cableLeft, cableRight;//0 is top position, 1 bottom
+    float leftX = 1;//0 is center
+    float rightX = 1;//0 is center
+    float leftY, rightY;//0 is top position, 1 bottom
     int index; //use index for visualisation position
     int totalCount;
 
@@ -30,7 +30,7 @@ public:
     {
         int zPos = index * drawDepth;
 
-        float extendCenteredCables = (2-((linearRailRight+1)-(1-linearRailLeft)))*100;//extend lenght when cables get closer to center
+        float extendCenteredCables = (2-((rightX+1)-(1-leftX)))*100;//extend lenght when cables get closer to center
         ofPushMatrix();
         ofTranslate(0, 100, zPos - totalCount * drawDepth/2);//translate to position, minus center value
         ofRotateY(10);
@@ -39,9 +39,9 @@ public:
         ofDrawBox(0, 0, 0, drawWidth, 10, drawDepth-2);//draw top support
         ofNoFill();
         ofSetColor(255);
-        float leftTop = linearRailLeft * (drawWidth/-2.);
-        float rightTop = linearRailRight * (drawWidth/2.);
-        ofDrawBezier(leftTop, 0, 0, leftTop, -100 - cableLeft*300 - extendCenteredCables, 0, rightTop, -100 - cableRight*300- extendCenteredCables, 0, rightTop, 0, 0);
+        float leftTop = leftX * (drawWidth/-2.);
+        float rightTop = rightX * (drawWidth/2.);
+        ofDrawBezier(leftTop, 0, 0, leftTop, -100 - leftY*300 - extendCenteredCables, 0, rightTop, -100 - rightY*300- extendCenteredCables, 0, rightTop, 0, 0);
         ofPopMatrix();
     }
     int drawWidth = 200;
@@ -72,10 +72,10 @@ public:
             float noiseSpeed = 0.1;
             float noiseSpread = 0.06;
             
-            cablesPositions[i].linearRailLeft = ofNoise(ofGetElapsedTimef()*noiseSpeed, 0, i*noiseSpread);
-            cablesPositions[i].linearRailRight = ofNoise(ofGetElapsedTimef()*noiseSpeed, 1238.44, i*noiseSpread);
-            cablesPositions[i].cableLeft = ofNoise(ofGetElapsedTimef()*noiseSpeed, 34774.3, i*noiseSpread);
-            cablesPositions[i].cableRight = ofNoise(ofGetElapsedTimef()*noiseSpeed, 283.2, i*noiseSpread);
+            cablesPositions[i].leftX = ofNoise(ofGetElapsedTimef()*noiseSpeed, 0, i*noiseSpread);
+            cablesPositions[i].rightX = ofNoise(ofGetElapsedTimef()*noiseSpeed, 1238.44, i*noiseSpread);
+            cablesPositions[i].leftY = ofNoise(ofGetElapsedTimef()*noiseSpeed, 34774.3, i*noiseSpread);
+            cablesPositions[i].rightY = ofNoise(ofGetElapsedTimef()*noiseSpeed, 283.2, i*noiseSpread);
         }
         
         
