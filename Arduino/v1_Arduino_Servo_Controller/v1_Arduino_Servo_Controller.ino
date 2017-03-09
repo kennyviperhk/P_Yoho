@@ -42,8 +42,11 @@ AccelStepper stepperRy (AccelStepper::DRIVER, 41, 42);
 
 long positionArray[stepperAmount];
 
-float SPEED = 1000;
-float ACCELARATION = 1000;
+//float SPEED = 1000;
+//float ACCELARATION = 1000;
+float SPEED = 100000000*100000000;
+float ACCELARATION = 50*500;
+float MOVETO = 500*1000;
 
 
 AccelStepper* steppers[stepperAmount] = {
@@ -63,7 +66,10 @@ void setup() {
   for (int stepperNumber = 0; stepperNumber < stepperAmount; stepperNumber++) {
     steppers[stepperNumber]->setMaxSpeed(SPEED);
     steppers[stepperNumber]->setAcceleration(ACCELARATION);
+    steppers[stepperNumber]->moveTo(500*1000);
   }
+    pinMode(4, OUTPUT);  
+    digitalWrite(4, LOW);    // turn the LED off by making the voltage LOW
 }
 
 void loop() {
@@ -71,7 +77,11 @@ void loop() {
   // ============ STEPPER ================
 
   for (int stepperNumber = 0; stepperNumber < stepperAmount; stepperNumber++) {
-    steppers[stepperNumber]->moveTo(positionArray[stepperNumber]);
+       if (steppers[stepperNumber]->distanceToGo() == 0){
+        
+        steppers[stepperNumber]->moveTo(-steppers[stepperNumber]->currentPosition());
+          //steppers[stepperNumber]->moveTo(positionArray[stepperNumber]);
+       }
   }
 
   for (int stepperNumber = 0; stepperNumber < stepperAmount; stepperNumber++) {

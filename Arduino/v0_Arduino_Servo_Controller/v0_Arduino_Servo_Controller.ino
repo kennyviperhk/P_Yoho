@@ -14,9 +14,9 @@ AccelStepper stepper(AccelStepper::DRIVER, 5, 6);
 void setup()
 {  
   pinMode(4, OUTPUT);
-  digitalWrite(4,HIGH);
+  digitalWrite(4,LOW);
 
-    stepper.setMaxSpeed(100000000*100000000);
+  stepper.setMaxSpeed(100000000*100000000);
   stepper.setAcceleration(50*500);
   stepper.moveTo(500*1000);
 }
