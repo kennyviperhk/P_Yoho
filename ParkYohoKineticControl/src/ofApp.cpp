@@ -12,6 +12,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    kinecticVisualisation.draw();
 
 }
 
