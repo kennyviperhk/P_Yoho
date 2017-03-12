@@ -18,6 +18,7 @@ class Cable
      holds data and visualises single cable
      
      ?might also do interpolation to from one position?
+     
      */
 public:
     float leftX = 1;//0 is center

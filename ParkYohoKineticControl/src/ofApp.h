@@ -2,7 +2,13 @@
 
 #include "ofMain.h"
 #include "KineticController.h"
+/*
+ notes: 
+ 
+ //command: send motor index [0-4] - position [0-10000] - interpolation style [0-4?] - 3 style parameters ... (example: time to position [0 - 100000ms])
 
+ 
+ */
 class ofApp : public ofBaseApp{
 
 	public:
