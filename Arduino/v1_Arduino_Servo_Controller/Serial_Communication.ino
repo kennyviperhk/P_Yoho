@@ -95,6 +95,7 @@ void char_decode(int inChar)
   {
    //DO STH HERE
     inString = "";   // clear the string buffer for new input:
+    Serial.println("Reached Here");
   }
 
 }

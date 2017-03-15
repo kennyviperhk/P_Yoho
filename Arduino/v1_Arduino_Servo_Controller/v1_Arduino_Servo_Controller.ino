@@ -36,9 +36,8 @@ const int stepperAmount = 4;
 
 AccelStepper stepperLx (AccelStepper::DRIVER, 2, 3);
 AccelStepper stepperLy (AccelStepper::DRIVER, 4, 5);
-AccelStepper stepperRx (AccelStepper::DRIVER, 38, 39);
-AccelStepper stepperRy (AccelStepper::DRIVER, 41, 42);
-
+AccelStepper stepperRx (AccelStepper::DRIVER, 6, 7);
+AccelStepper stepperRy (AccelStepper::DRIVER, 8, 9);
 
 long positionArray[stepperAmount];
 
@@ -46,8 +45,7 @@ long positionArray[stepperAmount];
 //float ACCELARATION = 1000;
 float SPEED = 500000;
 float ACCELARATION = 50000;
-float MOVETO = 5;
-
+float MOVETO = 50;
 
 AccelStepper* steppers[stepperAmount] = {
   &stepperLx,
@@ -56,23 +54,49 @@ AccelStepper* steppers[stepperAmount] = {
   &stepperRy,
 };
 
+// ============ ENCODER ================
+#include <Encoder.h>
+Encoder enc(22, 23);
+
+Encoder encoderLx(22, 23);
+Encoder encoderLy(25, 26);
+Encoder encoderRx(28, 29);
+Encoder encoderRy(31, 32);
+
+Encoder* encoder[stepperAmount] = {
+  &encoderLx,
+  &encoderLy,
+  &encoderRx,
+  &encoderLy,
+};
+
 //TODO
 int val = 0;
 
 void setup() {
+
 
   // ============ STEPPER ================
 
   for (int stepperNumber = 0; stepperNumber < stepperAmount; stepperNumber++) {
     steppers[stepperNumber]->setMaxSpeed(SPEED);
     steppers[stepperNumber]->setAcceleration(ACCELARATION);
-    steppers[stepperNumber]->moveTo(360);
+    steppers[stepperNumber]->moveTo(MOVETO);
   }
-    pinMode(4, OUTPUT);  
-    digitalWrite(4, LOW);    // turn the LED off by making the voltage LOW
+    pinMode(34, OUTPUT);  
+
+  // ============ SERIAL ================
+      Serial.begin(9600);
+
 }
 
 void loop() {
+
+    
+  // ============ SERIAL ================
+  serial_decode();
+  check_update();
+
 
   // ============ STEPPER ================
 
@@ -81,14 +105,24 @@ void loop() {
         
         steppers[stepperNumber]->moveTo(-steppers[stepperNumber]->currentPosition());
           //steppers[stepperNumber]->moveTo(positionArray[stepperNumber]);
+          
        }
   }
 
   for (int stepperNumber = 0; stepperNumber < stepperAmount; stepperNumber++) {
     steppers[stepperNumber]->run();
   }
+  // ============ ENCODER ================
+
+  long newPosition = enc.read();
+  for (int stepperNumber = 0; stepperNumber < stepperAmount; stepperNumber++) {
+    encoder[stepperNumber]->read(); //TODO, read to sth?
+  }
+
 
 //TODO
   val=20;
+
+  
 }
 
