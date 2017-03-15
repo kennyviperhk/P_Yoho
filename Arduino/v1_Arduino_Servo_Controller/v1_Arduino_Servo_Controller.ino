@@ -35,7 +35,7 @@
 const int stepperAmount = 4;
 
 AccelStepper stepperLx (AccelStepper::DRIVER, 2, 3);
-AccelStepper stepperLy (AccelStepper::DRIVER, 5, 6);
+AccelStepper stepperLy (AccelStepper::DRIVER, 4, 5);
 AccelStepper stepperRx (AccelStepper::DRIVER, 38, 39);
 AccelStepper stepperRy (AccelStepper::DRIVER, 41, 42);
 
@@ -44,9 +44,9 @@ long positionArray[stepperAmount];
 
 //float SPEED = 1000;
 //float ACCELARATION = 1000;
-float SPEED = 100000000*100000000;
-float ACCELARATION = 50*500;
-float MOVETO = 500*1000;
+float SPEED = 500000;
+float ACCELARATION = 50000;
+float MOVETO = 5;
 
 
 AccelStepper* steppers[stepperAmount] = {
@@ -66,7 +66,7 @@ void setup() {
   for (int stepperNumber = 0; stepperNumber < stepperAmount; stepperNumber++) {
     steppers[stepperNumber]->setMaxSpeed(SPEED);
     steppers[stepperNumber]->setAcceleration(ACCELARATION);
-    steppers[stepperNumber]->moveTo(500*1000);
+    steppers[stepperNumber]->moveTo(360);
   }
     pinMode(4, OUTPUT);  
     digitalWrite(4, LOW);    // turn the LED off by making the voltage LOW
