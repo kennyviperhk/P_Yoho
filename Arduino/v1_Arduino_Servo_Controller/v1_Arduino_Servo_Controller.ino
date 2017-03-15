@@ -83,16 +83,18 @@ void setup() {
     steppers[stepperNumber]->setAcceleration(ACCELARATION);
     steppers[stepperNumber]->moveTo(MOVETO);
   }
-    pinMode(34, OUTPUT);  
+  //pinMode(34, OUTPUT);
 
   // ============ SERIAL ================
-      Serial.begin(9600);
+  Serial.begin(9600);
 
+
+  pinMode(34, INPUT);
 }
 
 void loop() {
 
-    
+
   // ============ SERIAL ================
   serial_decode();
   check_update();
@@ -101,12 +103,12 @@ void loop() {
   // ============ STEPPER ================
 
   for (int stepperNumber = 0; stepperNumber < stepperAmount; stepperNumber++) {
-       if (steppers[stepperNumber]->distanceToGo() == 0){
-        
-        steppers[stepperNumber]->moveTo(-steppers[stepperNumber]->currentPosition());
-          //steppers[stepperNumber]->moveTo(positionArray[stepperNumber]);
-          
-       }
+    if (steppers[stepperNumber]->distanceToGo() == 0) {
+
+      steppers[stepperNumber]->moveTo(-steppers[stepperNumber]->currentPosition());
+      //steppers[stepperNumber]->moveTo(positionArray[stepperNumber]);
+
+    }
   }
 
   for (int stepperNumber = 0; stepperNumber < stepperAmount; stepperNumber++) {
@@ -120,9 +122,13 @@ void loop() {
   }
 
 
-//TODO
-  val=20;
-
-  
+  //TODO
+  val = 20;
+  //buttonState =
+  if (digitalRead(34) == HIGH) {
+    Serial.println("Y");
+  } else {
+    Serial.println("N");
+  }
 }
 
