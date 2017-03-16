@@ -125,10 +125,11 @@ void loop() {
   //TODO
   val = 20;
   //buttonState =
-  if (digitalRead(34) == HIGH) {
+/*  if (digitalRead(34) == HIGH) {
     Serial.println("Y");
   } else {
     Serial.println("N");
   }
+ */
 }
 
