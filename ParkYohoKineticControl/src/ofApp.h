@@ -53,25 +53,40 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-		
+    
+    //========== kinecticVisualisation ===========
+    
     KinecticVisualisation kinecticVisualisation;
     
-    //Serial
-    vector<float> serialRead();
-    void sendChar();
+    int style;
+    //================== Serial ==================
     
-    void videoMixing();
+    vector<bool> serialSetup();
+    vector<string> serialRead();
+    vector<bool> isArduinoConnected;
+    void serialWrite();
+
     
+    vector<ofx::IO::BufferedSerialDevice> arduino;
+    
+    //unused
+    //void sendChar();
     void onSerialBuffer(const ofx::IO::SerialBufferEventArgs& args);
     void onSerialError(const ofx::IO::SerialBufferErrorEventArgs& args);
     
-    vector<ofx::IO::BufferedSerialDevice> deviceAccel;
-    //ofx::IO::BufferedSerialDevice deviceMotor;
-    
     std::vector<SerialMessage> serialMessages;
+    
     string receivedMsg;
+    vector<string> prevReceivedString;
+    vector<string> receivedString;
+    vector<int> updateColor;
     
-    vector<float> receivedVal;
+    //================== debugMode ==================
     
+    bool debugMode;
+    
+    //================== Config ==================
+    
+    int numOfCables;
 };
 

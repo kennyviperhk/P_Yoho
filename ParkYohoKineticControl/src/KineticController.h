@@ -63,6 +63,25 @@ public:
             cablesPositions[i].index = i;
             cablesPositions[i].totalCount = cables;
         }
+        
+        for(int i = 0; i < cables; i++)
+        {
+            leftX.push_back(0);
+            rightX.push_back(0);
+            leftY.push_back(0);
+            rightY.push_back(0);
+        }
+        
+    }
+    
+    void set(int arduinoID,int s, float lx,float ly,float rx,float ry)
+    {
+        style = s;
+        leftX[arduinoID] = lx;
+        rightX[arduinoID] = ly;
+        leftY[arduinoID] = rx;
+        rightY[arduinoID] = ry;
+        
     }
     
     void draw()
@@ -73,12 +92,27 @@ public:
             float noiseSpeed = 0.1;
             float noiseSpread = 0.06;
             
-            cablesPositions[i].leftX = ofNoise(ofGetElapsedTimef()*noiseSpeed, 0, i*noiseSpread);
-            cablesPositions[i].rightX = ofNoise(ofGetElapsedTimef()*noiseSpeed, 1238.44, i*noiseSpread);
-            cablesPositions[i].leftY = ofNoise(ofGetElapsedTimef()*noiseSpeed, 34774.3, i*noiseSpread);
-            cablesPositions[i].rightY = ofNoise(ofGetElapsedTimef()*noiseSpeed, 283.2, i*noiseSpread);
+            switch (style){
+                case 0:
+                    cablesPositions[i].leftX = ofNoise(ofGetElapsedTimef()*noiseSpeed, 0, i*noiseSpread);
+                    cablesPositions[i].rightX = ofNoise(ofGetElapsedTimef()*noiseSpeed, 1238.44, i*noiseSpread);
+                    cablesPositions[i].leftY = ofNoise(ofGetElapsedTimef()*noiseSpeed, 34774.3, i*noiseSpread);
+                    cablesPositions[i].rightY = ofNoise(ofGetElapsedTimef()*noiseSpeed, 283.2, i*noiseSpread);
+                    break;
+                    
+                case 1:
+                    cablesPositions[i].leftX = leftX[i];
+                    cablesPositions[i].rightX = rightX[i];
+                    cablesPositions[i].leftY = leftY[i];
+                    cablesPositions[i].rightY = rightY[i];
+                    break;
+                    
+                default:
+                    style = 0;
+
+            }
+    
         }
-        
         
         cam.begin();
         for(int i = 0; i < cablesPositions.size(); i++)
@@ -93,6 +127,9 @@ public:
     vector<Cable> cablesPositions;
     
     int cables = 20;
+    
+    int style = 0;
+    vector<float> leftX, rightX, leftY, rightY;
 
 };
 

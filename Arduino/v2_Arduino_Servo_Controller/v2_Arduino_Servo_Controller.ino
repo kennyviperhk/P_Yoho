@@ -1,4 +1,3 @@
-#include <AccelStepper.h>
 
 /*  AccelStepper Library
    http://www.airspayce.com/mikem/arduino/AccelStepper/
@@ -28,8 +27,10 @@
   -Linkage Serial To Here
   -Test Actual code with 4 motor and switches
 */
-//================ Serial ================
+//================ Config ================
+#include "PinAssignment.h" //Pin Config
 
+//================ Serial ================
 
 // Variables will change:
 int ledState = LOW;             // ledState used to set the LED
@@ -37,17 +38,13 @@ long previousMillis = 0;        // will store last time LED was updated
 
 // the follow variables is a long because the time, measured in miliseconds,
 // will quickly become a bigger number than can be stored in an int.
-long interval = 1000;    
+long interval = 5000;    
 // ============ STEPPER ================
+#include <AccelStepper.h>
 
-const int stepperAmount = 4;
+const int numOfStepper = 4;
 
-AccelStepper stepperLx (AccelStepper::DRIVER, 2, 3);
-AccelStepper stepperLy (AccelStepper::DRIVER, 4, 5);
-AccelStepper stepperRx (AccelStepper::DRIVER, 6, 7);
-AccelStepper stepperRy (AccelStepper::DRIVER, 8, 9);
-
-long positionArray[stepperAmount];
+long positionArray[numOfStepper];
 
 //float SPEED = 1000;
 //float ACCELARATION = 1000;
@@ -55,49 +52,49 @@ float SPEED = 500000;
 float ACCELARATION = 50000;
 float MOVETO = 50;
 
-AccelStepper* steppers[stepperAmount] = {
-  &stepperLx,
-  &stepperLy,
-  &stepperRx,
-  &stepperRy,
-};
+AccelStepper stepperLx (AccelStepper::DRIVER, lxStep, lxDir);
+AccelStepper stepperLy (AccelStepper::DRIVER, lyStep, lyDir);
+AccelStepper stepperRx (AccelStepper::DRIVER, rxStep, ryDir);
+AccelStepper stepperRy (AccelStepper::DRIVER, ryStep, ryDir);
+
+AccelStepper* steppers[numOfStepper] = { &stepperLx, &stepperLy, &stepperRx, &stepperRy};
 
 // ============ ENCODER ================
 #include <Encoder.h>
-Encoder enc(22, 23);
 
-Encoder encoderLx(22, 23);
-Encoder encoderLy(25, 26);
-Encoder encoderRx(28, 29);
-Encoder encoderRy(31, 32);
+Encoder encoderLx(encoderLxA, encoderLxB);
+Encoder encoderLy(encoderLyA, encoderLyB);
+Encoder encoderRx(encoderRxA, encoderRxB);
+Encoder encoderRy(encoderRyA, encoderRyB);
 
-Encoder* encoder[stepperAmount] = {
-  &encoderLx,
-  &encoderLy,
-  &encoderRx,
-  &encoderLy,
-};
+Encoder* encoder[numOfStepper] = {&encoderLx, &encoderLy, &encoderRx, &encoderLy};
+
+// ============ LIMIT SWITCH ================
+const byte limitSwitch[4]  = {LimitSwitchLx, LimitSwitchLy, LimitSwitchRx, LimitSwitchRy};
 
 //TODO
 int val = 0;
 
 void setup() {
 
-
+    
   // ============ STEPPER ================
 
-  for (int stepperNumber = 0; stepperNumber < stepperAmount; stepperNumber++) {
+  for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
     steppers[stepperNumber]->setMaxSpeed(SPEED);
     steppers[stepperNumber]->setAcceleration(ACCELARATION);
     steppers[stepperNumber]->moveTo(MOVETO);
+
+    //steppers[stepperNumber].setPinsInverted(true, false, false); //(directionInvert,stepInvert,enableInvert)
+    // ============ LIMIT SWITCH ================
+    pinMode(limitSwitch[stepperNumber], INPUT_PULLUP);
   }
-  //pinMode(34, OUTPUT);
 
   // ============ SERIAL ================
   Serial.begin(115200);
 
 
-  pinMode(34, INPUT);
+ // pinMode(34, INPUT);
 }
 
 void loop() {
@@ -110,7 +107,7 @@ void loop() {
 
   // ============ STEPPER ================
 
-  for (int stepperNumber = 0; stepperNumber < stepperAmount; stepperNumber++) {
+  for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
     if (steppers[stepperNumber]->distanceToGo() == 0) {
 
       steppers[stepperNumber]->moveTo(-steppers[stepperNumber]->currentPosition());
@@ -119,27 +116,15 @@ void loop() {
     }
   }
 
-  for (int stepperNumber = 0; stepperNumber < stepperAmount; stepperNumber++) {
+  for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
     steppers[stepperNumber]->run();
   }
   // ============ ENCODER ================
 
-  long newPosition = enc.read();
-  for (int stepperNumber = 0; stepperNumber < stepperAmount; stepperNumber++) {
+
+  for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
     encoder[stepperNumber]->read(); //TODO, read to sth?
   }
-
-
-  //TODO
-  val = 20;
-  //buttonState =
-/*  if (digitalRead(34) == HIGH) {
-    Serial.println("Y");
-  } else {
-    Serial.println("N");
-  }
- */
-
 
   unsigned long currentMillis = millis();
  
