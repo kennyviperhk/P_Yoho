@@ -29,20 +29,15 @@
 */
 //================ Config ================
 #include "PinAssignment.h" //Pin Config
-
+#include "config.h" //Pin Config
 //================ Serial ================
 
 // Variables will change:
 int ledState = LOW;             // ledState used to set the LED
 long previousMillis = 0;        // will store last time LED was updated
 
-// the follow variables is a long because the time, measured in miliseconds,
-// will quickly become a bigger number than can be stored in an int.
-long interval = 5000;    
 // ============ STEPPER ================
 #include <AccelStepper.h>
-
-const int numOfStepper = 4;
 
 long positionArray[numOfStepper];
 
@@ -75,9 +70,13 @@ const byte limitSwitch[4]  = {LimitSwitchLx, LimitSwitchLy, LimitSwitchRx, Limit
 //TODO
 int val = 0;
 
+// ============ ============ ================
+// ============ ====SETUP=== ================
+// ============ ============ ================
+
 void setup() {
 
-    
+
   // ============ STEPPER ================
 
   for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
@@ -91,11 +90,18 @@ void setup() {
   }
 
   // ============ SERIAL ================
-  Serial.begin(115200);
+  Serial.begin(BAUD);
+
+  // ============  ================
+   //pinMode(34, INPUT);
 
 
- // pinMode(34, INPUT);
 }
+
+
+// ============ ============ ================
+// ============ ====LOOP==== ================
+// ============ ============ ================
 
 void loop() {
 
@@ -126,25 +132,25 @@ void loop() {
     encoder[stepperNumber]->read(); //TODO, read to sth?
   }
 
-  unsigned long currentMillis = millis();
- 
-  if(currentMillis - previousMillis > interval) {
-    // save the last time you blinked the LED 
-    previousMillis = currentMillis;   
+  // ============  ================
+ /* unsigned long currentMillis = millis();
+
+  if (currentMillis - previousMillis > interval) {
+    // save the last time you blinked the LED
+    previousMillis = currentMillis;
 
     // if the LED is off turn it on and vice-versa:
-    if (ledState == LOW){
+    if (ledState == LOW) {
       ledState = HIGH;
-      }
-    else{
+    }
+    else {
       ledState = LOW;
       Serial.println("C");
     }
     // set the LED with the ledState of the variable:
-    
+
   }
+*/
 
-
- 
 }
 

@@ -4,6 +4,8 @@
 #include "KineticController.h"
 
 #include "ofxSerial.h"
+#include "ofxGui.h"
+
 
 /*
  notes: 
@@ -63,8 +65,10 @@ class ofApp : public ofBaseApp{
     
     vector<bool> serialSetup();
     vector<string> serialRead();
+    vector<int> stringDecode(string s);
+    bool is_number(const std::string& s);
     vector<bool> isArduinoConnected;
-    void serialWrite();
+    void serialWrite(int arduinoID, string sw);
 
     
     vector<ofx::IO::BufferedSerialDevice> arduino;
@@ -81,12 +85,39 @@ class ofApp : public ofBaseApp{
     vector<string> receivedString;
     vector<int> updateColor;
     
+    
+    
+    vector<string> SERIAL_PARAMETERES;
+    
     //================== debugMode ==================
     
-    bool debugMode;
+    void guiSetup();
     
+    bool debugMode;
+    ofxPanel guiDebug;
+    ofParameterGroup parametersDebug;
+    ofXml settings;
+    vector<ofParameter<int>> EEPROM;
+    vector<ofxButton> EEPROM_btn;
+
+    
+    ofxButton EEPROM_saveBtn;
+    ofxButton EEPROM_loadBtn;
+    
+    ofxPanel guiCablePos;
+    ofParameterGroup parametersCablePos;
+    vector<ofParameter<ofVec4f>> cablePos; //lx,ly,rx,ry
+    ofParameter<int> currentDebugArduinoID;
+    
+    bool serialTrigger; //TO avoid ofxButton cause multiple click and send mutiple serial command;
+    long prevSerialTriggerMills; //TO avoid ofxButton cause multiple click and send mutiple serial command;
+    
+    void displayLog(string s);
+    string currentdisplayLog;
+
     //================== Config ==================
     
-    int numOfCables;
+    //int numOfCables;
+    
 };
 

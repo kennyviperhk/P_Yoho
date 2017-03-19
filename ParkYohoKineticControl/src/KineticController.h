@@ -84,6 +84,12 @@ public:
         
     }
     
+    ofVec4f get(int arduinoID)
+    {
+        return ofVec4f(leftX[arduinoID],leftY[arduinoID],rightX[arduinoID],rightY[arduinoID]);
+        
+    }
+    
     void draw()
     {
         //temporary test positions

@@ -1,22 +1,20 @@
 /*  Serial Decode
- *   
- *   Read Format
- *   
- *   20-20-400-200
- *   
- *   Write
- *   
- */
+
+     Read Format
+
+     20-20-400-200
+
+     Write
+
+*/
 
 String inString = "";    // string to hold input char
 String inString_buffer = "";    // string to hold input Serial msg
 String inString_display_buffer = "";    // string to hold Display info
 
+bool exclude_print_val = true;;
 
-  // ============ CONFIG HERE ================
-#define Input_size 3  //define number of inputs value(s)
-  // ============================================
-  
+
 int current_index = 0;//index of current decoding number
 long input_value[Input_size];  //inputs value(s) buffer
 boolean update_flag = false; //Flag for end of success input string follow /n
@@ -31,7 +29,7 @@ void serial_decode()   // Read serial input:
     int inChar = Serial.read();
     char_decode(inChar) ;
   }
- 
+
 
 }
 
@@ -54,13 +52,13 @@ void char_decode(int inChar)
     if (current_index < Input_size) // within size
     {
       input_value[current_index] = inString.toInt(); //
-    //  pdInput_value[current_index] = inString.toInt(); //
+      //  pdInput_value[current_index] = inString.toInt(); //
       current_index++;  //increase index
     }
 
 
 
-    
+
     //            else// giveup the value to avoide over access array
     //            {
     //              Serial.println("overflow");
@@ -73,7 +71,7 @@ void char_decode(int inChar)
     {
       input_value[current_index] = inString.toInt(); //final value
       val = input_value[0];
-            //pdInput_value[current_index] = inString.toInt(); //
+      //pdInput_value[current_index] = inString.toInt(); //
     }
     //            else// giveup the value to avoide over access array
     //            {
@@ -85,21 +83,59 @@ void char_decode(int inChar)
     current_index = 0;// reset the index
     //Set update_Flag
     update_flag = true;
-    //print all value
-    for (int index = 0; index < Input_size; index++)
-    {
-      Serial.print(index);
-      Serial.print(":\t");
-      Serial.print(input_value[index]);
-      Serial.print("\t");
-    }
-    Serial.print("\n ");
+
   }
-  else if (inChar == 'D')       // if dummy
+  else if (inChar == 'D')
   {
-   //DO STH HERE
+    //DO STH HERE
     inString = "";   // clear the string buffer for new input:
     Serial.println("Reached Here");
+  }
+  else if (inChar == 'S')
+  {
+    //DO STH HERE
+    inString = "";   // clear the string buffer for new input:
+    inString_display_buffer = F("Write Config");
+        for (int i = 0; i < int_array_size; i++)
+        {
+          int_array[i] = input_value[i];
+
+          Serial.print("\t");
+          Serial.print(i);
+          Serial.print(":");
+          Serial.print(int_array[i]);
+        }
+    Write_Flash();
+    Serial.print("save-");
+    for (int i = 0; i < int_array_size; i++) {
+
+      Serial.print(int_array[i]);
+      if (i != int_array_size - 1) {
+        Serial.print("-");
+      }
+    }
+    Serial.print("\t");
+
+    exclude_print_val = true;
+
+  }
+  else if (inChar == 'L')
+  {
+    //DO STH HERE
+    inString = "";   // clear the string buffer for new input:
+    Load_Flash();
+    Serial.print("load-");
+    for (int i = 0; i < int_array_size; i++) {
+
+      Serial.print(int_array[i]);
+      if (i != int_array_size - 1) {
+        Serial.print("-");
+      }
+    }
+    Serial.print("\t");
+
+    exclude_print_val = true;
+
   }
 
 }
@@ -109,9 +145,27 @@ void check_update()   //Check update flag and write value when string finish
 {
   if ( update_flag == true) //update value
   {
+
+    if (!exclude_print_val) {
+      //print all value
+      for (int index = 0; index < Input_size; index++)
+      {
+        Serial.print(index);
+        Serial.print(":\t");
+        Serial.print(input_value[index]);
+        Serial.print("\t");
+      }
+      
+    }
+    //Finish Serial.print, Next Line
+    Serial.println("");
+
+    exclude_print_val = false;
     update_flag = false; //clear flag
     inString_display_buffer = inString_buffer;    // string to hold input Serial msg
     inString_buffer = "";   // clear the string buffer for new input:
   }
+
+
 }
 
