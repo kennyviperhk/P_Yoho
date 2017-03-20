@@ -5,7 +5,25 @@
 
 #include "ofxSerial.h"
 #include "ofxGui.h"
+#include "ofxInputField.h"
 
+#define NUM_OF_CABLES 20 //Todo Transfer definition /variables to xml
+
+#define HOME_MAXSPEED     int_array[0]
+#define HOME_ACCELERATION     int_array[1]
+//RUNNING
+#define MAX_SPEED_X      int_array[2]
+#define MAX_ACCELERATION_X       int_array[3]
+#define MAX_SPEED_Y      int_array[4]
+#define MAX_ACCELERATION_Y       int_array[5]
+#define MAX_POSITION_LX      int_array[6]
+#define MAX_POSITION_LY      int_array[7]
+#define MAX_POSITION_RX      int_array[8]
+#define MAX_POSITION_RY      int_array[9]
+#define INVERT_DIR_LX      int_array[10]
+#define INVERT_DIR_LY      int_array[11]
+#define INVERT_DIR_RX      int_array[12]
+#define INVERT_DIR_RY      int_array[13]
 
 /*
  notes: 
@@ -104,6 +122,8 @@ class ofApp : public ofBaseApp{
     ofxButton EEPROM_saveBtn;
     ofxButton EEPROM_loadBtn;
     
+    ofxTextField textField;
+    
     ofxPanel guiCablePos;
     ofParameterGroup parametersCablePos;
     vector<ofParameter<ofVec4f>> cablePos; //lx,ly,rx,ry
@@ -114,6 +134,8 @@ class ofApp : public ofBaseApp{
     
     void displayLog(string s);
     string currentdisplayLog;
+    void commandPrompt();
+    
 
     //================== Config ==================
     

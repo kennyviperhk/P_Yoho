@@ -23,9 +23,11 @@
    |  Control Room    |
    |__________________|
 
+ 
+
   //Todo
-  -Linkage Serial To Here
   -Test Actual code with 4 motor and switches
+
 */
 //================ Config ================
 #include "PinAssignment.h" //Pin Config
@@ -36,16 +38,19 @@
 int ledState = LOW;             // ledState used to set the LED
 long previousMillis = 0;        // will store last time LED was updated
 
+long input_value[Input_size];
+
 // ============ STEPPER ================
 #include <AccelStepper.h>
 
-long positionArray[numOfStepper];
+//long positionArray[numOfStepper];
 
 //float SPEED = 1000;
 //float ACCELARATION = 1000;
-float SPEED = 500000;
-float ACCELARATION = 50000;
-float MOVETO = 50;
+
+long stepperSpeed[numOfStepper]  = {0, 0, 0, 0};
+long stepperAccel[numOfStepper]  = {0, 0, 0, 0};
+long stepperMoveTo[numOfStepper]  = {0, 0, 0, 0};
 
 AccelStepper stepperLx (AccelStepper::DRIVER, lxStep, lxDir);
 AccelStepper stepperLy (AccelStepper::DRIVER, lyStep, lyDir);
@@ -65,7 +70,11 @@ Encoder encoderRy(encoderRyA, encoderRyB);
 Encoder* encoder[numOfStepper] = {&encoderLx, &encoderLy, &encoderRx, &encoderLy};
 
 // ============ LIMIT SWITCH ================
-const byte limitSwitch[4]  = {LimitSwitchLx, LimitSwitchLy, LimitSwitchRx, LimitSwitchRy};
+const byte limitSwitch[numOfStepper]  = {LimitSwitchLx, LimitSwitchLy, LimitSwitchRx, LimitSwitchRy};
+
+//================ Style ================
+int style = 0; //0 command to go
+
 
 //TODO
 int val = 0;
@@ -80,9 +89,9 @@ void setup() {
   // ============ STEPPER ================
 
   for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
-    steppers[stepperNumber]->setMaxSpeed(SPEED);
-    steppers[stepperNumber]->setAcceleration(ACCELARATION);
-    steppers[stepperNumber]->moveTo(MOVETO);
+    steppers[stepperNumber]->setMaxSpeed(stepperSpeed[stepperNumber]);
+    steppers[stepperNumber]->setAcceleration(stepperAccel[stepperNumber]);
+    steppers[stepperNumber]->moveTo(stepperMoveTo[stepperNumber]);
 
     //steppers[stepperNumber].setPinsInverted(true, false, false); //(directionInvert,stepInvert,enableInvert)
     // ============ LIMIT SWITCH ================
@@ -93,7 +102,7 @@ void setup() {
   Serial.begin(BAUD);
 
   // ============  ================
-   //pinMode(34, INPUT);
+  //pinMode(34, INPUT);
 
 
 }
@@ -105,52 +114,71 @@ void setup() {
 
 void loop() {
 
+  if (GO_HOME) { //TODO
+    /*
+      for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
+      if (steppers[stepperNumber]->distanceToGo() == 0) {
+      steppers[stepperNumber]->setMaxSpeed(stepperSpeed[stepperNumber]); //TODO Change to HOME VAL
+      steppers[stepperNumber]->setAcceleration(stepperAccel[stepperNumber]);  //TODO Change to HOME VAL
+      steppers[stepperNumber]->moveTo(stepperMoveTo[stepperNumber]); //TODO NOT MOVE TO BUT SET TO 0
 
-  // ============ SERIAL ================
-  serial_decode();
-  check_update();
-
-
-  // ============ STEPPER ================
-
-  for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
-    if (steppers[stepperNumber]->distanceToGo() == 0) {
-
-      steppers[stepperNumber]->moveTo(-steppers[stepperNumber]->currentPosition());
+      //steppers[stepperNumber]->moveTo(-steppers[stepperNumber]->currentPosition());
       //steppers[stepperNumber]->moveTo(positionArray[stepperNumber]);
 
+      }
+      }
+      }
+
+
+      for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
+      steppers[stepperNumber]->run();
+      }
+
+    */
+
+    GO_HOME = false;
+  } else {
+    // == == == == == == SERIAL == == == == == == == ==
+    serial_decode();
+    check_update();
+
+
+    // ============ STEPPER ================
+
+    stepper_style();
+    
+    for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
+      steppers[stepperNumber]->run();
     }
-  }
-
-  for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
-    steppers[stepperNumber]->run();
-  }
-  // ============ ENCODER ================
+    // ============ ENCODER ================
 
 
-  for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
-    encoder[stepperNumber]->read(); //TODO, read to sth?
-  }
-
-  // ============  ================
- /* unsigned long currentMillis = millis();
-
-  if (currentMillis - previousMillis > interval) {
-    // save the last time you blinked the LED
-    previousMillis = currentMillis;
-
-    // if the LED is off turn it on and vice-versa:
-    if (ledState == LOW) {
-      ledState = HIGH;
+    for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
+      encoder[stepperNumber]->read(); //TODO, read to sth?
     }
-    else {
-      ledState = LOW;
-      Serial.println("C");
-    }
-    // set the LED with the ledState of the variable:
+
+    // ============  ================
+    /* unsigned long currentMillis = millis();
+
+      if (currentMillis - previousMillis > interval) {
+       // save the last time you blinked the LED
+       previousMillis = currentMillis;
+
+       // if the LED is off turn it on and vice-versa:
+       if (ledState == LOW) {
+         ledState = HIGH;
+       }
+       else {
+         ledState = LOW;
+         Serial.println("C");
+       }
+       // set the LED with the ledState of the variable:
+
+      }
+    */
 
   }
-*/
+
 
 }
 

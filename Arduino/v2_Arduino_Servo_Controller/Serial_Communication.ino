@@ -16,7 +16,7 @@ bool exclude_print_val = true;;
 
 
 int current_index = 0;//index of current decoding number
-long input_value[Input_size];  //inputs value(s) buffer
+//long input_value[Input_size];  //inputs value(s) buffer -> moved to main tab
 boolean update_flag = false; //Flag for end of success input string follow /n
 
 
@@ -52,6 +52,7 @@ void char_decode(int inChar)
     if (current_index < Input_size) // within size
     {
       input_value[current_index] = inString.toInt(); //
+      
       //  pdInput_value[current_index] = inString.toInt(); //
       current_index++;  //increase index
     }
@@ -85,15 +86,22 @@ void char_decode(int inChar)
     update_flag = true;
 
   }
-  else if (inChar == 'D')
+  else if (inChar == 'D') //TEST
   {
     //DO STH HERE
     inString = "";   // clear the string buffer for new input:
     Serial.println("Reached Here");
   }
-  else if (inChar == 'S')
+  else if (inChar == 'Q') //MODE1
   {
     //DO STH HERE
+    inString = "";   // clear the string buffer for new input:
+    Serial.println("mode_a");
+    
+  }
+  else if (inChar == 'S') //SAVE EEPROM
+  {
+
     inString = "";   // clear the string buffer for new input:
     inString_display_buffer = F("Write Config");
         for (int i = 0; i < int_array_size; i++)
@@ -119,7 +127,7 @@ void char_decode(int inChar)
     exclude_print_val = true;
 
   }
-  else if (inChar == 'L')
+  else if (inChar == 'L') //LOAD EEPROM
   {
     //DO STH HERE
     inString = "";   // clear the string buffer for new input:
@@ -150,10 +158,10 @@ void check_update()   //Check update flag and write value when string finish
       //print all value
       for (int index = 0; index < Input_size; index++)
       {
-        Serial.print(index);
-        Serial.print(":\t");
+        //Serial.print(index);
+        //Serial.print(":");
         Serial.print(input_value[index]);
-        Serial.print("\t");
+        Serial.print("-");
       }
       
     }

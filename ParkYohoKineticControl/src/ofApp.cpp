@@ -1,6 +1,6 @@
 #include "ofApp.h"
 
-#define NUM_OF_CABLES 20 //Todo Transfer definition /variables to xml
+
 
 
 //--------------------------------------------------------------
@@ -27,55 +27,6 @@ void ofApp::setup(){
     
     guiSetup();
     
-}
-//--------------------------------------------------------------
-//-------------------------- GUI -------------------------------
-//--------------------------------------------------------------
-//--------------------------------------------------------------
-//--------------------------------------------------------------
-void ofApp::guiSetup(){
-    
-    //EEPROM
-    parametersDebug.setName("settings");
-    guiDebug.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 400, 0);
-    
-    vector<string> EEPROM_names = {"HOME_MAXSPEED", "HOME_ACCELERATION", "MAX_SPEED", "ACCELERATION", "MAX_POSITION"};
-    vector<int> EEPROM_min = {0, 0, 0, 0, 0};
-    vector<int> EEPROM_max = {500, 500, 1000, 5000, 1000}; //Todo Transfer definition /variables to xml
-    
-    guiDebug.add(currentDebugArduinoID.set("ArduinoID",0,0,NUM_OF_CABLES));
-    
-    for(int i=0; i< EEPROM_names.size(); i++){
-        ofParameter<int> a;
-        a.set(EEPROM_names[i],0,EEPROM_min[i],EEPROM_max[i]);
-        EEPROM.push_back(a);
-        guiDebug.add(EEPROM[i]);
-    }
-    vector<string> EEPROM_saveLoad_names = {"SAVE", "LOAD"};
-    /* EEPROM_btn = {new ofxButton , new ofxButton}; //TODO problem with implementing ofxButton array
-     for(int i=0; i< 2; i++){
-     //  ofxButton a;
-     //  a.setup(EEPROM_saveLoad_names[i]);
-     //  EEPROM_btn.push_back(a);
-     guiDebug.add(EEPROM_btn[i].setup("SAVE"+ofToString(i),50,50));
-     }
-     
-     */
-    guiDebug.add(EEPROM_saveBtn.setup(EEPROM_saveLoad_names[0]));
-    guiDebug.add(EEPROM_loadBtn.setup(EEPROM_saveLoad_names[1]));
-
-
-    
-    parametersCablePos.setName("cablePosition");
-    guiCablePos.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 200, 0);
-    
-    for(int i=0; i< NUM_OF_CABLES; i++){
-        ofParameter<ofVec4f> a;
-        a.set(ofToString(i),ofVec4f(10,10,10,10),ofVec4f(0,0,0,0),ofVec4f(100,100,100,100));
-        
-        cablePos.push_back(a);
-        guiCablePos.add(cablePos[i]);
-    }
     
 }
 //--------------------------------------------------------------
@@ -114,87 +65,12 @@ void ofApp::update(){
     }
     //================== Kinectic Visualisation ==================
     
-    float mx = ofMap(mouseX, 0, ofGetScreenWidth(),0,1);
-    float my = ofMap(mouseY, 0, ofGetScreenHeight(),0,1);
-    
-    kinecticVisualisation.set(0, style ,mx,my,mx + 0.5, my+ 0.2);
+    for(int i=0; i< cablePos.size(); i++){
+        kinecticVisualisation.set(i, style ,ofMap(cablePos[i]->x,0,1000,0,1) ,ofMap(cablePos[i]->y,0,1000,0,1),ofMap(cablePos[i]->z,0,1000,0,1), ofMap(cablePos[i]->w,0,1000,0,1));
+    }
+
 }
 
-//--------------------------------------------------------------
-vector<int> ofApp::stringDecode(string s){
-    vector<int> sToIntArray;
-
-    /*
-    std::stringstream input(s);
-    string segment;
-    vector<string> seglist;
-    
-    while(std::getline(input, segment, '-'))
-    {
-        seglist.push_back(segment);
-        
-    }
-     */
-    
-
-    for (int i=0; i<s.length(); i++)
-    {
-        if (s[i] == '-')
-            s[i] = ' ';
-    }
-    
-    vector<string> seglist;
-    stringstream ss(s);
-    string temp;
-    while (ss >> temp)
-        seglist.push_back(temp);
-    
-    //ofLog() << "seglist.size() " << seglist.size();
-    bool isContainParameter = false;
-
-  for(int i=0; i < seglist.size(); i++){
-    for(int j=0; j < SERIAL_PARAMETERES.size(); j++){
-      if(seglist[i] == SERIAL_PARAMETERES[j]){
-
-          sToIntArray.push_back(j);
-          isContainParameter= true;
-      }
-    }
-      if(isContainParameter){
-          if(i!=0 && is_number(seglist[i])){
-          sToIntArray.push_back(std::stoi( seglist[i] ));
-          }
-      }
-  }
-    
-    for(int i=0; i < sToIntArray.size(); i++){
-        ofLog() << "sToIntArray" << i << " : " << sToIntArray[i];
-    }
-    ofLog() << "EEPROM" << " : " << EEPROM.size();
-    ofLog() << "sToIntArray" << " : " << sToIntArray.size();
-    if(sToIntArray.size() == EEPROM.size()+1){
-        displayLog(ofToString(currentDebugArduinoID) +" EEPROM LOADED");
-        return sToIntArray;
-    }
-    else{
-    vector<int> sToIntArray;
-        return sToIntArray;
-    }
-    
-}
-void ofApp::displayLog(string s=""){
-    if(s.size() >0){
-        currentdisplayLog = s ;
-    }
-    ofSetColor(255, 255, 255);
-    ofDrawBitmapString("Status: " + currentdisplayLog, 10, ofGetHeight()-10);
-}
-bool ofApp::is_number(const std::string& s)
-{
-    std::string::const_iterator it = s.begin();
-    while (it != s.end() && std::isdigit(*it)) ++it;
-    return !s.empty() && it == s.end();
-}
 //--------------------------------------------------------------
 void ofApp::draw(){
     //================== Debug Mode ==================
@@ -223,6 +99,8 @@ void ofApp::draw(){
                 ss2 << "Connected Devices (" << i << ") : " << "Disconnected" << endl;
             }
             ofDrawBitmapString(ss2.str(), ofVec2f(20, 25*i + 100));
+            
+            
         }
 
         if(serialTrigger){
@@ -241,7 +119,7 @@ void ofApp::draw(){
                 serialWrite(currentDebugArduinoID, toWrite);
                 serialWrite(currentDebugArduinoID, "S");
                 
-                displayLog(ofToString(currentDebugArduinoID) +" EEPROM SAVED");
+                currentdisplayLog = ofToString(currentDebugArduinoID) +" EEPROM SAVED";
                 serialTrigger = false;
                 prevSerialTriggerMills =ofGetElapsedTimeMillis();
                 
@@ -258,15 +136,22 @@ void ofApp::draw(){
         if(ofGetElapsedTimeMillis() -  prevSerialTriggerMills > 200){
             serialTrigger = true;
         }
+
+        
+        string t = textField;
+        if (t.find('+') != std::string::npos || t.find('=') != std::string::npos)
+        {
+            t.erase(std::remove(t.begin(), t.end(), '='), t.end());
+            t.erase(std::remove(t.begin(), t.end(), '+'), t.end());
+            currentdisplayLog = t;
+            serialWrite(currentDebugArduinoID, t);
+            textField = "";
+        }
         
         guiDebug.draw();
         guiCablePos.draw();
-        displayLog();
-        
- 
-       // ofLog() <<"guiDebug.mouseReleased(g) " <<
-       // guiDebug.unregisterMouseEvents();
-        //guiDebug.mouseReleased(g);
+        displayLog(currentdisplayLog);
+
     }else{
         ofBackground(100, 100, 100);
         
@@ -295,11 +180,90 @@ void ofApp::keyReleased(int key){
         case 'w': //write some char for testing
             serialWrite(-1, "D");
             break;
-            
+        
+        case 'p': //dialog for serial writing
+            commandPrompt();
+            break;
+
+        
         default:
             break;
             
     }
+}
+
+bool ofApp::is_number(const std::string& s)
+{
+    std::string::const_iterator it = s.begin();
+    while (it != s.end() && std::isdigit(*it)) ++it;
+    return !s.empty() && it == s.end();
+}
+
+void ofApp::commandPrompt(){
+    string txt = ofSystemTextBoxDialog("Serial Command", txt);
+    serialWrite(currentDebugArduinoID, txt);
+
+}
+//--------------------------------------------------------------
+//-------------------------- GUI -------------------------------
+//--------------------------------------------------------------
+//--------------------------------------------------------------
+//--------------------------------------------------------------
+void ofApp::guiSetup(){
+    
+    //--- EEPROM ---
+    parametersDebug.setName("settings");
+    guiDebug.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 400, 0);
+    
+    vector<string> EEPROM_names = {"HOME_MAXSPEED", "HOME_ACCELERATION", "MAX_SPEED_X", "MAX_ACCELERATION_X", "MAX_SPEED_Y","MAX_ACCELERATION_Y","MAX_POSITION_LX","MAX_POSITION_LY","MAX_POSITION_RX","MAX_POSITION_RY","INVERT_DIR_LX","INVERT_DIR_LY","INVERT_DIR_RX","INVERT_DIR_RY"};
+
+    
+    vector<int> EEPROM_min = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    vector<int> EEPROM_max = {500, 500, 1000, 5000, 1000,5000, 1000, 1000, 1000, 1000,1, 1, 1,1}; //Todo Transfer definition /variables to xml
+    
+    guiDebug.add(currentDebugArduinoID.set("ArduinoID",0,0,NUM_OF_CABLES));
+    
+    for(int i=0; i< EEPROM_names.size(); i++){
+        ofParameter<int> a;
+        a.set(EEPROM_names[i],0,EEPROM_min[i],EEPROM_max[i]);
+        EEPROM.push_back(a);
+        guiDebug.add(EEPROM[i]);
+    }
+    vector<string> EEPROM_saveLoad_names = {"SAVE", "LOAD"};
+    /* EEPROM_btn = {new ofxButton , new ofxButton}; //TODO problem with implementing ofxButton array
+     for(int i=0; i< 2; i++){
+     //  ofxButton a;
+     //  a.setup(EEPROM_saveLoad_names[i]);
+     //  EEPROM_btn.push_back(a);
+     guiDebug.add(EEPROM_btn[i].setup("SAVE"+ofToString(i),50,50));
+     }
+     
+     */
+    guiDebug.add(EEPROM_saveBtn.setup(EEPROM_saveLoad_names[0]));
+    guiDebug.add(EEPROM_loadBtn.setup(EEPROM_saveLoad_names[1]));
+    guiDebug.add(textField.setup("Serial:", "0-0-0-0-0"));
+    //textField.addListener(this,&ofApp::serialTextInput);
+    //--- Cable Position Control ---
+    
+    parametersCablePos.setName("cablePosition");
+    guiCablePos.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 200, 0);
+    
+    for(int i=0; i< NUM_OF_CABLES; i++){
+        ofParameter<ofVec4f> a;
+        a.set(ofToString(i),ofVec4f(0,0,0,0),ofVec4f(0,0,0,0),ofVec4f(1000,1000,1000,1000)); //lx,ly,rx,ry
+        cablePos.push_back(a);
+        guiCablePos.add(cablePos[i]);
+    }
+    
+}
+
+
+void ofApp::displayLog(string s=""){
+    if(s.size() >0){
+        currentdisplayLog = s ;
+    }
+    ofSetColor(255, 255, 255);
+    ofDrawBitmapString("Status: " + currentdisplayLog, 10, ofGetHeight()-10);
 }
 
 //--------------------------------------------------------------
@@ -437,6 +401,68 @@ vector<string> ofApp::serialRead(){
     }
     return output;
 }
+
+//--------------------------------------------------------------
+vector<int> ofApp::stringDecode(string s){
+    vector<int> sToIntArray;
+    
+    /*
+     std::stringstream input(s);
+     string segment;
+     vector<string> seglist;
+     
+     while(std::getline(input, segment, '-'))
+     {
+     seglist.push_back(segment);
+     
+     }
+     */
+    
+    
+    for (int i=0; i<s.length(); i++)
+    {
+        if (s[i] == '-')
+            s[i] = ' ';
+    }
+    
+    vector<string> seglist;
+    stringstream ss(s);
+    string temp;
+    while (ss >> temp)
+        seglist.push_back(temp);
+    
+    //ofLog() << "seglist.size() " << seglist.size();
+    bool isContainParameter = false;
+    
+    for(int i=0; i < seglist.size(); i++){
+        for(int j=0; j < SERIAL_PARAMETERES.size(); j++){
+            if(seglist[i] == SERIAL_PARAMETERES[j]){
+                
+                sToIntArray.push_back(j);
+                isContainParameter= true;
+            }
+        }
+        if(isContainParameter){
+            if(i!=0 && is_number(seglist[i])){
+                sToIntArray.push_back(std::stoi( seglist[i] ));
+            }
+        }
+    }
+    //LOAD
+    for(int i=0; i < sToIntArray.size(); i++){
+        ofLog() << "sToIntArray" << i << " : " << sToIntArray[i];
+    }
+    if(sToIntArray.size() == EEPROM.size()+1){
+        currentdisplayLog = ofToString(currentDebugArduinoID) +" EEPROM LOADED";
+        return sToIntArray;
+    }
+    else{
+        vector<int> sToIntArray;
+        return sToIntArray;
+    }
+    
+}
+
 
 //TODO: Unused for now
 

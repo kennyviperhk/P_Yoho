@@ -21,8 +21,8 @@ class Cable
      
      */
 public:
-    float leftX = 1;//0 is center
-    float rightX = 1;//0 is center
+    float leftX = 1;//TODO 0 is leftmost
+    float rightX = 1;//TODO 0 is rightmost
     float leftY, rightY;//0 is top position, 1 bottom
     int index; //use index for visualisation position
     int totalCount;
@@ -40,8 +40,8 @@ public:
         ofDrawBox(0, 0, 0, drawWidth, 10, drawDepth-2);//draw top support
         ofNoFill();
         ofSetColor(255);
-        float leftTop = leftX * (drawWidth/-2.);
-        float rightTop = rightX * (drawWidth/2.);
+        float leftTop = -100-leftX * (drawWidth/-2.); //Kenny: I modified this
+        float rightTop = 100- rightX * (drawWidth/2.); //Kenny: I modified this
         ofDrawBezier(leftTop, 0, 0, leftTop, -100 - leftY*300 - extendCenteredCables, 0, rightTop, -100 - rightY*300- extendCenteredCables, 0, rightTop, 0, 0);
         ofPopMatrix();
     }
@@ -67,8 +67,8 @@ public:
         for(int i = 0; i < cables; i++)
         {
             leftX.push_back(0);
-            rightX.push_back(0);
             leftY.push_back(0);
+            rightX.push_back(0);
             rightY.push_back(0);
         }
         
@@ -78,8 +78,8 @@ public:
     {
         style = s;
         leftX[arduinoID] = lx;
-        rightX[arduinoID] = ly;
-        leftY[arduinoID] = rx;
+        leftY[arduinoID] = ly;
+        rightX[arduinoID] = rx;
         rightY[arduinoID] = ry;
         
     }
@@ -101,15 +101,15 @@ public:
             switch (style){
                 case 0:
                     cablesPositions[i].leftX = ofNoise(ofGetElapsedTimef()*noiseSpeed, 0, i*noiseSpread);
-                    cablesPositions[i].rightX = ofNoise(ofGetElapsedTimef()*noiseSpeed, 1238.44, i*noiseSpread);
                     cablesPositions[i].leftY = ofNoise(ofGetElapsedTimef()*noiseSpeed, 34774.3, i*noiseSpread);
+                    cablesPositions[i].rightX = ofNoise(ofGetElapsedTimef()*noiseSpeed, 1238.44, i*noiseSpread);
                     cablesPositions[i].rightY = ofNoise(ofGetElapsedTimef()*noiseSpeed, 283.2, i*noiseSpread);
                     break;
                     
                 case 1:
                     cablesPositions[i].leftX = leftX[i];
-                    cablesPositions[i].rightX = rightX[i];
                     cablesPositions[i].leftY = leftY[i];
+                    cablesPositions[i].rightX = rightX[i];
                     cablesPositions[i].rightY = rightY[i];
                     break;
                     
@@ -135,7 +135,7 @@ public:
     int cables = 20;
     
     int style = 0;
-    vector<float> leftX, rightX, leftY, rightY;
+    vector<float> leftX, leftY, rightX, rightY;
 
 };
 
