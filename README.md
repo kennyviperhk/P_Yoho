@@ -7,8 +7,7 @@ AddOns:<br/>
 ofxDmx https://github.com/kylemcdonald/ofxDmx <br/>
 ofxGui <br/>(buildin)
 ofxIO https://github.com/bakercp/ofxIO <br/>
-ofxSerial <br/>
-https://github.com/bakercp/ofxSerial <br/>
+ofxSerial https://github.com/bakercp/ofxSerial <br/>
 ofxXmlSettings (buildin)<br/>
 ofxInputField https://github.com/fx-lange/ofxInputField <br/>
 <br/>
