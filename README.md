@@ -5,10 +5,17 @@ OSX: 10.12.3 <br/>
 <br/>
 AddOns:<br/>
 ofxDmx<br/>
+https://github.com/kylemcdonald/ofxDmx
 ofxGui<br/>
+(buildin)
 ofxIO<br/>
+https://github.com/bakercp/ofxIO
 ofxSerial<br/>
+https://github.com/bakercp/ofxSerial
 ofxXmlSettings<br/>
+(buildin)
+ofxInputField
+https://github.com/fx-lange/ofxInputField
 <br/>
 Put this in /apps folder<br/>
 
