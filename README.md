@@ -5,7 +5,7 @@ OSX: 10.12.3 <br/>
 <br/>
 AddOns:<br/>
 ofxDmx https://github.com/kylemcdonald/ofxDmx <br/>
-ofxGui <br/>(buildin)
+ofxGui (buildin) <br/>
 ofxIO https://github.com/bakercp/ofxIO <br/>
 ofxSerial https://github.com/bakercp/ofxSerial <br/>
 ofxXmlSettings (buildin)<br/>
