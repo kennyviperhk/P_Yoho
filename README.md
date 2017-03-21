@@ -14,8 +14,8 @@ ofxInputField https://github.com/fx-lange/ofxInputField <br/>
 Put this in /apps folder<br/>
 
 
-Arduino Library
-AccelStepper http://www.airspayce.com/mikem/arduino/AccelStepper/AccelStepper-1.56.zip <br/><br/>
+Arduino Library <br/>
+AccelStepper http://www.airspayce.com/mikem/arduino/AccelStepper/AccelStepper-1.56.zip <br/>
 
 
 
