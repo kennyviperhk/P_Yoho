@@ -16,6 +16,8 @@ Put this in /apps folder<br/>
 
 Arduino Library <br/>
 AccelStepper http://www.airspayce.com/mikem/arduino/AccelStepper/AccelStepper-1.56.zip <br/>
+Encoder
+https://www.pjrc.com/teensy/td_libs_Encoder.html <br/>
 
 
 
