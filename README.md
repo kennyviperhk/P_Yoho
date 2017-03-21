@@ -4,25 +4,19 @@ OSX: 10.12.3 <br/>
 <br/>
 <br/>
 AddOns:<br/>
-ofxDmx<br/>
-https://github.com/kylemcdonald/ofxDmx
-ofxGui<br/>
-(buildin)
-ofxIO<br/>
-https://github.com/bakercp/ofxIO
-ofxSerial<br/>
-https://github.com/bakercp/ofxSerial
-ofxXmlSettings<br/>
-(buildin)
-ofxInputField
-https://github.com/fx-lange/ofxInputField
+ofxDmx https://github.com/kylemcdonald/ofxDmx <br/>
+ofxGui <br/>(buildin)
+ofxIO https://github.com/bakercp/ofxIO <br/>
+ofxSerial <br/>
+https://github.com/bakercp/ofxSerial <br/>
+ofxXmlSettings (buildin)<br/>
+ofxInputField https://github.com/fx-lange/ofxInputField <br/>
 <br/>
 Put this in /apps folder<br/>
 
 
 Arduino Library
-AccelStepper
-http://www.airspayce.com/mikem/arduino/AccelStepper/AccelStepper-1.56.zip
+AccelStepper http://www.airspayce.com/mikem/arduino/AccelStepper/AccelStepper-1.56.zip <br/><br/>
 
 
 
