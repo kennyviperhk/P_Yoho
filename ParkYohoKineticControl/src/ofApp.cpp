@@ -294,7 +294,7 @@ vector<bool> ofApp::serialSetup(){ //int give the connection status of each cabl
             string portDesc = devicesInfo[i].getDescription();
             ofLog() << "devicesInfo[i].getDescription() : " << devicesInfo[i].getDescription();
             
-            if(portDesc.find("USB") != std::string::npos )
+            if(portDesc.find("USB") != std::string::npos || portDesc.find("Arduino") != std::string::npos )
             {
                 // Connect to the first matching device.
                 ofx::IO::BufferedSerialDevice device;
