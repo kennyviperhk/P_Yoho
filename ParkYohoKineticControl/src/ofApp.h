@@ -30,7 +30,11 @@
  
  //command: send motor index [0-4] - position [0-10000] - interpolation style [0-4?] - 3 style parameters ... (example: time to position [0 - 100000ms])
 
- //use ofserial for now (to avoid framedrop issue)
+ todo:
+//controllable single module:
+ accel, speed, pos (send to arduino), flip dir, 
+ 
+ //call for assure connection
  
  */
 
@@ -124,9 +128,21 @@ class ofApp : public ofBaseApp{
     
     ofxTextField textField;
     
+    //Cable Pos
     ofxPanel guiCablePos;
     ofParameterGroup parametersCablePos;
     vector<ofParameter<ofVec4f>> cablePos; //lx,ly,rx,ry
+    
+    //Cable Accel
+    ofxPanel guiCableAccel;
+    ofParameterGroup parametersCableAccel;
+    vector<ofParameter<ofVec4f>> cableAccel; //lx,ly,rx,ry
+    
+    //Cable Speed
+    ofxPanel guiCableSpeed;
+    ofParameterGroup parametersCableSpeed;
+    vector<ofParameter<ofVec4f>> cableSpeed; //lx,ly,rx,ry
+    
     ofParameter<int> currentDebugArduinoID;
     
     bool serialTrigger; //TO avoid ofxButton cause multiple click and send mutiple serial command;

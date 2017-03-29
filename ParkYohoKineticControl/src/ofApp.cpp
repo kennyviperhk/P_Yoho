@@ -150,6 +150,8 @@ void ofApp::draw(){
         
         guiDebug.draw();
         guiCablePos.draw();
+        guiCableAccel.draw();
+        guiCableSpeed.draw();
         displayLog(currentdisplayLog);
 
     }else{
@@ -213,7 +215,7 @@ void ofApp::guiSetup(){
     
     //--- EEPROM ---
     parametersDebug.setName("settings");
-    guiDebug.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 400, 0);
+    guiDebug.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 800, 0);
     
     vector<string> EEPROM_names = {"HOME_MAXSPEED", "HOME_ACCELERATION", "MAX_SPEED_X", "MAX_ACCELERATION_X", "MAX_SPEED_Y","MAX_ACCELERATION_Y","MAX_POSITION_LX","MAX_POSITION_LY","MAX_POSITION_RX","MAX_POSITION_RY","INVERT_DIR_LX","INVERT_DIR_LY","INVERT_DIR_RX","INVERT_DIR_RY"};
 
@@ -250,9 +252,31 @@ void ofApp::guiSetup(){
     
     for(int i=0; i< NUM_OF_CABLES; i++){
         ofParameter<ofVec4f> a;
-        a.set(ofToString(i),ofVec4f(0,0,0,0),ofVec4f(0,0,0,0),ofVec4f(1000,1000,1000,1000)); //lx,ly,rx,ry
+        a.set("Pos " + ofToString(i),ofVec4f(0,0,0,0),ofVec4f(0,0,0,0),ofVec4f(1000,1000,1000,1000)); //lx,ly,rx,ry
         cablePos.push_back(a);
         guiCablePos.add(cablePos[i]);
+    }
+    //--- Cable Accel Control ---
+    
+    parametersCableAccel.setName("cableAccel");
+    guiCableAccel.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 400, 0);
+    
+    for(int i=0; i< NUM_OF_CABLES; i++){
+        ofParameter<ofVec4f> a;
+        a.set("Accel " + ofToString(i),ofVec4f(0,0,0,0),ofVec4f(0,0,0,0),ofVec4f(1000,1000,1000,1000)); //lx,ly,rx,ry
+        cableAccel.push_back(a);
+        guiCableAccel.add(cableAccel[i]);
+    }
+    //--- Cable Speed Control ---
+    
+    parametersCableSpeed.setName("cableSpeed");
+    guiCableSpeed.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 600, 0);
+    
+    for(int i=0; i< NUM_OF_CABLES; i++){
+        ofParameter<ofVec4f> a;
+        a.set("Speed " + ofToString(i),ofVec4f(0,0,0,0),ofVec4f(0,0,0,0),ofVec4f(1000,1000,1000,1000)); //lx,ly,rx,ry
+        cableSpeed.push_back(a);
+        guiCableSpeed.add(cableSpeed[i]);
     }
     
 }
