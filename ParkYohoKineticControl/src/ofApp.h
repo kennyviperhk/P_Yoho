@@ -8,6 +8,8 @@
 #include "ofxInputField.h"
 
 #define NUM_OF_CABLES 20 //Todo Transfer definition /variables to xml
+#define BAUD 57600 //Todo Transfer definition /variables to xml
+
 
 #define HOME_MAXSPEED     int_array[0]
 #define HOME_ACCELERATION     int_array[1]
@@ -125,6 +127,7 @@ class ofApp : public ofBaseApp{
     
     ofxButton EEPROM_saveBtn;
     ofxButton EEPROM_loadBtn;
+    ofxButton style_Btn;
     
     ofxTextField textField;
     
@@ -144,6 +147,7 @@ class ofApp : public ofBaseApp{
     vector<ofParameter<ofVec4f>> cableSpeed; //lx,ly,rx,ry
     
     ofParameter<int> currentDebugArduinoID;
+    ofParameter<int> currentStyle;
     
     bool serialTrigger; //TO avoid ofxButton cause multiple click and send mutiple serial command;
     long prevSerialTriggerMills; //TO avoid ofxButton cause multiple click and send mutiple serial command;

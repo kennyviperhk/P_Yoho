@@ -12,7 +12,7 @@ String inString = "";    // string to hold input char
 String inString_buffer = "";    // string to hold input Serial msg
 String inString_display_buffer = "";    // string to hold Display info
 
-bool exclude_print_val = true;;
+bool exclude_print_val = true;
 
 
 int current_index = 0;//index of current decoding number
@@ -65,6 +65,8 @@ void char_decode(int inChar)
     //              Serial.println("overflow");
     //            }
     inString = "";   // clear the string buffer for new input:
+
+
   }
   else if (inChar == '\n' || inChar == 'N')       //if you get a newline, convert to a number and print all value
   {
@@ -72,7 +74,7 @@ void char_decode(int inChar)
     {
       input_value[current_index] = inString.toInt(); //final value
       val = input_value[0];
-      //pdInput_value[current_index] = inString.toInt(); //
+
     }
     //            else// giveup the value to avoide over access array
     //            {
@@ -154,7 +156,7 @@ void check_update()   //Check update flag and write value when string finish
   if ( update_flag == true) //update value
   {
 
-    if (!exclude_print_val) {
+    if (exclude_print_val == false) {
       //print all value
       for (int index = 0; index < Input_size; index++)
       {

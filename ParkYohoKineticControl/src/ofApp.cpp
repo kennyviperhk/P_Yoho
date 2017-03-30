@@ -131,6 +131,70 @@ void ofApp::draw(){
                 serialTrigger = false;
                 prevSerialTriggerMills =ofGetElapsedTimeMillis();
             }
+            if(style_Btn){
+                string writeInTotal = "";
+                
+                string toWrite = "";
+                
+                toWrite+= ofToString(currentStyle);
+                toWrite+= "-";
+                toWrite+= ofToString(0);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cableSpeed[currentDebugArduinoID]->x);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cableAccel[currentDebugArduinoID]->x);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cablePos[currentDebugArduinoID]->x);
+                
+                serialWrite(currentDebugArduinoID, toWrite);
+             /*   writeInTotal+=" LX: "+ toWrite;
+                
+                toWrite = "";
+                toWrite+= ofToString(currentStyle);
+                toWrite+= "-";
+                toWrite+= ofToString(1);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cableSpeed[currentDebugArduinoID]->y);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cableAccel[currentDebugArduinoID]->y);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cablePos[currentDebugArduinoID]->y);
+                
+                serialWrite(currentDebugArduinoID, toWrite);
+                writeInTotal+=" LY: "+ toWrite;
+                
+                toWrite = "";
+                toWrite+= ofToString(currentStyle);
+                toWrite+= "-";
+                toWrite+= ofToString(2);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cableSpeed[currentDebugArduinoID]->z);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cableAccel[currentDebugArduinoID]->z);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cablePos[currentDebugArduinoID]->z);
+                
+                serialWrite(currentDebugArduinoID, toWrite);
+                writeInTotal+=" RX: "+toWrite;
+                
+                toWrite = "";
+                toWrite+= ofToString(currentStyle);
+                toWrite+= "-";
+                toWrite+= ofToString(3);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cableSpeed[currentDebugArduinoID]->w);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cableAccel[currentDebugArduinoID]->w);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cablePos[currentDebugArduinoID]->w);
+                
+                serialWrite(currentDebugArduinoID, toWrite);
+                writeInTotal+=" RY: "+toWrite;
+                */
+                currentdisplayLog = writeInTotal;
+            
+
+            }
             
         }
         if(ofGetElapsedTimeMillis() -  prevSerialTriggerMills > 200){
@@ -224,7 +288,7 @@ void ofApp::guiSetup(){
     vector<int> EEPROM_max = {500, 500, 1000, 5000, 1000,5000, 1000, 1000, 1000, 1000,1, 1, 1,1}; //Todo Transfer definition /variables to xml
     
     guiDebug.add(currentDebugArduinoID.set("ArduinoID",0,0,NUM_OF_CABLES));
-    
+
     for(int i=0; i< EEPROM_names.size(); i++){
         ofParameter<int> a;
         a.set(EEPROM_names[i],0,EEPROM_min[i],EEPROM_max[i]);
@@ -244,6 +308,8 @@ void ofApp::guiSetup(){
     guiDebug.add(EEPROM_saveBtn.setup(EEPROM_saveLoad_names[0]));
     guiDebug.add(EEPROM_loadBtn.setup(EEPROM_saveLoad_names[1]));
     guiDebug.add(textField.setup("Serial:", "0-0-0-0-0"));
+    guiDebug.add(currentStyle.set("Style",1,0,NUM_OF_CABLES)); //TODO
+    guiDebug.add(style_Btn.setup("Set Position:"));
     //textField.addListener(this,&ofApp::serialTextInput);
     //--- Cable Position Control ---
     
@@ -324,7 +390,7 @@ vector<bool> ofApp::serialSetup(){ //int give the connection status of each cabl
                 ofx::IO::BufferedSerialDevice device;
                 arduino.push_back(device);
                 
-                bool success = arduino[a].setup(devicesInfo[i], 115200);
+                bool success = arduino[a].setup(devicesInfo[i], BAUD);
                 
                 if(success)
                 {
