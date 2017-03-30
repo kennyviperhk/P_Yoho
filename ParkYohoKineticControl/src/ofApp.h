@@ -84,7 +84,6 @@ class ofApp : public ofBaseApp{
     
     KinecticVisualisation kinecticVisualisation;
     
-    int style;
     //================== Serial ==================
     
     vector<bool> serialSetup();
@@ -156,6 +155,7 @@ class ofApp : public ofBaseApp{
     string currentdisplayLog;
     void commandPrompt();
     
+    bool isEmergencyStop;
 
     //================== Config ==================
     

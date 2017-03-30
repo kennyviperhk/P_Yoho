@@ -147,6 +147,31 @@ void char_decode(int inChar)
     exclude_print_val = true;
 
   }
+    else if (inChar == 'E') //EMERGENCY STOP
+  {
+    //DO STH HERE
+    inString = "";   // clear the string buffer for new input:
+    
+    Serial.print("EMERGENCY STOP ON === R to release");
+   isEmergencyStop = true;
+    Serial.print("\t");
+
+    exclude_print_val = true;
+
+  }
+
+      else if (inChar == 'R') //EMERGENCY STOP
+  {
+    //DO STH HERE
+    inString = "";   // clear the string buffer for new input:
+    
+    Serial.print("EMERGENCY STOP OFF");
+   isEmergencyStop = false;
+    Serial.print("\t");
+
+    exclude_print_val = true;
+
+  }
 
 }
 

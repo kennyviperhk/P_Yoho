@@ -86,7 +86,7 @@ void setup() {
   //pinMode(34, OUTPUT);
 
   // ============ SERIAL ================
-  Serial.begin(9600);
+  Serial.begin(57600);
 
 
   pinMode(34, INPUT);

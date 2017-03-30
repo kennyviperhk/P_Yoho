@@ -113,6 +113,13 @@ public:
                     cablesPositions[i].rightY = rightY[i];
                     break;
                     
+                case 11:
+                    cablesPositions[i].leftX = leftX[i];
+                    cablesPositions[i].leftY = leftY[i];
+                    cablesPositions[i].rightX = rightX[i];
+                    cablesPositions[i].rightY = rightY[i];
+                    break;
+                    
                 default:
                     style = 0;
 

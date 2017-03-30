@@ -17,6 +17,7 @@ void ofApp::setup(){
     //================== debugMode ==================
     
     debugMode = true;
+    isEmergencyStop = false;
     for(int i=0; i < arduino.size(); i++){
         receivedString.push_back("");
         prevReceivedString.push_back("");
@@ -66,15 +67,25 @@ void ofApp::update(){
     //================== Kinectic Visualisation ==================
     
     for(int i=0; i< cablePos.size(); i++){
-        kinecticVisualisation.set(i, style ,ofMap(cablePos[i]->x,0,1000,0,1) ,ofMap(cablePos[i]->y,0,1000,0,1),ofMap(cablePos[i]->z,0,1000,0,1), ofMap(cablePos[i]->w,0,1000,0,1));
+        kinecticVisualisation.set(i, currentStyle ,ofMap(cablePos[i]->x,0,1000,0,1) ,ofMap(cablePos[i]->y,0,1000,0,1),ofMap(cablePos[i]->z,0,1000,0,1), ofMap(cablePos[i]->w,0,1000,0,1));
     }
 
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    if(isEmergencyStop){
+    ofBackground(255, 0, 0);
+        ofSetColor(255);
+        
+        std::stringstream ss;
+        ss << "FrameRate : "<< ofGetFrameRate() << endl;
+        ss << "EMERGENCY STOP - 'r' to relase: " << endl;
+
+        ofDrawBitmapString(ss.str(), ofVec2f(20, 20));
+    }
     //================== Debug Mode ==================
-    if(debugMode){
+    else if(debugMode){
         ofBackground(100, 0, 0);
         
         ofSetColor(255);
@@ -84,7 +95,7 @@ void ofApp::draw(){
         ss << "FrameRate : "<< ofGetFrameRate() << endl;
         
         ss << "Num of Connected Devices: " << arduino.size() << " / " << NUM_OF_CABLES << endl;
-        ss << "Style: " << style << endl;
+        //ss << "Style: " << currentStyle << endl;
         
         ofDrawBitmapString(ss.str(), ofVec2f(20, 20));
         
@@ -132,66 +143,55 @@ void ofApp::draw(){
                 prevSerialTriggerMills =ofGetElapsedTimeMillis();
             }
             if(style_Btn){
-                string writeInTotal = "";
                 
-                string toWrite = "";
+                if(currentStyle == 11){
+                    string writeInTotal = "LX : ";
+                    
+                    string toWrite = "";
+                    
+                    toWrite+= ofToString(currentStyle);
+                    toWrite+= "-";
+                    
+                    toWrite+= ofToString((int)cableSpeed[currentDebugArduinoID]->x);
+                    toWrite+= "-";
+                    toWrite+= ofToString((int)cableAccel[currentDebugArduinoID]->x);
+                    toWrite+= "-";
+                    toWrite+= ofToString((int)cablePos[currentDebugArduinoID]->x);
+                    toWrite+= "-";
+                    
+                    writeInTotal=toWrite + " LY:";
                 
-                toWrite+= ofToString(currentStyle);
-                toWrite+= "-";
-                toWrite+= ofToString(0);
-                toWrite+= "-";
-                toWrite+= ofToString((int)cableSpeed[currentDebugArduinoID]->x);
-                toWrite+= "-";
-                toWrite+= ofToString((int)cableAccel[currentDebugArduinoID]->x);
-                toWrite+= "-";
-                toWrite+= ofToString((int)cablePos[currentDebugArduinoID]->x);
+                    toWrite+= ofToString((int)cableSpeed[currentDebugArduinoID]->y);
+                    toWrite+= "-";
+                    toWrite+= ofToString((int)cableAccel[currentDebugArduinoID]->y);
+                    toWrite+= "-";
+                    toWrite+= ofToString((int)cablePos[currentDebugArduinoID]->y);
+                    toWrite+= "-";
+
+                    writeInTotal=toWrite +" RX: ";
+                    
+                    toWrite+= ofToString((int)cableSpeed[currentDebugArduinoID]->z);
+                    toWrite+= "-";
+                    toWrite+= ofToString((int)cableAccel[currentDebugArduinoID]->z);
+                    toWrite+= "-";
+                    toWrite+= ofToString((int)cablePos[currentDebugArduinoID]->z);
+                    toWrite+= "-";
+                    
+                    writeInTotal=toWrite +" RY: ";;
+
+                    toWrite+= ofToString((int)cableSpeed[currentDebugArduinoID]->w);
+                    toWrite+= "-";
+                    toWrite+= ofToString((int)cableAccel[currentDebugArduinoID]->w);
+                    toWrite+= "-";
+                    toWrite+= ofToString((int)cablePos[currentDebugArduinoID]->w);
+                    
+                    writeInTotal=toWrite;
+                    
+                    serialWrite(currentDebugArduinoID, toWrite);
+                    currentdisplayLog = writeInTotal;
                 
-                serialWrite(currentDebugArduinoID, toWrite);
-             /*   writeInTotal+=" LX: "+ toWrite;
+                }
                 
-                toWrite = "";
-                toWrite+= ofToString(currentStyle);
-                toWrite+= "-";
-                toWrite+= ofToString(1);
-                toWrite+= "-";
-                toWrite+= ofToString((int)cableSpeed[currentDebugArduinoID]->y);
-                toWrite+= "-";
-                toWrite+= ofToString((int)cableAccel[currentDebugArduinoID]->y);
-                toWrite+= "-";
-                toWrite+= ofToString((int)cablePos[currentDebugArduinoID]->y);
-                
-                serialWrite(currentDebugArduinoID, toWrite);
-                writeInTotal+=" LY: "+ toWrite;
-                
-                toWrite = "";
-                toWrite+= ofToString(currentStyle);
-                toWrite+= "-";
-                toWrite+= ofToString(2);
-                toWrite+= "-";
-                toWrite+= ofToString((int)cableSpeed[currentDebugArduinoID]->z);
-                toWrite+= "-";
-                toWrite+= ofToString((int)cableAccel[currentDebugArduinoID]->z);
-                toWrite+= "-";
-                toWrite+= ofToString((int)cablePos[currentDebugArduinoID]->z);
-                
-                serialWrite(currentDebugArduinoID, toWrite);
-                writeInTotal+=" RX: "+toWrite;
-                
-                toWrite = "";
-                toWrite+= ofToString(currentStyle);
-                toWrite+= "-";
-                toWrite+= ofToString(3);
-                toWrite+= "-";
-                toWrite+= ofToString((int)cableSpeed[currentDebugArduinoID]->w);
-                toWrite+= "-";
-                toWrite+= ofToString((int)cableAccel[currentDebugArduinoID]->w);
-                toWrite+= "-";
-                toWrite+= ofToString((int)cablePos[currentDebugArduinoID]->w);
-                
-                serialWrite(currentDebugArduinoID, toWrite);
-                writeInTotal+=" RY: "+toWrite;
-                */
-                currentdisplayLog = writeInTotal;
             
 
             }
@@ -233,9 +233,9 @@ void ofApp::draw(){
 void ofApp::keyReleased(int key){
     switch (key){
         case 's':
-            style++;
-            if(style >1){
-                style=0;
+            currentStyle++;
+            if(currentStyle >NUM_OF_CABLES){ //todo
+                currentStyle=0;
             }
             break;
             
@@ -249,6 +249,16 @@ void ofApp::keyReleased(int key){
         
         case 'p': //dialog for serial writing
             commandPrompt();
+            break;
+            
+        case ' ': //emergency Stop
+            serialWrite(-1, "E");
+            isEmergencyStop = true;
+            break;
+            
+        case 'r': //emergency Stop release
+            serialWrite(-1, "R");
+            isEmergencyStop = false;
             break;
 
         
@@ -308,7 +318,7 @@ void ofApp::guiSetup(){
     guiDebug.add(EEPROM_saveBtn.setup(EEPROM_saveLoad_names[0]));
     guiDebug.add(EEPROM_loadBtn.setup(EEPROM_saveLoad_names[1]));
     guiDebug.add(textField.setup("Serial:", "0-0-0-0-0"));
-    guiDebug.add(currentStyle.set("Style",1,0,NUM_OF_CABLES)); //TODO
+    guiDebug.add(currentStyle.set("Style",11,0,NUM_OF_CABLES)); //TODO
     guiDebug.add(style_Btn.setup("Set Position:"));
     //textField.addListener(this,&ofApp::serialTextInput);
     //--- Cable Position Control ---

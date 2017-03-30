@@ -59,6 +59,8 @@ AccelStepper stepperRy (AccelStepper::DRIVER, ryStep, ryDir);
 
 AccelStepper* steppers[numOfStepper] = { &stepperLx, &stepperLy, &stepperRx, &stepperRy};
 
+bool isEmergencyStop = false;
+
 // ============ ENCODER ================
 #include <Encoder.h>
 
@@ -113,8 +115,14 @@ void setup() {
 // ============ ============ ================
 
 void loop() {
-
-  if (GO_HOME) { //TODO
+    // == == == == == == SERIAL == == == == == == == ==
+    serial_decode();
+    check_update();
+  
+  if(isEmergencyStop){
+    //TODO -> check brake
+  }
+  else if (GO_HOME) { //TODO
     /*
       for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
       if (steppers[stepperNumber]->distanceToGo() == 0) {
@@ -138,9 +146,7 @@ void loop() {
 
     GO_HOME = false;
   } else {
-    // == == == == == == SERIAL == == == == == == == ==
-    serial_decode();
-    check_update();
+
 
 
     // ============ STEPPER ================

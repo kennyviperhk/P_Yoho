@@ -39,4 +39,30 @@ void stepper_style(){
         }
       }
     }
+    if (style == 11) {
+    //STYLE - SPEED - ACCEL - POS
+      stepperSpeed[0] = input_value[1];
+      stepperAccel[0] = input_value[2];
+      stepperMoveTo[0] = input_value[3];
+
+      stepperSpeed[1] = input_value[4];
+      stepperAccel[1] = input_value[5];
+      stepperMoveTo[1] = input_value[6];
+
+      stepperSpeed[2] = input_value[7];
+      stepperAccel[2] = input_value[8];
+      stepperMoveTo[2] = input_value[9];
+
+      stepperSpeed[3] = input_value[10];
+      stepperAccel[3] = input_value[11];
+      stepperMoveTo[3] = input_value[12];
+
+      for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
+        if (steppers[stepperNumber]->distanceToGo() == 0) {
+          steppers[stepperNumber]->setMaxSpeed(stepperSpeed[stepperNumber]);
+          steppers[stepperNumber]->setAcceleration(stepperAccel[stepperNumber]);
+          steppers[stepperNumber]->moveTo(stepperMoveTo[stepperNumber]);
+        }
+      }
+    }
 }
