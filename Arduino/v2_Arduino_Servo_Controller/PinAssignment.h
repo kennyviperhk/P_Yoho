@@ -1,13 +1,13 @@
 // ============ STEPPER ================
 
-#define lxStep 2
-#define lxDir 3
-#define lyStep 4
-#define lyDir 5
-#define rxStep 6
-#define rxDir 7
-#define ryStep 8
-#define ryDir 9
+#define lxStep 3
+#define lxDir 2
+#define lyStep 5
+#define lyDir 4
+#define rxStep 7
+#define rxDir 6
+#define ryStep 9
+#define ryDir 8
 
 // ============ Limit Switch / IR Sensor ================
 
