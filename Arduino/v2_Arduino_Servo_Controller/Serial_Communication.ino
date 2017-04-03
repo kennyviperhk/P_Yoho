@@ -21,7 +21,7 @@ boolean update_flag = false; //Flag for end of success input string follow /n
 
 
 
-void serial_decode()   // Read serial input:
+void serial_decode()   // Read serial input: //TODO add serial1
 {
   byte Read_Flag = 0;
   while (Serial.available() > 0)
@@ -29,8 +29,13 @@ void serial_decode()   // Read serial input:
     int inChar = Serial.read();
     char_decode(inChar) ;
   }
-
-
+/*
+  while (Serial1.available() > 0)
+  {
+    int inChar = Serial1.read();
+    char_decode(inChar) ;
+  }
+  */
 }
 
 

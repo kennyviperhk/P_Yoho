@@ -23,6 +23,30 @@ int int_array[int_array_size] = {0};
 #define INVERT_DIR_RX      int_array[12]
 #define INVERT_DIR_RY      int_array[13]
 
+void Load_To_Variables() {
+  for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
+    
+    //HOME -> USE DIRECTLY
+    
+    if (stepperNumber == 0 || stepperNumber == 2) {
+      maxSpeed[stepperNumber] = int_array[2];
+      maxAccel[stepperNumber] = int_array[3];
+    } else {
+      maxSpeed[stepperNumber] = int_array[4];
+      maxAccel[stepperNumber] = int_array[5];
+    }
+
+    maxPos[stepperNumber] = int_array[6 + stepperNumber];
+    
+    //inverseDir[stepperNumber]= int_array[10 + stepperNumber];
+    if (int_array[10 + stepperNumber] == 0) {
+      inverseDir[stepperNumber] = 1;
+    } else {
+      inverseDir[stepperNumber] = -1;
+    }
+  }
+
+}
 
 void Load_Flash()
 {

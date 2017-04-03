@@ -43,14 +43,10 @@ long input_value[Input_size];
 // ============ STEPPER ================
 #include <AccelStepper.h>
 
-//long positionArray[numOfStepper];
-
-//float SPEED = 1000;
-//float ACCELARATION = 1000;
 
 long stepperSpeed[numOfStepper]  = {0, 0, 0, 0};
 long stepperAccel[numOfStepper]  = {0, 0, 0, 0};
-long stepperMoveTo[numOfStepper]  = {0, 0, 0, 0};
+long stepperPos[numOfStepper]  = {0, 0, 0, 0};
 
 AccelStepper stepperLx (AccelStepper::DRIVER, lxStep, lxDir);
 AccelStepper stepperLy (AccelStepper::DRIVER, lyStep, lyDir);
@@ -60,6 +56,14 @@ AccelStepper stepperRy (AccelStepper::DRIVER, ryStep, ryDir);
 AccelStepper* steppers[numOfStepper] = { &stepperLx, &stepperLy, &stepperRx, &stepperRy};
 
 bool isEmergencyStop = false;
+
+//variables
+long inverseDir[numOfStepper]  = {0, 0, 0, 0};
+long maxPos[numOfStepper]  = {0, 0, 0, 0};
+long maxSpeed[numOfStepper] = {0, 0, 0, 0};
+long maxAccel[numOfStepper] = {0, 0, 0, 0};
+
+
 
 // ============ ENCODER ================
 #include <Encoder.h>
@@ -93,9 +97,11 @@ void setup() {
   for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
     steppers[stepperNumber]->setMaxSpeed(stepperSpeed[stepperNumber]);
     steppers[stepperNumber]->setAcceleration(stepperAccel[stepperNumber]);
-    steppers[stepperNumber]->moveTo(stepperMoveTo[stepperNumber]);
+    steppers[stepperNumber]->moveTo(stepperPos[stepperNumber]);
 
     //steppers[stepperNumber].setPinsInverted(true, false, false); //(directionInvert,stepInvert,enableInvert)
+    Load_Flash();
+    Load_To_Variables();
     // ============ LIMIT SWITCH ================
     pinMode(limitSwitch[stepperNumber], INPUT_PULLUP);
   }
@@ -128,7 +134,7 @@ void loop() {
       if (steppers[stepperNumber]->distanceToGo() == 0) {
       steppers[stepperNumber]->setMaxSpeed(stepperSpeed[stepperNumber]); //TODO Change to HOME VAL
       steppers[stepperNumber]->setAcceleration(stepperAccel[stepperNumber]);  //TODO Change to HOME VAL
-      steppers[stepperNumber]->moveTo(stepperMoveTo[stepperNumber]); //TODO NOT MOVE TO BUT SET TO 0
+      steppers[stepperNumber]->moveTo(stepperPos[stepperNumber]); //TODO NOT MOVE TO BUT SET TO 0
 
       //steppers[stepperNumber]->moveTo(-steppers[stepperNumber]->currentPosition());
       //steppers[stepperNumber]->moveTo(positionArray[stepperNumber]);
