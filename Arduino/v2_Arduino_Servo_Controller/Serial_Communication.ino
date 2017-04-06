@@ -93,11 +93,11 @@ void char_decode(int inChar)
     update_flag = true;
 
   }
-  else if (inChar == 'D') //TEST
+  else if (inChar == 'C') //Check if online
   {
     //DO STH HERE
     inString = "";   // clear the string buffer for new input:
-    Serial.println("Reached Here");
+    Serial.println("online");
   }
   else if (inChar == 'Q') //MODE1
   {
@@ -121,6 +121,7 @@ void char_decode(int inChar)
           Serial.print(int_array[i]);
         }
     Write_Flash();
+    Load_To_Variables();
     Serial.print("save-");
     for (int i = 0; i < int_array_size; i++) {
 

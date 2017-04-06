@@ -11,9 +11,15 @@ void ofApp::setup(){
     //================== Serial ==================
     
     isArduinoConnected = serialSetup();
-    SERIAL_PARAMETERES = {"save", "load"};
+    
+    SERIAL_PARAMETERES = {"save", "load","online"};
     serialTrigger = true;
-    prevSerialTriggerMills = ofGetElapsedTimeMillis();
+    prevSerialTriggerMillis = ofGetElapsedTimeMillis();
+    
+    for(int i=0; i < NUM_OF_CABLES; i++){
+        isArduinoConnectedBySerial.push_back(false);
+    }
+     initOnUpdate = true;
     //================== debugMode ==================
     
     debugMode = true;
@@ -31,21 +37,48 @@ void ofApp::setup(){
     
 }
 //--------------------------------------------------------------
+void ofApp::checkArduinoIsConnected(){
+
+    if(currMillis < 3000){
+
+        if(currMillis %5 == 0){
+            serialWrite(-1, "C");
+            ofLog() << "hello";
+        }
+    }
+   
+    
+}
+//--------------------------------------------------------------
 void ofApp::update(){
     
     ofSetWindowTitle(ofToString(ofGetFrameRate()));
     
+    
+    currMillis = ofGetElapsedTimeMillis();
+
+    
     //================== Serial ==================
     receivedString = serialRead();
+
+    
+    if(initOnUpdate){
+        checkArduinoIsConnected();
+    }
     
     for(int i=0; i< receivedString.size(); i++){
-        if(stringDecode(receivedString[i]).size()){
+        if(stringDecode(receivedString[i]).size()>=1){
             if(stringDecode(receivedString[i])[0] == 1){ //load
                 for(int j=0; j< stringDecode(receivedString[i]).size(); j++){
                     if(j< EEPROM.size()){
                         EEPROM[j] = stringDecode(receivedString[i])[j+1];
                     }
                 }
+            }
+            
+            if(stringDecode(receivedString[i])[0] == 2){ //online
+                ofLog() << "device : " << i << " online";
+                isArduinoConnectedBySerial[i] = true;
             }
             
         }
@@ -75,7 +108,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     if(isEmergencyStop){
-    ofBackground(255, 0, 0);
+        ofBackground(255, 0, 0);
         ofSetColor(255);
         
         std::stringstream ss;
@@ -102,7 +135,8 @@ void ofApp::draw(){
         
         for(int i=0; i < NUM_OF_CABLES; i++){
             std::stringstream ss2;
-            if(isArduinoConnected[i]){
+           // if(isArduinoConnected[i]){
+            if(isArduinoConnectedBySerial[i]){
                 ofSetColor(0,updateColor[i],updateColor[i]);
                 ss2 << "Connected Devices (" << i << ") : " << arduino[i].getPortName() << "receivedMsg: " << prevReceivedString[i] << endl;
             }else{
@@ -132,7 +166,7 @@ void ofApp::draw(){
                 
                 currentdisplayLog = ofToString(currentDebugArduinoID) +" EEPROM SAVED";
                 serialTrigger = false;
-                prevSerialTriggerMills =ofGetElapsedTimeMillis();
+                prevSerialTriggerMillis =currMillis;
                 
                 
             }
@@ -140,7 +174,7 @@ void ofApp::draw(){
 
                 serialWrite(currentDebugArduinoID, "L");
                 serialTrigger = false;
-                prevSerialTriggerMills =ofGetElapsedTimeMillis();
+                prevSerialTriggerMillis =currMillis;
             }
             if(style_Btn){
                 
@@ -197,7 +231,7 @@ void ofApp::draw(){
             }
             
         }
-        if(ofGetElapsedTimeMillis() -  prevSerialTriggerMills > 200){
+        if(currMillis -  prevSerialTriggerMillis > 200){
             serialTrigger = true;
         }
 
@@ -243,8 +277,8 @@ void ofApp::keyReleased(int key){
             debugMode = !debugMode;
             break;
             
-        case 'w': //write some char for testing
-            serialWrite(-1, "D");
+        case 'c': //check if arduino online
+            serialWrite(-1, "C");
             break;
         
         case 'p': //dialog for serial writing
@@ -506,19 +540,7 @@ vector<string> ofApp::serialRead(){
 vector<int> ofApp::stringDecode(string s){
     vector<int> sToIntArray;
     
-    /*
-     std::stringstream input(s);
-     string segment;
-     vector<string> seglist;
-     
-     while(std::getline(input, segment, '-'))
-     {
-     seglist.push_back(segment);
-     
-     }
-     */
-    
-    
+
     for (int i=0; i<s.length(); i++)
     {
         if (s[i] == '-')
@@ -536,7 +558,7 @@ vector<int> ofApp::stringDecode(string s){
     
     for(int i=0; i < seglist.size(); i++){
         for(int j=0; j < SERIAL_PARAMETERES.size(); j++){
-            if(seglist[i] == SERIAL_PARAMETERES[j]){
+            if(seglist[i] == SERIAL_PARAMETERES[j]){ //check if anything match with SERIAL_PARAMETERS
                 
                 sToIntArray.push_back(j);
                 isContainParameter= true;

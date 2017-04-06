@@ -91,8 +91,11 @@ class ofApp : public ofBaseApp{
     vector<int> stringDecode(string s);
     bool is_number(const std::string& s);
     vector<bool> isArduinoConnected;
+    vector<bool> isArduinoConnectedBySerial;
     void serialWrite(int arduinoID, string sw);
-
+    void checkArduinoIsConnected();
+    bool initOnUpdate;
+    long checkArduinoMillis; //todo
     
     vector<ofx::IO::BufferedSerialDevice> arduino;
     
@@ -149,7 +152,8 @@ class ofApp : public ofBaseApp{
     ofParameter<int> currentStyle;
     
     bool serialTrigger; //TO avoid ofxButton cause multiple click and send mutiple serial command;
-    long prevSerialTriggerMills; //TO avoid ofxButton cause multiple click and send mutiple serial command;
+    long prevSerialTriggerMillis; //TO avoid ofxButton cause multiple click and send mutiple serial command;
+    long currMillis;
     
     void displayLog(string s);
     string currentdisplayLog;
