@@ -1,8 +1,5 @@
 #include "ofApp.h"
 
-
-
-
 //--------------------------------------------------------------
 void ofApp::setup(){
     
@@ -46,8 +43,6 @@ void ofApp::checkArduinoIsConnected(){
             ofLog() << "hello";
         }
     }
-   
-    
 }
 //--------------------------------------------------------------
 void ofApp::update(){

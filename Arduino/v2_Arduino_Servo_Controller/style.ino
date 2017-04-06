@@ -62,14 +62,14 @@ void stepper_style() {
         steppers[stepperNumber]->setMaxSpeed(stepperSpeed[stepperNumber]);
         steppers[stepperNumber]->setAcceleration(stepperAccel[stepperNumber]);
         steppers[stepperNumber]->moveTo((inverseDir[stepperNumber])*stepperPos[stepperNumber]);
-        if (stepperNumber == 0) {
+       /* if (stepperNumber == 0) {
           Serial.print("\t invers : ");
           Serial.print((inverseDir[stepperNumber]));
           Serial.print("\t Pos : ");
           Serial.print(stepperPos[stepperNumber]);
           Serial.print("\t A*B : ");
           Serial.println((inverseDir[stepperNumber])*stepperPos[stepperNumber]);
-        }
+        }*/
       }
     }
   }
