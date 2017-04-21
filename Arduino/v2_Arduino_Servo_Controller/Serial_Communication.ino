@@ -29,6 +29,11 @@ void serial_decode()   // Read serial input: //TODO add serial1
     int inChar = Serial.read();
     char_decode(inChar) ;
   }
+  while (Serial1.available() > 0)
+  {
+    int inChar = Serial1.read();
+    char_decode(inChar) ;
+  }
 /*
   while (Serial1.available() > 0)
   {
@@ -98,12 +103,14 @@ void char_decode(int inChar)
     //DO STH HERE
     inString = "";   // clear the string buffer for new input:
     Serial.println("online");
+    Serial1.println("online");
   }
   else if (inChar == 'Q') //MODE1
   {
     //DO STH HERE
     inString = "";   // clear the string buffer for new input:
     Serial.println("mode_a");
+    Serial1.println("mode_a");
     
   }
   else if (inChar == 'S') //SAVE EEPROM
@@ -119,18 +126,27 @@ void char_decode(int inChar)
           Serial.print(i);
           Serial.print(":");
           Serial.print(int_array[i]);
+
+          Serial1.print("\t");
+          Serial1.print(i);
+          Serial1.print(":");
+          Serial1.print(int_array[i]);
         }
     Write_Flash();
     Load_To_Variables();
     Serial.print("save-");
+    Serial1.print("save-");
     for (int i = 0; i < int_array_size; i++) {
 
       Serial.print(int_array[i]);
+      Serial1.print(int_array[i]);
       if (i != int_array_size - 1) {
         Serial.print("-");
+        Serial1.print("-");
       }
     }
     Serial.print("\t");
+    Serial1.print("\t");
 
     exclude_print_val = true;
 
@@ -141,15 +157,18 @@ void char_decode(int inChar)
     inString = "";   // clear the string buffer for new input:
     Load_Flash();
     Serial.print("load-");
+    Serial1.print("load-");
     for (int i = 0; i < int_array_size; i++) {
 
       Serial.print(int_array[i]);
+      Serial1.print(int_array[i]);
       if (i != int_array_size - 1) {
         Serial.print("-");
+        Serial1.print("-");
       }
     }
     Serial.print("\t");
-
+    Serial1.print("\t");
     exclude_print_val = true;
 
   }
@@ -159,8 +178,10 @@ void char_decode(int inChar)
     inString = "";   // clear the string buffer for new input:
     
     Serial.print("EMERGENCY STOP ON === R to release");
+    Serial1.print("EMERGENCY STOP ON === R to release");
    isEmergencyStop = true;
     Serial.print("\t");
+    Serial1.print("\t");
 
     exclude_print_val = true;
 
@@ -172,8 +193,10 @@ void char_decode(int inChar)
     inString = "";   // clear the string buffer for new input:
     
     Serial.print("EMERGENCY STOP OFF");
+    Serial1.print("EMERGENCY STOP OFF");
    isEmergencyStop = false;
     Serial.print("\t");
+    Serial1.print("\t");
 
     exclude_print_val = true;
 
@@ -195,11 +218,15 @@ void check_update()   //Check update flag and write value when string finish
         //Serial.print(":");
         Serial.print(input_value[index]);
         Serial.print("-");
+                
+        Serial1.print(input_value[index]);
+        Serial1.print("-");
       }
       
     }
     //Finish Serial.print, Next Line
     Serial.println("");
+    Serial1.println("");
 
     exclude_print_val = false;
     update_flag = false; //clear flag

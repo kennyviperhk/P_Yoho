@@ -108,6 +108,7 @@ void setup() {
 
   // ============ SERIAL ================
   Serial.begin(BAUD);
+    Serial1.begin(BAUD);
 
   // ============  ================
   //pinMode(34, INPUT);
