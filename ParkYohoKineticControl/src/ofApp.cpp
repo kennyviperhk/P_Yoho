@@ -31,6 +31,9 @@ void ofApp::setup(){
     
     guiSetup();
     
+    //================== Music Player ==================
+    
+    musicPlayer.setup();
     
 }
 //--------------------------------------------------------------
@@ -98,6 +101,9 @@ void ofApp::update(){
         kinecticVisualisation.set(i, currentStyle ,ofMap(cablePos[i]->x,0,1000,0,1) ,ofMap(cablePos[i]->y,0,1000,0,1),ofMap(cablePos[i]->z,0,1000,0,1), ofMap(cablePos[i]->w,0,1000,0,1));
     }
 
+    
+    //================== Music Player ==================
+    musicPlayer.update();
 }
 
 //--------------------------------------------------------------
@@ -254,6 +260,9 @@ void ofApp::draw(){
     //================== Kinectic Visualisation ==================
     
     kinecticVisualisation.draw();
+    
+    //================== Music Player ==================
+    musicPlayer.draw();
 
 }
 

@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "KineticController.h"
+#include "MusicPlayer.h"
 
 #include "ofxSerial.h"
 #include "ofxGui.h"
@@ -83,6 +84,10 @@ class ofApp : public ofBaseApp{
     //========== kinecticVisualisation ===========
     
     KinecticVisualisation kinecticVisualisation;
+    
+    //========== MusicPlayer ===========
+    
+    MusicPlayer musicPlayer;
     
     //================== Serial ==================
     
