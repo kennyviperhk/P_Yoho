@@ -39,7 +39,7 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::checkArduinoIsConnected(){
 
-    if(currMillis < 3000){
+    if(currMillis < 2000){
 
         if(currMillis %5 == 0){
             serialWrite(-1, "C");
