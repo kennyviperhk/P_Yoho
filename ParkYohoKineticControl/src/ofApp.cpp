@@ -16,13 +16,14 @@ void ofApp::setup(){
     for(int i=0; i < NUM_OF_CABLES; i++){
         isArduinoConnectedBySerial.push_back(false);
     }
-     initOnUpdate = true;
+    initOnUpdate = true;
     //================== debugMode ==================
     
     debugMode = true;
     isEmergencyStop = false;
     for(int i=0; i < arduino.size(); i++){
         receivedString.push_back("");
+        receivedStringBuffer.push_back("");
         prevReceivedString.push_back("");
         updateColor.push_back(255);
     }
@@ -33,19 +34,28 @@ void ofApp::setup(){
     
     //================== Music Player ==================
     
+    showMusicPlayer = false;
     musicPlayer.setup();
     
 }
 //--------------------------------------------------------------
 void ofApp::checkArduinoIsConnected(){
-
-    if(currMillis < 2000){
-
+    
+    if(currMillis < 3000){
+        
         if(currMillis %5 == 0){
             serialWrite(-1, "C");
             ofLog() << "hello";
         }
     }
+}
+
+void ofApp::removeSubstrs(string& s, string& p) {
+    string::size_type n = p.length();
+    for (string::size_type i = s.find(p);
+         i != string::npos;
+         i = s.find(p))
+        s.erase(i, n);
 }
 //--------------------------------------------------------------
 void ofApp::update(){
@@ -54,16 +64,41 @@ void ofApp::update(){
     
     
     currMillis = ofGetElapsedTimeMillis();
-
+    
     
     //================== Serial ==================
-    receivedString = serialRead();
+    for(int i=0; i < arduino.size(); i++){
+        receivedStringBuffer[i] += serialRead(i);
 
+        bool reachEnd = false;
+        for (int j=0; j<receivedStringBuffer[i].size(); j++)
+        {
+            if (receivedStringBuffer[i][j] == '|'){
+                receivedStringBuffer[i][j] = ' ';
+                reachEnd = true;
+            }
+        }
+        if(reachEnd){
+        vector<string> array;
+        stringstream ss(receivedStringBuffer[i]);
+        string temp;
+        while (ss >> temp)
+        array.push_back(temp);
+        if(array.size()>0){
+            receivedString[i] = array[0];
+            ofLog() << "receivedString[i] :" <<receivedString[i];
+            reachEnd = false;
+            receivedStringBuffer[i] = "";
+        }
+    }
+    }
+    
+    
     
     if(initOnUpdate){
         checkArduinoIsConnected();
     }
-    
+
     for(int i=0; i< receivedString.size(); i++){
         if(stringDecode(receivedString[i]).size()>=1){
             if(stringDecode(receivedString[i])[0] == 1){ //load
@@ -83,15 +118,16 @@ void ofApp::update(){
     }
     
     for(int i=0; i< arduino.size(); i++){
-       // ofLog() << "receivedString : "<< i << " : "<<receivedString[i];
+        // ofLog() << "receivedString : "<< i << " : "<<receivedString[i];
         if(receivedString[i].size() > 0){
             prevReceivedString[i] = receivedString[i];
+            receivedString[i]="";
             updateColor[i] = 255;
         }
         if(updateColor[i]>0){
             updateColor[i]--;
         }
-       // ofLog() << "prevReceivedString : "<< i << " : "<<prevReceivedString[i];
+        // ofLog() << "prevReceivedString : "<< i << " : "<<prevReceivedString[i];
         //ofLog() << "updateColor : "<< i << " : "<<updateColor[i];
         
     }
@@ -100,7 +136,7 @@ void ofApp::update(){
     for(int i=0; i< cablePos.size(); i++){
         kinecticVisualisation.set(i, currentStyle ,ofMap(cablePos[i]->x,0,1000,0,1) ,ofMap(cablePos[i]->y,0,1000,0,1),ofMap(cablePos[i]->z,0,1000,0,1), ofMap(cablePos[i]->w,0,1000,0,1));
     }
-
+    
     
     //================== Music Player ==================
     musicPlayer.update();
@@ -115,7 +151,7 @@ void ofApp::draw(){
         std::stringstream ss;
         ss << "FrameRate : "<< ofGetFrameRate() << endl;
         ss << "EMERGENCY STOP - 'r' to relase: " << endl;
-
+        
         ofDrawBitmapString(ss.str(), ofVec2f(20, 20));
     }
     //================== Debug Mode ==================
@@ -136,7 +172,7 @@ void ofApp::draw(){
         
         for(int i=0; i < NUM_OF_CABLES; i++){
             std::stringstream ss2;
-           // if(isArduinoConnected[i]){
+            // if(isArduinoConnected[i]){
             if(isArduinoConnectedBySerial[i]){
                 ofSetColor(0,updateColor[i],updateColor[i]);
                 ss2 << "Connected Devices (" << i << ") : " << arduino[i].getPortName() << "receivedMsg: " << prevReceivedString[i] << endl;
@@ -148,17 +184,17 @@ void ofApp::draw(){
             
             
         }
-
+        
         if(serialTrigger){
             if(EEPROM_saveBtn){
-
+                
                 string toWrite = "";
                 
                 for(int i=0; i< EEPROM.size(); i++)
                 {
                     toWrite+= ofToString(EEPROM[i]);
                     if(i!=EEPROM.size()-1){
-                    toWrite+= "-";
+                        toWrite+= "-";
                     }
                 }
                 ofLog() << "toWrite : "<< toWrite ;
@@ -172,10 +208,7 @@ void ofApp::draw(){
                 
             }
             if(EEPROM_loadBtn){
-
-                serialWrite(currentDebugArduinoID, "L");
-                serialTrigger = false;
-                prevSerialTriggerMillis =currMillis;
+                
             }
             if(style_Btn){
                 
@@ -195,14 +228,14 @@ void ofApp::draw(){
                     toWrite+= "-";
                     
                     writeInTotal=toWrite + " LY:";
-                
+                    
                     toWrite+= ofToString((int)cableSpeed[currentDebugArduinoID]->y);
                     toWrite+= "-";
                     toWrite+= ofToString((int)cableAccel[currentDebugArduinoID]->y);
                     toWrite+= "-";
                     toWrite+= ofToString((int)cablePos[currentDebugArduinoID]->y);
                     toWrite+= "-";
-
+                    
                     writeInTotal=toWrite +" RX: ";
                     
                     toWrite+= ofToString((int)cableSpeed[currentDebugArduinoID]->z);
@@ -213,7 +246,7 @@ void ofApp::draw(){
                     toWrite+= "-";
                     
                     writeInTotal=toWrite +" RY: ";;
-
+                    
                     toWrite+= ofToString((int)cableSpeed[currentDebugArduinoID]->w);
                     toWrite+= "-";
                     toWrite+= ofToString((int)cableAccel[currentDebugArduinoID]->w);
@@ -224,18 +257,18 @@ void ofApp::draw(){
                     
                     serialWrite(currentDebugArduinoID, toWrite);
                     currentdisplayLog = writeInTotal;
-                
+                    
                 }
                 
-            
-
+                
+                
             }
             
         }
         if(currMillis -  prevSerialTriggerMillis > 200){
             serialTrigger = true;
         }
-
+        
         
         string t = textField;
         if (t.find('+') != std::string::npos || t.find('=') != std::string::npos)
@@ -252,7 +285,7 @@ void ofApp::draw(){
         guiCableAccel.draw();
         guiCableSpeed.draw();
         displayLog(currentdisplayLog);
-
+        
     }else{
         ofBackground(100, 100, 100);
         
@@ -262,8 +295,10 @@ void ofApp::draw(){
     kinecticVisualisation.draw();
     
     //================== Music Player ==================
-    musicPlayer.draw();
-
+    if(showMusicPlayer){
+        musicPlayer.draw();
+    }
+    
 }
 
 
@@ -284,7 +319,7 @@ void ofApp::keyReleased(int key){
         case 'c': //check if arduino online
             serialWrite(-1, "C");
             break;
-        
+            
         case 'p': //dialog for serial writing
             commandPrompt();
             break;
@@ -298,8 +333,13 @@ void ofApp::keyReleased(int key){
             serialWrite(-1, "R");
             isEmergencyStop = false;
             break;
-
-        
+            
+        case 'm': //emergency Stop release
+            showMusicPlayer = !showMusicPlayer;
+            break;
+            
+            
+            
         default:
             break;
             
@@ -316,7 +356,7 @@ bool ofApp::is_number(const std::string& s)
 void ofApp::commandPrompt(){
     string txt = ofSystemTextBoxDialog("Serial Command", txt);
     serialWrite(currentDebugArduinoID, txt);
-
+    
 }
 //--------------------------------------------------------------
 //-------------------------- GUI -------------------------------
@@ -330,13 +370,13 @@ void ofApp::guiSetup(){
     guiDebug.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 800, 0);
     
     vector<string> EEPROM_names = {"HOME_MAXSPEED", "HOME_ACCELERATION", "MAX_SPEED_X", "MAX_ACCELERATION_X", "MAX_SPEED_Y","MAX_ACCELERATION_Y","MAX_POSITION_LX","MAX_POSITION_LY","MAX_POSITION_RX","MAX_POSITION_RY","INVERT_DIR_LX","INVERT_DIR_LY","INVERT_DIR_RX","INVERT_DIR_RY"};
-
+    
     
     vector<int> EEPROM_min = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     vector<int> EEPROM_max = {500, 500, 1000, 5000, 1000,5000, 1000, 1000, 1000, 1000,1, 1, 1,1}; //Todo Transfer definition /variables to xml
     
     guiDebug.add(currentDebugArduinoID.set("ArduinoID",0,0,NUM_OF_CABLES));
-
+    
     for(int i=0; i< EEPROM_names.size(); i++){
         ofParameter<int> a;
         a.set(EEPROM_names[i],0,EEPROM_min[i],EEPROM_max[i]);
@@ -355,6 +395,7 @@ void ofApp::guiSetup(){
      */
     guiDebug.add(EEPROM_saveBtn.setup(EEPROM_saveLoad_names[0]));
     guiDebug.add(EEPROM_loadBtn.setup(EEPROM_saveLoad_names[1]));
+    EEPROM_loadBtn.addListener(this, &ofApp::loadButtonPressed);
     guiDebug.add(textField.setup("Serial:", "0-0-0-0-0"));
     guiDebug.add(currentStyle.set("Style",11,0,NUM_OF_CABLES)); //TODO
     guiDebug.add(style_Btn.setup("Set Position:"));
@@ -402,6 +443,16 @@ void ofApp::displayLog(string s=""){
     }
     ofSetColor(255, 255, 255);
     ofDrawBitmapString("Status: " + currentdisplayLog, 10, ofGetHeight()-10);
+}
+
+
+//--------------------------------------------------------------
+//--------------------------GUI EVENT -----------------------------
+//--------------------------------------------------------------
+void ofApp::loadButtonPressed(){
+    serialWrite(currentDebugArduinoID, "L");
+    serialTrigger = false;
+    
 }
 
 //--------------------------------------------------------------
@@ -509,42 +560,45 @@ void ofApp::serialWrite(int arduinoID, string sw){
     else{ ofLog() << "Arduino: " <<arduinoID << "not connected";} // todo put in gui
 }
 
-vector<string> ofApp::serialRead(){
+string ofApp::serialRead(int a){
     
-    vector<string> output;
-    for(int i=0; i< arduino.size(); i++){
-        output.push_back("");
-        // The serial device can throw exeptions.
-        try
+    string combinedStr = "";
+    // for(int i=0; i< arduino.size(); i++){
+    
+    // The serial device can throw exeptions.
+    try
+    {
+        // Read all bytes from the device;
+        uint8_t buffer[1024];
+        while (arduino[a].available() > 0)
         {
-            // Read all bytes from the device;
-            uint8_t buffer[1024];
-            
-            while (arduino[i].available() > 0)
+            std::size_t sz = arduino[a].readBytes(buffer, 1024);
+            ofLog() << "buffer : ";
+            for (std::size_t j = 0; j < sz; ++j)
             {
-                std::size_t sz = arduino[i].readBytes(buffer, 1024);
-                
-                for (std::size_t j = 0; j < sz; ++j)
-                {
-                    std::cout << buffer[j];
-                }
-                output[i] = ofToString(buffer);
+                std::cout << buffer[j];
             }
-            
+            combinedStr += ofToString(buffer);
         }
-        catch (const std::exception& exc)
-        {
-            ofLogError("ofApp::update") << exc.what();
-        }
+        
     }
-    return output;
+    catch (const std::exception& exc)
+    {
+        ofLogError("ofApp::update") << exc.what();
+    }
+    //  }
+    
+    return combinedStr;
 }
 
 //--------------------------------------------------------------
 vector<int> ofApp::stringDecode(string s){
+    
+    
+    
     vector<int> sToIntArray;
     
-
+    
     for (int i=0; i<s.length(); i++)
     {
         if (s[i] == '-')
@@ -558,12 +612,18 @@ vector<int> ofApp::stringDecode(string s){
         seglist.push_back(temp);
     
     //ofLog() << "seglist.size() " << seglist.size();
+    for(int i=0; i<seglist.size(); i++){
+            seglist[i].erase(seglist[i].find_last_not_of(" \n\r\t")+1);
+        
+        ofLog() << "seglist[i] : " << seglist[i];
+        
+    }
     bool isContainParameter = false;
     
     for(int i=0; i < seglist.size(); i++){
         for(int j=0; j < SERIAL_PARAMETERES.size(); j++){
             if(seglist[i] == SERIAL_PARAMETERES[j]){ //check if anything match with SERIAL_PARAMETERS
-                
+                     ofLog() << "SERIAL_PARAMETERES[j]" << SERIAL_PARAMETERES[j];
                 sToIntArray.push_back(j);
                 isContainParameter= true;
             }
@@ -576,14 +636,14 @@ vector<int> ofApp::stringDecode(string s){
     }
     //LOAD
     for(int i=0; i < sToIntArray.size(); i++){
-        ofLog() << "sToIntArray" << i << " : " << sToIntArray[i];
-    }
+     ofLog() << "sToIntArray" << i << " : " << sToIntArray[i];
+     }
     if(sToIntArray.size() == EEPROM.size()+1){
         currentdisplayLog = ofToString(currentDebugArduinoID) +" EEPROM LOADED";
         return sToIntArray;
     }
     else{
-        vector<int> sToIntArray;
+       // vector<int> sToIntArray;
         return sToIntArray;
     }
     
@@ -620,6 +680,8 @@ void ofApp::onSerialError(const ofx::IO::SerialBufferErrorEventArgs& args)
 }
 
 
+
+
 //--------------------------------------------------------------
 //--------------------------UNUSED -----------------------------
 //--------------------------------------------------------------
@@ -634,7 +696,7 @@ void ofApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-
+    
 }
 
 //--------------------------------------------------------------
@@ -644,7 +706,7 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-
+    
 }
 
 //--------------------------------------------------------------
@@ -671,8 +733,4 @@ void ofApp::gotMessage(ofMessage msg){
 void ofApp::dragEvent(ofDragInfo dragInfo){
     
 }
-
-
-
-
 

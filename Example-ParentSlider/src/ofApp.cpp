@@ -20,7 +20,6 @@ void ofApp::setup(){
     gui.add(buttonnn.setup("button"));
     
     gui.add(mySlid.setup("mySlid", 140, 10, 300));
-
 	bHide = false;
 
 	ring.load("ring.wav");
@@ -39,6 +38,7 @@ void ofApp::circleResolutionChanged(int &circleResolution){
 //--------------------------------------------------------------
 void ofApp::ringButtonPressed(){
 	ring.play();
+    cout << "play" << endl;
 }
 
 //--------------------------------------------------------------
@@ -48,6 +48,10 @@ void ofApp::update(){
     if(mySlid.isValueChanged())
     {
         cout << mySlid.getChangedValue()<< endl;
+    }
+    if(buttonnn.isMouseReleased()){
+
+        cout << "helllllo" << endl;
     }
 }
 

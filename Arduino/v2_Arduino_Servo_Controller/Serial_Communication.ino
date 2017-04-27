@@ -102,8 +102,10 @@ void char_decode(int inChar)
   {
     //DO STH HERE
     inString = "";   // clear the string buffer for new input:
-    Serial.println("online");
-    Serial1.println("online");
+    Serial.print("online-");
+    Serial1.print("online-");
+    update_flag = true;
+    exclude_print_val = true;
   }
   else if (inChar == 'Q') //MODE1
   {
@@ -225,8 +227,8 @@ void check_update()   //Check update flag and write value when string finish
       
     }
     //Finish Serial.print, Next Line
-    Serial.println("");
-    Serial1.println("");
+    Serial.println("|");
+    Serial1.println("|");
 
     exclude_print_val = false;
     update_flag = false; //clear flag

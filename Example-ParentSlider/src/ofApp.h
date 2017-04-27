@@ -14,11 +14,19 @@ public:
     virtual bool mouseReleased(ofMouseEventArgs & args)
     {
         ofxButton::mouseReleased(args);
-        
-        
-        cout << "helllllo" << endl;
+        isMR = true;
     }
-
+    
+    bool isMouseReleased()
+    {
+        if(isMR){
+            isMR = false;
+        return true;
+        }else{
+        return false;
+        }
+    }
+    bool isMR;
 };
 
 
@@ -55,6 +63,8 @@ public:
     bool updatedValue;
     
 };
+
+
 
 class ofApp : public ofBaseApp{
 	

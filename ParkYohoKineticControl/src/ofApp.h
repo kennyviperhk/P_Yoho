@@ -88,11 +88,12 @@ class ofApp : public ofBaseApp{
     //========== MusicPlayer ===========
     
     MusicPlayer musicPlayer;
+    bool showMusicPlayer;
     
     //================== Serial ==================
     
     vector<bool> serialSetup();
-    vector<string> serialRead();
+    string serialRead(int a);
     vector<int> stringDecode(string s);
     bool is_number(const std::string& s);
     vector<bool> isArduinoConnected;
@@ -113,10 +114,12 @@ class ofApp : public ofBaseApp{
     
     string receivedMsg;
     vector<string> prevReceivedString;
+    vector<string> receivedStringBuffer;
     vector<string> receivedString;
     vector<int> updateColor;
     
-    
+    //function
+    void removeSubstrs(string& s, string& p);
     
     vector<string> SERIAL_PARAMETERES;
     
@@ -165,6 +168,8 @@ class ofApp : public ofBaseApp{
     void commandPrompt();
     
     bool isEmergencyStop;
+    
+    void loadButtonPressed();
 
     //================== Config ==================
     
