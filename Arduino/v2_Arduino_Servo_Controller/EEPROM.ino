@@ -27,6 +27,8 @@ void Load_To_Variables() {
   for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
     
     //HOME -> USE DIRECTLY
+home_speed = int_array[0];
+home_accel = int_array[1];
     
     if (stepperNumber == 0 || stepperNumber == 2) {
       maxSpeed[stepperNumber] = int_array[2];

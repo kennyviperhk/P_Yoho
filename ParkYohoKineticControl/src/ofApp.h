@@ -83,6 +83,7 @@ class ofApp : public ofBaseApp{
     
     //========== kinecticVisualisation ===========
     
+    
     KinecticVisualisation kinecticVisualisation;
     
     //========== MusicPlayer ===========
@@ -138,23 +139,46 @@ class ofApp : public ofBaseApp{
     ofxButton EEPROM_saveBtn;
     ofxButton EEPROM_loadBtn;
     ofxButton style_Btn;
+    ofxButton home_Btn;
+    ofxToggle all_Tog;
     
     ofxTextField textField;
     
     //Cable Pos
-    ofxPanel guiCablePos;
+    ofxPanel guiCablePosLx;
+    ofxPanel guiCablePosLy;
+    ofxPanel guiCablePosRx;
+    ofxPanel guiCablePosRy;
     ofParameterGroup parametersCablePos;
-    vector<ofParameter<ofVec4f>> cablePos; //lx,ly,rx,ry
+    vector<ofParameter<int>> cablePosLx; //lx,ly,rx,ry
+    vector<ofParameter<int>> cablePosLy; //lx,ly,rx,ry
+    vector<ofParameter<int>> cablePosRx; //lx,ly,rx,ry
+    vector<ofParameter<int>> cablePosRy; //lx,ly,rx,ry
+    
     
     //Cable Accel
-    ofxPanel guiCableAccel;
+    ofxPanel guiCableAccelLx;
+    ofxPanel guiCableAccelLy;
+    ofxPanel guiCableAccelRx;
+    ofxPanel guiCableAccelRy;
+    //ofxPanel guiCableAccel;
     ofParameterGroup parametersCableAccel;
-    vector<ofParameter<ofVec4f>> cableAccel; //lx,ly,rx,ry
+    vector<ofParameter<int>> cableAccelLx; //lx,ly,rx,ry
+    vector<ofParameter<int>> cableAccelLy; //lx,ly,rx,ry
+    vector<ofParameter<int>> cableAccelRx; //lx,ly,rx,ry
+    vector<ofParameter<int>> cableAccelRy; //lx,ly,rx,ry
     
     //Cable Speed
-    ofxPanel guiCableSpeed;
+    ofxPanel guiCableSpeedLx;
+    ofxPanel guiCableSpeedLy;
+    ofxPanel guiCableSpeedRx;
+    ofxPanel guiCableSpeedRy;
+    //ofxPanel guiCableAccel;
     ofParameterGroup parametersCableSpeed;
-    vector<ofParameter<ofVec4f>> cableSpeed; //lx,ly,rx,ry
+    vector<ofParameter<int>> cableSpeedLx; //lx,ly,rx,ry
+    vector<ofParameter<int>> cableSpeedLy; //lx,ly,rx,ry
+    vector<ofParameter<int>> cableSpeedRx; //lx,ly,rx,ry
+    vector<ofParameter<int>> cableSpeedRy; //lx,ly,rx,ry
     
     ofParameter<int> currentDebugArduinoID;
     ofParameter<int> currentStyle;
@@ -170,10 +194,15 @@ class ofApp : public ofBaseApp{
     bool isEmergencyStop;
     
     void loadButtonPressed();
+    
+    
+    ofFbo kineticVisualizationFbo;
 
     //================== Config ==================
     
     //int numOfCables;
+    
+    
     
 };
 

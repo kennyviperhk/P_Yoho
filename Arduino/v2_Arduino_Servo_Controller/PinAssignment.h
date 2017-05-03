@@ -16,6 +16,13 @@
 #define LimitSwitchRx A2
 #define LimitSwitchRy A3
 
+// ============ Brake ================
+
+#define BrakeLx A4
+#define BrakeLy A5
+#define BrakeRx A6
+#define BrakeRy A7
+
 // ============ Encoder ================
 
 #define encoderLxA 22
@@ -62,6 +69,9 @@
 #define DO5_ALRM_rx 48
 #define DO5_ALRM_ry 49
 
+// ============ SERIAL ================
 
+#define RX1 19
+#define TX1 18
 
 

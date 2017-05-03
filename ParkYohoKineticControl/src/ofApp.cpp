@@ -133,8 +133,8 @@ void ofApp::update(){
     }
     //================== Kinectic Visualisation ==================
     
-    for(int i=0; i< cablePos.size(); i++){
-        kinecticVisualisation.set(i, currentStyle ,ofMap(cablePos[i]->x,0,1000,0,1) ,ofMap(cablePos[i]->y,0,1000,0,1),ofMap(cablePos[i]->z,0,1000,0,1), ofMap(cablePos[i]->w,0,1000,0,1));
+    for(int i=0; i< NUM_OF_CABLES; i++){
+        kinecticVisualisation.set(i, currentStyle ,ofMap(cablePosLx[i],0,1000,0,1) ,ofMap(cablePosLy[i],0,1000,0,1),ofMap(cablePosRx[i],0,1000,0,1), ofMap(cablePosRy[i],0,1000,0,1));
     }
     
     
@@ -220,38 +220,38 @@ void ofApp::draw(){
                     toWrite+= ofToString(currentStyle);
                     toWrite+= "-";
                     
-                    toWrite+= ofToString((int)cableSpeed[currentDebugArduinoID]->x);
+                    toWrite+= ofToString((int)cableSpeedLx[currentDebugArduinoID]);
                     toWrite+= "-";
-                    toWrite+= ofToString((int)cableAccel[currentDebugArduinoID]->x);
+                    toWrite+= ofToString((int)cableAccelLx[currentDebugArduinoID]);
                     toWrite+= "-";
-                    toWrite+= ofToString((int)cablePos[currentDebugArduinoID]->x);
+                    toWrite+= ofToString((int)cablePosLx[currentDebugArduinoID]);
                     toWrite+= "-";
                     
                     writeInTotal=toWrite + " LY:";
                     
-                    toWrite+= ofToString((int)cableSpeed[currentDebugArduinoID]->y);
+                    toWrite+= ofToString((int)cableSpeedLy[currentDebugArduinoID]);
                     toWrite+= "-";
-                    toWrite+= ofToString((int)cableAccel[currentDebugArduinoID]->y);
+                    toWrite+= ofToString((int)cableAccelLy[currentDebugArduinoID]);
                     toWrite+= "-";
-                    toWrite+= ofToString((int)cablePos[currentDebugArduinoID]->y);
+                    toWrite+= ofToString((int)cablePosLy[currentDebugArduinoID]);
                     toWrite+= "-";
                     
                     writeInTotal=toWrite +" RX: ";
                     
-                    toWrite+= ofToString((int)cableSpeed[currentDebugArduinoID]->z);
+                    toWrite+= ofToString((int)cableSpeedRx[currentDebugArduinoID]);
                     toWrite+= "-";
-                    toWrite+= ofToString((int)cableAccel[currentDebugArduinoID]->z);
+                    toWrite+= ofToString((int)cableAccelRx[currentDebugArduinoID]);
                     toWrite+= "-";
-                    toWrite+= ofToString((int)cablePos[currentDebugArduinoID]->z);
+                    toWrite+= ofToString((int)cablePosRx[currentDebugArduinoID]);
                     toWrite+= "-";
                     
                     writeInTotal=toWrite +" RY: ";;
                     
-                    toWrite+= ofToString((int)cableSpeed[currentDebugArduinoID]->w);
+                    toWrite+= ofToString((int)cableSpeedRy[currentDebugArduinoID]);
                     toWrite+= "-";
-                    toWrite+= ofToString((int)cableAccel[currentDebugArduinoID]->w);
+                    toWrite+= ofToString((int)cableAccelRy[currentDebugArduinoID]);
                     toWrite+= "-";
-                    toWrite+= ofToString((int)cablePos[currentDebugArduinoID]->w);
+                    toWrite+= ofToString((int)cablePosRy[currentDebugArduinoID]);
                     
                     writeInTotal=toWrite;
                     
@@ -281,9 +281,21 @@ void ofApp::draw(){
         }
         
         guiDebug.draw();
-        guiCablePos.draw();
-        guiCableAccel.draw();
-        guiCableSpeed.draw();
+
+        
+        guiCablePosLx.draw();
+        guiCablePosLy.draw();
+        guiCablePosRx.draw();
+        guiCablePosRy.draw();
+        guiCableAccelLx.draw();
+        guiCableAccelLy.draw();
+        guiCableAccelRx.draw();
+        guiCableAccelRy.draw();
+        guiCableSpeedLx.draw();
+        guiCableSpeedLy.draw();
+        guiCableSpeedRx.draw();
+        guiCableSpeedRy.draw();
+
         displayLog(currentdisplayLog);
         
     }else{
@@ -291,8 +303,13 @@ void ofApp::draw(){
         
     }
     //================== Kinectic Visualisation ==================
-    
+
+    kineticVisualizationFbo.begin();
+    ofClear(0, 0, 0);
     kinecticVisualisation.draw();
+    kineticVisualizationFbo.end();
+    
+    kineticVisualizationFbo.draw(0,200);
     
     //================== Music Player ==================
     if(showMusicPlayer){
@@ -367,7 +384,10 @@ void ofApp::guiSetup(){
     
     //--- EEPROM ---
     parametersDebug.setName("settings");
-    guiDebug.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 800, 0);
+    guiDebug.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 630, 0);
+    guiDebug.setSize(100, 1000);
+    guiDebug.setWidthElements(100);
+    
     
     vector<string> EEPROM_names = {"HOME_MAXSPEED", "HOME_ACCELERATION", "MAX_SPEED_X", "MAX_ACCELERATION_X", "MAX_SPEED_Y","MAX_ACCELERATION_Y","MAX_POSITION_LX","MAX_POSITION_LY","MAX_POSITION_RX","MAX_POSITION_RY","INVERT_DIR_LX","INVERT_DIR_LY","INVERT_DIR_RX","INVERT_DIR_RY"};
     
@@ -399,40 +419,124 @@ void ofApp::guiSetup(){
     guiDebug.add(textField.setup("Serial:", "0-0-0-0-0"));
     guiDebug.add(currentStyle.set("Style",11,0,NUM_OF_CABLES)); //TODO
     guiDebug.add(style_Btn.setup("Set Position:"));
+    guiDebug.add(home_Btn.setup("Home: "));
+    guiDebug.add(style_Btn.setup("Set Position:"));
+    
+    guiDebug.add(all_Tog.setup("Set Position:"));
+    
     //textField.addListener(this,&ofApp::serialTextInput);
     //--- Cable Position Control ---
     
     parametersCablePos.setName("cablePosition");
-    guiCablePos.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 200, 0);
-    
+    guiCablePosLx.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 200, 0);
+    guiCablePosLy.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 200, 400);
+    guiCablePosRx.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 100, 0);
+    guiCablePosRy.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 100, 400);
     for(int i=0; i< NUM_OF_CABLES; i++){
-        ofParameter<ofVec4f> a;
-        a.set("Pos " + ofToString(i),ofVec4f(0,0,0,0),ofVec4f(0,0,0,0),ofVec4f(1000,1000,1000,1000)); //lx,ly,rx,ry
-        cablePos.push_back(a);
-        guiCablePos.add(cablePos[i]);
+        ofParameter<int> a;
+        a.set("P Lx" + ofToString(i),0,0,1000); //lx,ly,rx,ry
+        ofParameter<int> b;
+        b.set("P Ly" + ofToString(i),0,0,1000);
+        ofParameter<int> c;
+        c.set("P Rx" + ofToString(i),0,0,1000);
+        ofParameter<int> d;
+        d.set("P Ry" + ofToString(i),0,0,1000);
+        cablePosLx.push_back(a);
+        cablePosLy.push_back(b);
+        cablePosRx.push_back(c);
+        cablePosRy.push_back(d);
+        guiCablePosLx.add(cablePosLx[i]);
+        guiCablePosLy.add(cablePosLy[i]);
+        guiCablePosRx.add(cablePosRx[i]);
+        guiCablePosRy.add(cablePosRy[i]);
     }
     //--- Cable Accel Control ---
     
     parametersCableAccel.setName("cableAccel");
-    guiCableAccel.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 400, 0);
-    
+    guiCableAccelLx.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 310, 0);
+    guiCableAccelLy.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 310, 400);
+    guiCableAccelRx.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 260, 0);
+    guiCableAccelRy.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 260, 400);
     for(int i=0; i< NUM_OF_CABLES; i++){
-        ofParameter<ofVec4f> a;
-        a.set("Accel " + ofToString(i),ofVec4f(0,0,0,0),ofVec4f(0,0,0,0),ofVec4f(1000,1000,1000,1000)); //lx,ly,rx,ry
-        cableAccel.push_back(a);
-        guiCableAccel.add(cableAccel[i]);
+        ofParameter<int> a;
+        a.set("A" + ofToString(i),10,0,1000); //lx,ly,rx,ry
+        ofParameter<int> b;
+        b.set("A" + ofToString(i),10,0,1000);
+        ofParameter<int> c;
+        c.set("A" + ofToString(i),10,0,1000);
+        ofParameter<int> d;
+        d.set("A" + ofToString(i),10,0,1000);
+        cableAccelLx.push_back(a);
+        cableAccelLy.push_back(b);
+        cableAccelRx.push_back(c);
+        cableAccelRy.push_back(d);
+        guiCableAccelLx.add(cableAccelLx[i]);
+        guiCableAccelLy.add(cableAccelLy[i]);
+        guiCableAccelRx.add(cableAccelRx[i]);
+        guiCableAccelRy.add(cableAccelRy[i]);
     }
     //--- Cable Speed Control ---
     
     parametersCableSpeed.setName("cableSpeed");
-    guiCableSpeed.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 600, 0);
-    
+    guiCableSpeedLx.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 420, 0);
+    guiCableSpeedLy.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 420, 400);
+    guiCableSpeedRx.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 370, 0);
+    guiCableSpeedRy.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 370, 400);
     for(int i=0; i< NUM_OF_CABLES; i++){
-        ofParameter<ofVec4f> a;
-        a.set("Speed " + ofToString(i),ofVec4f(0,0,0,0),ofVec4f(0,0,0,0),ofVec4f(1000,1000,1000,1000)); //lx,ly,rx,ry
-        cableSpeed.push_back(a);
-        guiCableSpeed.add(cableSpeed[i]);
+        ofParameter<int> a;
+        a.set("S" + ofToString(i),10,0,1000); //lx,ly,rx,ry
+        ofParameter<int> b;
+        b.set("S" + ofToString(i),10,0,1000);
+        ofParameter<int> c;
+        c.set("S" + ofToString(i),10,0,1000);
+        ofParameter<int> d;
+        d.set("S" + ofToString(i),10,0,1000);
+        cableSpeedLx.push_back(a);
+        cableSpeedLy.push_back(b);
+        cableSpeedRx.push_back(c);
+        cableSpeedRy.push_back(d);
+        guiCableSpeedLx.add(cableSpeedLx[i]);
+        guiCableSpeedLy.add(cableSpeedLy[i]);
+        guiCableSpeedRx.add(cableSpeedRx[i]);
+        guiCableSpeedRy.add(cableSpeedRy[i]);
     }
+
+    
+    int guiPosCableW = 100;
+    int guiCableH = 500;
+    guiCablePosLx.setSize(guiPosCableW, guiCableH);
+    guiCablePosLx.setWidthElements(guiPosCableW);
+    guiCablePosLy.setSize(guiPosCableW, guiCableH);
+    guiCablePosLy.setWidthElements(guiPosCableW);
+    guiCablePosRx.setSize(guiPosCableW, guiCableH);
+    guiCablePosRx.setWidthElements(guiPosCableW);
+    guiCablePosRy.setSize(guiPosCableW, guiCableH);
+    guiCablePosRy.setWidthElements(guiPosCableW);
+    
+    int guiCableW = 50;
+    
+    guiCableAccelLx.setSize(guiCableW, guiCableH);
+    guiCableAccelLx.setWidthElements(guiCableW);
+    guiCableAccelLy.setSize(guiCableW, guiCableH);
+    guiCableAccelLy.setWidthElements(guiCableW);
+    guiCableAccelRx.setSize(guiCableW, guiCableH);
+    guiCableAccelRx.setWidthElements(guiCableW);
+    guiCableAccelRy.setSize(guiCableW, guiCableH);
+    guiCableAccelRy.setWidthElements(guiCableW);
+    
+    guiCableSpeedLx.setSize(guiCableW, guiCableH);
+    guiCableSpeedLx.setWidthElements(guiCableW);
+    guiCableSpeedLy.setSize(guiCableW, guiCableH);
+    guiCableSpeedLy.setWidthElements(guiCableW);
+    guiCableSpeedRx.setSize(guiCableW, guiCableH);
+    guiCableSpeedRx.setWidthElements(guiCableW);
+    guiCableSpeedRy.setSize(guiCableW, guiCableH);
+    guiCableSpeedRy.setWidthElements(guiCableW);
+    
+
+    //ofFBO
+    kineticVisualizationFbo.allocate(ofGetWidth(),ofGetHeight());
+
     
 }
 

@@ -23,7 +23,7 @@
    |  Control Room    |
    |__________________|
 
- 
+
 
   //Todo
   -Test Actual code with 4 motor and switches
@@ -77,7 +77,8 @@ Encoder* encoder[numOfStepper] = {&encoderLx, &encoderLy, &encoderRx, &encoderLy
 
 // ============ LIMIT SWITCH ================
 const byte limitSwitch[numOfStepper]  = {LimitSwitchLx, LimitSwitchLy, LimitSwitchRx, LimitSwitchRy};
-
+bool homeDone[numOfStepper]  = {false, false, false, false};
+int home_speed, home_accel;
 //================ Style ================
 int style = 0; //0 command to go
 
@@ -104,15 +105,24 @@ void setup() {
     Load_To_Variables();
     // ============ LIMIT SWITCH ================
     pinMode(limitSwitch[stepperNumber], INPUT_PULLUP);
+
   }
 
   // ============ SERIAL ================
   Serial.begin(BAUD);
-    Serial1.begin(BAUD);
-
+  Serial1.begin(BAUD);
+  pinMode(RX1, INPUT_PULLUP);
   // ============  ================
-  //pinMode(34, INPUT);
 
+  pinMode(BrakeLx, OUTPUT);
+  pinMode(BrakeLy, OUTPUT);
+  pinMode(BrakeRx, OUTPUT);
+  pinMode(BrakeRy, OUTPUT);
+
+  digitalWrite(BrakeLx, HIGH);
+  digitalWrite(BrakeLy, HIGH);
+  digitalWrite(BrakeRx, HIGH);
+  digitalWrite(BrakeRy, HIGH);
 
 }
 
@@ -122,14 +132,36 @@ void setup() {
 // ============ ============ ================
 
 void loop() {
-    // == == == == == == SERIAL == == == == == == == ==
-    serial_decode();
-    check_update();
-  
-  if(isEmergencyStop){
+  // == == == == == == SERIAL == == == == == == == ==
+  serial_decode();
+  check_update();
+
+  if (isEmergencyStop) {
     //TODO -> check brake
   }
   else if (GO_HOME) { //TODO
+
+    int limitSwitchReading[numOfStepper]  = {0, 0, 0, 0};
+
+
+    for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
+      limitSwitchReading[stepperNumber] = digitalRead(limitSwitch[stepperNumber]);
+      steppers[stepperNumber]->setMaxSpeed((-inverseDir[stepperNumber])*home_speed);
+      steppers[stepperNumber]->setSpeed(home_accel);
+
+      if (limitSwitchReading[stepperNumber]) {
+
+      steppers[stepperNumber]->setCurrentPosition(0);
+      homeDone[stepperNumber] = true;
+      //todo println;
+    }
+    steppers[stepperNumber]->runSpeed();
+    }
+
+    if(homeDone[0] && homeDone[1] && homeDone[2] && homeDone[3]){
+      GO_HOME = false; //done with go home
+      }
+
     /*
       for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
       if (steppers[stepperNumber]->distanceToGo() == 0) {
@@ -159,7 +191,7 @@ void loop() {
     // ============ STEPPER ================
 
     stepper_style();
-    
+
     for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
       steppers[stepperNumber]->run();
     }

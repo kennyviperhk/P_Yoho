@@ -13,6 +13,7 @@ void setup() {
 }
 
 void loop() {
+  serialEvent1();
 //  digitalWrite(13, HIGH);
 //  delay(500);
   //(millis() < lastBlink + 100 ) ? digitalWrite(13, HIGH) : digitalWrite(13, LOW);
