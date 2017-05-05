@@ -1,7 +1,7 @@
 #include "ofApp.h"
-
 //--------------------------------------------------------------
 void ofApp::setup(){
+    
     
     ofSetFrameRate(60);
     
@@ -68,7 +68,7 @@ void ofApp::update(){
     
     //================== Serial ==================
     for(int i=0; i < arduino.size(); i++){
-        receivedStringBuffer[i] += serialRead(i);
+        receivedStringBuffer[i] += ofTrim(serialRead(i));
 
         bool reachEnd = false;
         for (int j=0; j<receivedStringBuffer[i].size(); j++)
