@@ -1,0 +1,4 @@
+ofxGui
+ofxInputField
+ofxSimpleSerial
+ofxXmlSettings

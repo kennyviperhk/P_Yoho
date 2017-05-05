@@ -100,7 +100,7 @@ void setup() {
     steppers[stepperNumber]->setAcceleration(stepperAccel[stepperNumber]);
     steppers[stepperNumber]->moveTo(stepperPos[stepperNumber]);
 
-    //steppers[stepperNumber].setPinsInverted(true, false, false); //(directionInvert,stepInvert,enableInvert)
+    steppers[stepperNumber]->setPinsInverted(true, true, true); //(directionInvert,stepInvert,enableInvert)
     Load_Flash();
     Load_To_Variables();
     // ============ LIMIT SWITCH ================
@@ -151,37 +151,18 @@ void loop() {
 
       if (limitSwitchReading[stepperNumber]) {
 
-      steppers[stepperNumber]->setCurrentPosition(0);
-      homeDone[stepperNumber] = true;
-      //todo println;
-    }
-    steppers[stepperNumber]->runSpeed();
+        steppers[stepperNumber]->setCurrentPosition(0);
+        homeDone[stepperNumber] = true;
+        //todo println;
+      }
+      steppers[stepperNumber]->runSpeed();
     }
 
-    if(homeDone[0] && homeDone[1] && homeDone[2] && homeDone[3]){
+    if (homeDone[0] && homeDone[1] && homeDone[2] && homeDone[3]) {
       GO_HOME = false; //done with go home
-      }
-
-    /*
-      for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
-      if (steppers[stepperNumber]->distanceToGo() == 0) {
-      steppers[stepperNumber]->setMaxSpeed(stepperSpeed[stepperNumber]); //TODO Change to HOME VAL
-      steppers[stepperNumber]->setAcceleration(stepperAccel[stepperNumber]);  //TODO Change to HOME VAL
-      steppers[stepperNumber]->moveTo(stepperPos[stepperNumber]); //TODO NOT MOVE TO BUT SET TO 0
-
-      //steppers[stepperNumber]->moveTo(-steppers[stepperNumber]->currentPosition());
-      //steppers[stepperNumber]->moveTo(positionArray[stepperNumber]);
-
-      }
-      }
-      }
+    }
 
 
-      for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
-      steppers[stepperNumber]->run();
-      }
-
-    */
 
     GO_HOME = false;
   } else {

@@ -27,7 +27,7 @@ void loop() {
   
 //  digitalWrite(13, LOW);
 //  delay(500);
-  //(millis() < lastBlink + 100 ) ? digitalWrite(13, HIGH) : digitalWrite(13, LOW);
+  (millis() < lastBlink + 100 ) ? digitalWrite(13, HIGH) : digitalWrite(13, LOW);
   // print the string when a newline arrives:
   if (stringComplete) {
     Serial1.println(inputString);

@@ -41,7 +41,7 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::checkArduinoIsConnected(){
     
-    if(currMillis < 3000){
+    if(currMillis < 8000){
         
         if(currMillis %5 == 0){
             serialWrite(-1, "C");
@@ -259,7 +259,10 @@ void ofApp::draw(){
                     currentdisplayLog = writeInTotal;
                     
                 }
-                
+                if(home_Btn){
+                    //serialWrite(currentDebugArduinoID, toWrite);
+                    serialWrite(currentDebugArduinoID, "H");
+                }
                 
                 
             }
