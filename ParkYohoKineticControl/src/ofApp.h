@@ -8,6 +8,12 @@
 #include "ofxGui.h"
 #include "ofxInputField.h"
 
+
+
+#include <iostream>
+#include <string>
+#include <regex>
+
 #define NUM_OF_CABLES 20 //Todo Transfer definition /variables to xml
 #define BAUD 57600 //Todo Transfer definition /variables to xml
 

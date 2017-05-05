@@ -50,7 +50,7 @@ long stepperPos[numOfStepper]  = {0, 0, 0, 0};
 
 AccelStepper stepperLx (AccelStepper::DRIVER, lxStep, lxDir);
 AccelStepper stepperLy (AccelStepper::DRIVER, lyStep, lyDir);
-AccelStepper stepperRx (AccelStepper::DRIVER, rxStep, ryDir);
+AccelStepper stepperRx (AccelStepper::DRIVER, rxStep, rxDir);
 AccelStepper stepperRy (AccelStepper::DRIVER, ryStep, ryDir);
 
 AccelStepper* steppers[numOfStepper] = { &stepperLx, &stepperLy, &stepperRx, &stepperRy};
@@ -134,15 +134,6 @@ void setup() {
   digitalWrite(DI1_SERVO_ON_rx, HIGH);
   digitalWrite(DI1_SERVO_ON_ry, HIGH);
 
-  pinMode(DO1_SERVO_READY_lx, OUTPUT);
-  pinMode(DO1_SERVO_READY_ly, OUTPUT);
-  pinMode(DO1_SERVO_READY_rx, OUTPUT);
-  pinMode(DO1_SERVO_READY_ry, OUTPUT);
-
-  digitalWrite(DO1_SERVO_READY_lx, HIGH);
-  digitalWrite(DO1_SERVO_READY_ly, HIGH);
-  digitalWrite(DO1_SERVO_READY_rx, HIGH);
-  digitalWrite(DO1_SERVO_READY_ry, HIGH);
   /*
     #define DI2_ALARM_RESET_lx 50
     #define DI2_ALARM_RESET_ly 51

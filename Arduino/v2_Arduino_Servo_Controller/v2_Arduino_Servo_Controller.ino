@@ -50,7 +50,7 @@ long stepperPos[numOfStepper]  = {0, 0, 0, 0};
 
 AccelStepper stepperLx (AccelStepper::DRIVER, lxStep, lxDir);
 AccelStepper stepperLy (AccelStepper::DRIVER, lyStep, lyDir);
-AccelStepper stepperRx (AccelStepper::DRIVER, rxStep, ryDir);
+AccelStepper stepperRx (AccelStepper::DRIVER, rxStep, rxDir);
 AccelStepper stepperRy (AccelStepper::DRIVER, ryStep, ryDir);
 
 AccelStepper* steppers[numOfStepper] = { &stepperLx, &stepperLy, &stepperRx, &stepperRy};

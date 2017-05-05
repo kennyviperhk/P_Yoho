@@ -2,6 +2,15 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     
+    if (std::regex_match ("subject", std::regex("(sub)(.*)") ))
+        std::cout << "string literal matched\n";
+    
+    const char cstr[] = "subject";
+    std::string s ("subject");
+    std::regex e ("(sub)(.*)");
+    
+    if (std::regex_match (s,e))
+    
     
     ofSetFrameRate(60);
     
@@ -673,6 +682,7 @@ string ofApp::serialRead(int a){
     // for(int i=0; i< arduino.size(); i++){
     
     // The serial device can throw exeptions.
+    
     try
     {
         // Read all bytes from the device;
@@ -684,7 +694,11 @@ string ofApp::serialRead(int a){
             for (std::size_t j = 0; j < sz; ++j)
             {
                 std::cout << buffer[j];
+                //string s = buffer[j];
+                
             }
+            string s = ofToString(buffer);
+            s.erase(std::remove_if(s.begin(), s.end(), (int(*)(int))std::isalnum), s.end());
             combinedStr += ofToString(buffer);
         }
         
