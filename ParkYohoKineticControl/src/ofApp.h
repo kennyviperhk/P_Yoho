@@ -74,6 +74,7 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
+        void exit();
 
 		void keyPressed(int key);
 		void keyReleased(int key);
@@ -117,7 +118,7 @@ class ofApp : public ofBaseApp{
     void onSerialBuffer(const ofx::IO::SerialBufferEventArgs& args);
     void onSerialError(const ofx::IO::SerialBufferErrorEventArgs& args);
     
-    std::vector<SerialMessage> serialMessages;
+    vector<SerialMessage> serialMessages;
     
     string receivedMsg;
     vector<string> prevReceivedString;

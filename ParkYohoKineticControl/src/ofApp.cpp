@@ -682,24 +682,32 @@ string ofApp::serialRead(int a){
     // for(int i=0; i< arduino.size(); i++){
     
     // The serial device can throw exeptions.
-    
+
     try
     {
         // Read all bytes from the device;
         uint8_t buffer[1024];
+        vector<uint8_t> finalBuffer;
+        finalBuffer.clear();
         while (arduino[a].available() > 0)
         {
             std::size_t sz = arduino[a].readBytes(buffer, 1024);
-            ofLog() << "buffer : ";
+            ofLog() << "buffer size: " << sz;
             for (std::size_t j = 0; j < sz; ++j)
             {
-                std::cout << buffer[j];
+               // std::cout << buffer[j];
+                ofLog() << "buf: " << buffer[j];
                 //string s = buffer[j];
+                if(isalnum(buffer[j]) || buffer[j] == '|' || buffer[j] == '-' ){
+                    finalBuffer.push_back(buffer[j]);
+                }
+                
                 
             }
-            string s = ofToString(buffer);
-            s.erase(std::remove_if(s.begin(), s.end(), (int(*)(int))std::isalnum), s.end());
-            combinedStr += ofToString(buffer);
+            for(int i = 0; i< finalBuffer.size();i++){
+                        ofLog() << "New Buf : " << finalBuffer[i];
+                combinedStr += ofToString(finalBuffer[i]);
+            }
         }
         
     }
@@ -709,13 +717,36 @@ string ofApp::serialRead(int a){
     }
     //  }
     
+    
+    
+ /*
+    auto iter = serialMessages.begin();
+    
+    // Cycle through each of our messages and delete those that have expired.
+    while (iter != serialMessages.end())
+    {
+        iter->fade -= 1;
+        
+        if (iter->fade < 0)
+        {
+            iter = serialMessages.erase(iter);
+        }
+        else
+        {
+            ofSetColor(255, ofClamp(iter->fade, 0, 255));
+            //ofDrawBitmapString(iter->message, ofVec2f(x, y));
+            combinedStr = iter->message;
+            ofLog() << " iter->message " << iter->message;
+            ++iter;
+        }
+    }
+*/
+
     return combinedStr;
 }
 
 //--------------------------------------------------------------
 vector<int> ofApp::stringDecode(string s){
-    
-    
     
     vector<int> sToIntArray;
     
@@ -789,6 +820,7 @@ void ofApp::onSerialBuffer(const ofx::IO::SerialBufferEventArgs& args)
     // Buffers will show up here when the marker character is found.
     SerialMessage message(args.getBuffer().toString(), "", 500);
     serialMessages.push_back(message);
+    ofLog() << "SERIALLLLLLLL : " << message.message;
 }
 
 void ofApp::onSerialError(const ofx::IO::SerialBufferErrorEventArgs& args)
@@ -800,7 +832,12 @@ void ofApp::onSerialError(const ofx::IO::SerialBufferErrorEventArgs& args)
     serialMessages.push_back(message);
 }
 
-
+void ofApp::exit()
+{
+    for(int i=0; i< arduino.size(); i++){
+    arduino[i].unregisterAllEvents(this);
+    }
+}
 
 
 //--------------------------------------------------------------
