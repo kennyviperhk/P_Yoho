@@ -50,9 +50,9 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::checkArduinoIsConnected(){
     
-    if(currMillis < 8000){
+    if(ofGetFrameNum() < 200){
         
-        if(currMillis %5 == 0){
+        if(300 %10 == 0){
             serialWrite(-1, "C");
             ofLog() << "hello";
         }
@@ -160,6 +160,7 @@ void ofApp::draw(){
         std::stringstream ss;
         ss << "FrameRate : "<< ofGetFrameRate() << endl;
         ss << "EMERGENCY STOP - 'r' to relase: " << endl;
+        ss << "EMERGENCY STOP - 'q' to reset all arduino: " << endl;
         
         ofDrawBitmapString(ss.str(), ofVec2f(20, 20));
     }
@@ -363,7 +364,14 @@ void ofApp::keyReleased(int key){
             isEmergencyStop = false;
             break;
             
-        case 'm': //emergency Stop release
+        case 'q': //reset Arduino
+            if(isEmergencyStop){
+                serialWrite(-1, "Q");
+                isEmergencyStop = false;
+            }
+            break;
+            
+        case 'm': //showMusicPlayer
             showMusicPlayer = !showMusicPlayer;
             break;
             
@@ -432,7 +440,7 @@ void ofApp::guiSetup(){
     guiDebug.add(currentStyle.set("Style",11,0,NUM_OF_CABLES)); //TODO
     guiDebug.add(style_Btn.setup("Set Position:"));
     guiDebug.add(home_Btn.setup("Home: "));
-    guiDebug.add(style_Btn.setup("Set Position:"));
+    guiDebug.add(all_Tog.setup("All Val:"));
     
     guiDebug.add(all_Tog.setup("Set Position:"));
     
@@ -471,13 +479,13 @@ void ofApp::guiSetup(){
     guiCableAccelRy.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 260, 400);
     for(int i=0; i< NUM_OF_CABLES; i++){
         ofParameter<int> a;
-        a.set("A" + ofToString(i),10,0,1000); //lx,ly,rx,ry
+        a.set("A" + ofToString(i),100,0,1000); //lx,ly,rx,ry
         ofParameter<int> b;
-        b.set("A" + ofToString(i),10,0,1000);
+        b.set("A" + ofToString(i),100,0,1000);
         ofParameter<int> c;
-        c.set("A" + ofToString(i),10,0,1000);
+        c.set("A" + ofToString(i),100,0,1000);
         ofParameter<int> d;
-        d.set("A" + ofToString(i),10,0,1000);
+        d.set("A" + ofToString(i),100,0,1000);
         cableAccelLx.push_back(a);
         cableAccelLy.push_back(b);
         cableAccelRx.push_back(c);
@@ -496,13 +504,13 @@ void ofApp::guiSetup(){
     guiCableSpeedRy.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 370, 400);
     for(int i=0; i< NUM_OF_CABLES; i++){
         ofParameter<int> a;
-        a.set("S" + ofToString(i),10,0,1000); //lx,ly,rx,ry
+        a.set("S" + ofToString(i),100,0,1000); //lx,ly,rx,ry
         ofParameter<int> b;
-        b.set("S" + ofToString(i),10,0,1000);
+        b.set("S" + ofToString(i),100,0,1000);
         ofParameter<int> c;
-        c.set("S" + ofToString(i),10,0,1000);
+        c.set("S" + ofToString(i),100,0,1000);
         ofParameter<int> d;
-        d.set("S" + ofToString(i),10,0,1000);
+        d.set("S" + ofToString(i),100,0,1000);
         cableSpeedLx.push_back(a);
         cableSpeedLy.push_back(b);
         cableSpeedRx.push_back(c);
@@ -696,8 +704,7 @@ string ofApp::serialRead(int a){
             for (std::size_t j = 0; j < sz; ++j)
             {
                // std::cout << buffer[j];
-                ofLog() << "buf: " << buffer[j];
-                //string s = buffer[j];
+                //ofLog() << "buf: " << buffer[j];
                 if(isalnum(buffer[j]) || buffer[j] == '|' || buffer[j] == '-' ){
                     finalBuffer.push_back(buffer[j]);
                 }
@@ -717,30 +724,6 @@ string ofApp::serialRead(int a){
     }
     //  }
     
-    
-    
- /*
-    auto iter = serialMessages.begin();
-    
-    // Cycle through each of our messages and delete those that have expired.
-    while (iter != serialMessages.end())
-    {
-        iter->fade -= 1;
-        
-        if (iter->fade < 0)
-        {
-            iter = serialMessages.erase(iter);
-        }
-        else
-        {
-            ofSetColor(255, ofClamp(iter->fade, 0, 255));
-            //ofDrawBitmapString(iter->message, ofVec2f(x, y));
-            combinedStr = iter->message;
-            ofLog() << " iter->message " << iter->message;
-            ++iter;
-        }
-    }
-*/
 
     return combinedStr;
 }
@@ -764,12 +747,12 @@ vector<int> ofApp::stringDecode(string s){
         seglist.push_back(temp);
     
     //ofLog() << "seglist.size() " << seglist.size();
-    for(int i=0; i<seglist.size(); i++){
+   /* for(int i=0; i<seglist.size(); i++){
             seglist[i].erase(seglist[i].find_last_not_of(" \n\r\t")+1);
         
-        ofLog() << "seglist[i] : " << seglist[i];
+      //  ofLog() << "seglist[i] : " << seglist[i];
         
-    }
+    }*/
     bool isContainParameter = false;
     
     for(int i=0; i < seglist.size(); i++){
@@ -788,7 +771,7 @@ vector<int> ofApp::stringDecode(string s){
     }
     //LOAD
     for(int i=0; i < sToIntArray.size(); i++){
-     ofLog() << "sToIntArray" << i << " : " << sToIntArray[i];
+     ofLog() << "sToIntArray " << i << " : " << sToIntArray[i];
      }
     if(sToIntArray.size() == EEPROM.size()+1){
         currentdisplayLog = ofToString(currentDebugArduinoID) +" EEPROM LOADED";
@@ -801,19 +784,19 @@ vector<int> ofApp::stringDecode(string s){
     
 }
 
+//--------------------------------------------------------------
+//---------------------- OTHER EVENTS --------------------------
+//--------------------------------------------------------------
+//--------------------------------------------------------------
+void ofApp::exit()
+{
+    for(int i=0; i< arduino.size(); i++){
+        arduino[i].unregisterAllEvents(this);
+    }
+}
+
 
 //TODO: Unused for now
-
-/*
- void ofApp::sendChar(){
- vector<uint8_t> hi;
- hi.push_back('D');
- ofx::IO::ByteBuffer buffer(hi);
- for(int i=0; i< arduino.size(); i++){
- arduino[i].writeByte(hi[0]);
- }
- }
- */
 
 void ofApp::onSerialBuffer(const ofx::IO::SerialBufferEventArgs& args)
 {
@@ -832,12 +815,6 @@ void ofApp::onSerialError(const ofx::IO::SerialBufferErrorEventArgs& args)
     serialMessages.push_back(message);
 }
 
-void ofApp::exit()
-{
-    for(int i=0; i< arduino.size(); i++){
-    arduino[i].unregisterAllEvents(this);
-    }
-}
 
 
 //--------------------------------------------------------------

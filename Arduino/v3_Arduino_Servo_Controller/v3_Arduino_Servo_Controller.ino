@@ -29,6 +29,9 @@
   -Test Actual code with 4 motor and switches
 
 */
+
+
+#include "SoftReset.h" //SoftReset function
 //================ Config ================
 #include "PinAssignment.h" //Pin Config
 #include "config.h" //Pin Config

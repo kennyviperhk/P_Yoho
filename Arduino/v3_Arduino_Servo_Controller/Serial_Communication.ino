@@ -6,6 +6,14 @@
 
      Write
 
+    'C' - Serial Communication Checking - print online if true
+    'H' - Home trigger
+    'S' - Save EEPROM
+    'L' - load EEPROM
+    'E' - EMERGENCY Start 'R' to stop
+    'R' - EMERGENCY Stop
+    'Q' - Reset Arduino
+    //EMERGENCY Start r
 */
 
 String inString = "";    // string to hold input char
@@ -178,7 +186,7 @@ void char_decode(int inChar)
     exclude_print_val = true;
 
   }
-  else if (inChar == 'E') //EMERGENCY STOP
+  else if (inChar == 'E') //EMERGENCY Start r
   {
     //DO STH HERE
     inString = "";   // clear the string buffer for new input:
@@ -203,6 +211,20 @@ void char_decode(int inChar)
     isEmergencyStop = false;
     Serial.print("\t");
     Serial1.print("\t");
+
+    exclude_print_val = true;
+
+  }
+
+  else if (inChar == 'Q') //Soft Reset
+  {
+    //DO STH HERE
+    inString = "";   // clear the string buffer for new input:
+
+    Serial.print("Restarting...");
+    Serial1.print("Restarting...");
+
+    soft_restart();
 
     exclude_print_val = true;
 
