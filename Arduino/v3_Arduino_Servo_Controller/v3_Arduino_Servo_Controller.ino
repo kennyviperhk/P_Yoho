@@ -162,21 +162,25 @@ void loop() {
     for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
       limitSwitchReading[stepperNumber] = digitalRead(limitSwitch[stepperNumber]);
       steppers[stepperNumber]->setMaxSpeed((-inverseDir[stepperNumber])*home_speed);
-      steppers[stepperNumber]->setSpeed(home_accel);
+      steppers[stepperNumber]->setSpeed((-inverseDir[stepperNumber])*home_speed);
 
-      if (limitSwitchReading[stepperNumber]) {
+      if (limitSwitchReading[stepperNumber] && !homeDone[stepperNumber]) {
 
         steppers[stepperNumber]->setCurrentPosition(0);
         homeDone[stepperNumber] = true;
-        //todo println;
+        Serial.print("home-");
+        Serial.print(stepperNumber);
+        Serial.print("-");
       }
       steppers[stepperNumber]->runSpeed();
     }
 
     if (homeDone[0] && homeDone[1] && homeDone[2] && homeDone[3]) {
       GO_HOME = false; //done with go home
+      Serial.print("allHome");
+      Serial.println("|");
     }
-    GO_HOME = false;
+
   } else {
 
 

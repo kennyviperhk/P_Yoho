@@ -217,6 +217,12 @@ void ofApp::draw(){
                 
                 
             }
+            if(home_Btn){
+                serialWrite(currentDebugArduinoID, "H");
+                //manual home "G"
+                //serialWrite(currentDebugArduinoID, 1-1-1-1);
+                //serialWrite(currentDebugArduinoID, "G");
+            }
             if(EEPROM_loadBtn){
                 
             }
@@ -269,10 +275,7 @@ void ofApp::draw(){
                     currentdisplayLog = writeInTotal;
                     
                 }
-                if(home_Btn){
-                    //serialWrite(currentDebugArduinoID, toWrite);
-                    serialWrite(currentDebugArduinoID, "H");
-                }
+            
                 
                 
             }
@@ -409,11 +412,11 @@ void ofApp::guiSetup(){
     guiDebug.setWidthElements(100);
     
     
-    vector<string> EEPROM_names = {"HOME_MAXSPEED", "HOME_ACCELERATION", "MAX_SPEED_X", "MAX_ACCELERATION_X", "MAX_SPEED_Y","MAX_ACCELERATION_Y","MAX_POSITION_LX","MAX_POSITION_LY","MAX_POSITION_RX","MAX_POSITION_RY","INVERT_DIR_LX","INVERT_DIR_LY","INVERT_DIR_RX","INVERT_DIR_RY"};
+    vector<string> EEPROM_names = {"HOME_MAXSPEED", "MAX_SPEED_X", "MAX_ACCELERATION_X", "MAX_SPEED_Y","MAX_ACCELERATION_Y","MAX_POSITION_LX","MAX_POSITION_LY","MAX_POSITION_RX","MAX_POSITION_RY","INVERT_DIR_LX","INVERT_DIR_LY","INVERT_DIR_RX","INVERT_DIR_RY"};
     
     
-    vector<int> EEPROM_min = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    vector<int> EEPROM_max = {500, 500, 1000, 5000, 1000,5000, 1000, 1000, 1000, 1000,1, 1, 1,1}; //Todo Transfer definition /variables to xml
+    vector<int> EEPROM_min = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    vector<int> EEPROM_max = {500, 1000, 5000, 1000,5000, 1000, 1000, 1000, 1000,1, 1, 1,1}; //Todo Transfer definition /variables to xml
     
     guiDebug.add(currentDebugArduinoID.set("ArduinoID",0,0,NUM_OF_CABLES));
     

@@ -116,15 +116,32 @@ void char_decode(int inChar)
   }
   else if (inChar == 'H') //HOME
   {
-    GO_HOME = !GO_HOME;
+    GO_HOME = true;
+
+    Serial.print("home-");
+    Serial1.print("home-");
     inString = "";   // clear the string buffer for new input:
     for (int i = 0; i < numOfStepper; i++)
     {
-      homeDone[i] = input_value[i];
+      homeDone[i]  = false;
     }
-    Serial.println("GO HOME");
-    Serial1.println("GO HOME");
-    exclude_print_val = false;
+    exclude_print_val = true;
+  }
+   else if (inChar == 'G') //HOME
+  {
+    GO_HOME = true;
+
+    Serial.print("manualHome-");
+    Serial1.print("manualHome-");
+    inString = "";   // clear the string buffer for new input:
+    for (int i = 0; i < numOfStepper; i++)
+    {
+      //homeDone[numOfStepper]  = false;
+      homeDone[i] = input_value[i];
+      Serial.print(homeDone[i]);
+      Serial.print("-");
+    }
+    exclude_print_val = true;
   }
   else if (inChar == 'S') //SAVE EEPROM
   {
