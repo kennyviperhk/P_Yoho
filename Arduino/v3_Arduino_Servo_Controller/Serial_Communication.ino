@@ -91,7 +91,6 @@ void char_decode(int inChar)
     if (current_index < Input_size) // within size
     {
       input_value[current_index] = inString.toInt(); //final value
-      val = input_value[0];
 
     }
     //            else// giveup the value to avoide over access array
@@ -125,7 +124,7 @@ void char_decode(int inChar)
     }
     Serial.println("GO HOME");
     Serial1.println("GO HOME");
-
+    exclude_print_val = false;
   }
   else if (inChar == 'S') //SAVE EEPROM
   {

@@ -81,13 +81,10 @@ Encoder* encoder[numOfStepper] = {&encoderLx, &encoderLy, &encoderRx, &encoderLy
 // ============ LIMIT SWITCH ================
 const byte limitSwitch[numOfStepper]  = {LimitSwitchLx, LimitSwitchLy, LimitSwitchRx, LimitSwitchRy};
 bool homeDone[numOfStepper]  = {false, false, false, false};
-int home_speed, home_accel;
+int home_speed = 100;
+int home_accel = 100;
 //================ Style ================
 int style = 0; //0 command to go
-
-
-//TODO
-int val = 0;
 
 // ============ ============ ================
 // ============ ====SETUP=== ================
@@ -162,7 +159,6 @@ void loop() {
 
     int limitSwitchReading[numOfStepper]  = {0, 0, 0, 0};
 
-
     for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
       limitSwitchReading[stepperNumber] = digitalRead(limitSwitch[stepperNumber]);
       steppers[stepperNumber]->setMaxSpeed((-inverseDir[stepperNumber])*home_speed);
@@ -180,9 +176,6 @@ void loop() {
     if (homeDone[0] && homeDone[1] && homeDone[2] && homeDone[3]) {
       GO_HOME = false; //done with go home
     }
-
-
-
     GO_HOME = false;
   } else {
 
