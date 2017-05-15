@@ -2,16 +2,6 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     
-    if (std::regex_match ("subject", std::regex("(sub)(.*)") ))
-        std::cout << "string literal matched\n";
-    
-    const char cstr[] = "subject";
-    std::string s ("subject");
-    std::regex e ("(sub)(.*)");
-    
-    if (std::regex_match (s,e))
-    
-    
     ofSetFrameRate(60);
     
     //================== Serial ==================
@@ -28,6 +18,8 @@ void ofApp::setup(){
     initOnUpdate = true;
     //================== debugMode ==================
     
+    page = 0;
+    numOfPages = 3;
     debugMode = true;
     isEmergencyStop = false;
     for(int i=0; i < arduino.size(); i++){
@@ -46,26 +38,26 @@ void ofApp::setup(){
     showMusicPlayer = false;
     musicPlayer.setup();
     
-}
-//--------------------------------------------------------------
-void ofApp::checkArduinoIsConnected(){
+    //================== Movement Controls ==================
+    int mcX = 10;
+    int mcY = 200;
+    int mcW = 500;
+    int mcH = 200;
+    int mcHg = 20;
+    /*
+     for(int i=0; i< 1 ; i++){
+     MovementController mc;
+     MovementControllers.push_back(mc);
+     MovementControllers[i].setup(NUM_OF_CABLES,mcX,mcY+ (i*mcH)+ mcHg,mcW,mcH);
+     }
+     */
+    MovementController.setup(NUM_OF_CABLES,mcX,mcY,mcW,mcH);
+    showMovementController = false;
     
-    if(ofGetFrameNum() < 200){
-        
-        if(300 %10 == 0){
-            serialWrite(-1, "C");
-            ofLog() << "hello";
-        }
-    }
+    
 }
 
-void ofApp::removeSubstrs(string& s, string& p) {
-    string::size_type n = p.length();
-    for (string::size_type i = s.find(p);
-         i != string::npos;
-         i = s.find(p))
-        s.erase(i, n);
-}
+
 //--------------------------------------------------------------
 void ofApp::update(){
     
@@ -78,7 +70,7 @@ void ofApp::update(){
     //================== Serial ==================
     for(int i=0; i < arduino.size(); i++){
         receivedStringBuffer[i] += ofTrim(serialRead(i));
-
+        
         bool reachEnd = false;
         for (int j=0; j<receivedStringBuffer[i].size(); j++)
         {
@@ -88,18 +80,18 @@ void ofApp::update(){
             }
         }
         if(reachEnd){
-        vector<string> array;
-        stringstream ss(receivedStringBuffer[i]);
-        string temp;
-        while (ss >> temp)
-        array.push_back(temp);
-        if(array.size()>0){
-            receivedString[i] = array[0];
-            ofLog() << "receivedString[i] :" <<receivedString[i];
-            reachEnd = false;
-            receivedStringBuffer[i] = "";
+            vector<string> array;
+            stringstream ss(receivedStringBuffer[i]);
+            string temp;
+            while (ss >> temp)
+                array.push_back(temp);
+            if(array.size()>0){
+                receivedString[i] = array[0];
+                ofLog() << "receivedString[i] :" <<receivedString[i];
+                reachEnd = false;
+                receivedStringBuffer[i] = "";
+            }
         }
-    }
     }
     
     
@@ -107,7 +99,7 @@ void ofApp::update(){
     if(initOnUpdate){
         checkArduinoIsConnected();
     }
-
+    
     for(int i=0; i< receivedString.size(); i++){
         if(stringDecode(receivedString[i]).size()>=1){
             if(stringDecode(receivedString[i])[0] == 1){ //load
@@ -142,13 +134,34 @@ void ofApp::update(){
     }
     //================== Kinectic Visualisation ==================
     
+    
+    vector<ofPoint> mcPoints = MovementController.getPoints();
+    
+    
     for(int i=0; i< NUM_OF_CABLES; i++){
-        kinecticVisualisation.set(i, currentStyle ,ofMap(cablePosLx[i],0,1000,0,1) ,ofMap(cablePosLy[i],0,1000,0,1),ofMap(cablePosRx[i],0,1000,0,1), ofMap(cablePosRy[i],0,1000,0,1));
+        
+        kinecticVisualisation.set(NUM_OF_CABLES ,i, currentStyle ,ofMap(cablePosLx[i],0,1000,0,2) ,ofMap(cablePosLy[i],0,1000,0,1),ofMap(cablePosRx[i],0,1000,0,2), ofMap(cablePosRy[i],0,1000,0,1));
+        
     }
+    
+    
+    kineticVisualizationFbo.begin();
+    ofClear(255, 0, 0,0);
+    kinecticVisualisation.draw();
+    kineticVisualizationFbo.end();
     
     
     //================== Music Player ==================
     musicPlayer.update();
+    
+    //================== Movement Controls ==================
+    /*
+     for(int i=0; i< MovementControllers.size(); i++){
+     MovementControllers[i].update();
+     }
+     */
+    MovementController.update();
+    
 }
 
 //--------------------------------------------------------------
@@ -170,9 +183,18 @@ void ofApp::draw(){
         
         ofSetColor(255);
         
+        
+        
+        if(drawKineticVisualizationFbo){
+            kineticVisualizationFbo.draw(0,200,ofGetWidth()*0.7,ofGetHeight()*0.7);
+        }
+        
+        //================== Debug Gui ==================
+        
         std::stringstream ss;
         ss << "debugMode : "<< debugMode << endl;
         ss << "FrameRate : "<< ofGetFrameRate() << endl;
+        ss << "Page : "<< page << endl;
         
         ss << "Num of Connected Devices: " << arduino.size() << " / " << NUM_OF_CABLES << endl;
         //ss << "Style: " << currentStyle << endl;
@@ -275,7 +297,7 @@ void ofApp::draw(){
                     currentdisplayLog = writeInTotal;
                     
                 }
-            
+                
                 
                 
             }
@@ -296,8 +318,9 @@ void ofApp::draw(){
             textField = "";
         }
         
-        guiDebug.draw();
-
+        if(drawDebugGui){
+            guiDebug.draw();
+        }
         
         guiCablePosLx.draw();
         guiCablePosLy.draw();
@@ -311,27 +334,45 @@ void ofApp::draw(){
         guiCableSpeedLy.draw();
         guiCableSpeedRx.draw();
         guiCableSpeedRy.draw();
-
+        
         displayLog(currentdisplayLog);
         
     }else{
-        ofBackground(100, 100, 100);
+       // ofBackground(100, 100, 100);
         
     }
-    //================== Kinectic Visualisation ==================
-
-    kineticVisualizationFbo.begin();
-    ofClear(0, 0, 0);
-    kinecticVisualisation.draw();
-    kineticVisualizationFbo.end();
-    
-    kineticVisualizationFbo.draw(0,200);
-    
     //================== Music Player ==================
     if(showMusicPlayer){
         musicPlayer.draw();
     }
     
+    //================== Movement Controller ==================
+    /*
+     for(int i=0; i< MovementControllers.size(); i++){
+     MovementControllers[i].draw();
+     }
+     */
+    if(showMovementController){
+        MovementController.draw();
+    }
+    
+
+    if(page == 0){
+        drawDebugGui = true;
+        drawKineticVisualizationFbo = true;
+        showMusicPlayer = false;
+        showMovementController = false;
+    }else if(page == 1){
+        drawDebugGui = false;
+        drawKineticVisualizationFbo = false;
+        showMusicPlayer = true;
+        showMovementController = false;
+    }else{
+        drawDebugGui = false;
+        drawKineticVisualizationFbo = true;
+        showMusicPlayer = false;
+        showMovementController = true;
+    }
 }
 
 
@@ -378,13 +419,33 @@ void ofApp::keyReleased(int key){
             showMusicPlayer = !showMusicPlayer;
             break;
             
+        case 358: //leftArrow;
+            page++;
+            if(page >= numOfPages ){
+                page = 0;
+            }
+            break;
+            
+        case 356: //leftArrow;
+            page--;
+            if(page < 0 ){
+                page = numOfPages-1;
+            }
+            
+            break;
+            
             
             
         default:
             break;
             
     }
+    ofLog() << "page " << page;
 }
+
+//--------------------------------------------------------------
+//-------------------------- Functions -------------------------
+//--------------------------------------------------------------
 
 bool ofApp::is_number(const std::string& s)
 {
@@ -416,7 +477,7 @@ void ofApp::guiSetup(){
     
     
     vector<int> EEPROM_min = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    vector<int> EEPROM_max = {500, 1000, 5000, 1000,5000, 1000, 1000, 1000, 1000,1, 1, 1,1}; //Todo Transfer definition /variables to xml
+    vector<int> EEPROM_max = {500, 1000, 5000, 1000,5000, 1000, 1000, 1000, 1000, 1, 1, 1, 1}; //Todo Transfer definition /variables to xml
     
     guiDebug.add(currentDebugArduinoID.set("ArduinoID",0,0,NUM_OF_CABLES));
     
@@ -427,14 +488,14 @@ void ofApp::guiSetup(){
         guiDebug.add(EEPROM[i]);
     }
     vector<string> EEPROM_saveLoad_names = {"SAVE", "LOAD"};
-    /* EEPROM_btn = {new ofxButton , new ofxButton}; //TODO problem with implementing ofxButton array
+    /*
+     EEPROM_btn = {new ofxButton , new ofxButton}; //TODO problem with implementing ofxButton array
      for(int i=0; i< 2; i++){
      //  ofxButton a;
      //  a.setup(EEPROM_saveLoad_names[i]);
      //  EEPROM_btn.push_back(a);
      guiDebug.add(EEPROM_btn[i].setup("SAVE"+ofToString(i),50,50));
      }
-     
      */
     guiDebug.add(EEPROM_saveBtn.setup(EEPROM_saveLoad_names[0]));
     guiDebug.add(EEPROM_loadBtn.setup(EEPROM_saveLoad_names[1]));
@@ -457,13 +518,13 @@ void ofApp::guiSetup(){
     guiCablePosRy.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 100, 400);
     for(int i=0; i< NUM_OF_CABLES; i++){
         ofParameter<int> a;
-        a.set("P Lx" + ofToString(i),0,0,1000); //lx,ly,rx,ry
+        a.set("P Lx" + ofToString(i),0,0,5000); //lx,ly,rx,ry
         ofParameter<int> b;
-        b.set("P Ly" + ofToString(i),0,0,1000);
+        b.set("P Ly" + ofToString(i),0,0,10000);
         ofParameter<int> c;
-        c.set("P Rx" + ofToString(i),0,0,1000);
+        c.set("P Rx" + ofToString(i),0,0,5000);
         ofParameter<int> d;
-        d.set("P Ry" + ofToString(i),0,0,1000);
+        d.set("P Ry" + ofToString(i),0,0,10000);
         cablePosLx.push_back(a);
         cablePosLy.push_back(b);
         cablePosRx.push_back(c);
@@ -482,13 +543,13 @@ void ofApp::guiSetup(){
     guiCableAccelRy.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 260, 400);
     for(int i=0; i< NUM_OF_CABLES; i++){
         ofParameter<int> a;
-        a.set("A" + ofToString(i),100,0,1000); //lx,ly,rx,ry
+        a.set("A" + ofToString(i),1000,0,3000); //lx,ly,rx,ry
         ofParameter<int> b;
-        b.set("A" + ofToString(i),100,0,1000);
+        b.set("A" + ofToString(i),1000,0,3000);
         ofParameter<int> c;
-        c.set("A" + ofToString(i),100,0,1000);
+        c.set("A" + ofToString(i),1000,0,3000);
         ofParameter<int> d;
-        d.set("A" + ofToString(i),100,0,1000);
+        d.set("A" + ofToString(i),1000,0,3000);
         cableAccelLx.push_back(a);
         cableAccelLy.push_back(b);
         cableAccelRx.push_back(c);
@@ -507,13 +568,13 @@ void ofApp::guiSetup(){
     guiCableSpeedRy.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 370, 400);
     for(int i=0; i< NUM_OF_CABLES; i++){
         ofParameter<int> a;
-        a.set("S" + ofToString(i),100,0,1000); //lx,ly,rx,ry
+        a.set("S" + ofToString(i),1000,0,2000); //lx,ly,rx,ry
         ofParameter<int> b;
-        b.set("S" + ofToString(i),100,0,1000);
+        b.set("S" + ofToString(i),1000,0,2000);
         ofParameter<int> c;
-        c.set("S" + ofToString(i),100,0,1000);
+        c.set("S" + ofToString(i),1000,0,2000);
         ofParameter<int> d;
-        d.set("S" + ofToString(i),100,0,1000);
+        d.set("S" + ofToString(i),1000,0,2000);
         cableSpeedLx.push_back(a);
         cableSpeedLy.push_back(b);
         cableSpeedRx.push_back(c);
@@ -523,7 +584,7 @@ void ofApp::guiSetup(){
         guiCableSpeedRx.add(cableSpeedRx[i]);
         guiCableSpeedRy.add(cableSpeedRy[i]);
     }
-
+    
     
     int guiPosCableW = 100;
     int guiCableH = 500;
@@ -556,10 +617,10 @@ void ofApp::guiSetup(){
     guiCableSpeedRy.setSize(guiCableW, guiCableH);
     guiCableSpeedRy.setWidthElements(guiCableW);
     
-
+    
     //ofFBO
     kineticVisualizationFbo.allocate(ofGetWidth(),ofGetHeight());
-
+    
     
 }
 
@@ -587,6 +648,19 @@ void ofApp::loadButtonPressed(){
 //--------------------------------------------------------------
 //--------------------------------------------------------------
 
+//--------------------------------------------------------------
+void ofApp::checkArduinoIsConnected(){
+    
+    if(ofGetFrameNum() < 200){
+        
+        if(300 %10 == 0){
+            serialWrite(-1, "C");
+            ofLog() << "hello";
+        }
+    }
+}
+
+//--------------------------------------------------------------
 vector<bool> ofApp::serialSetup(){ //int give the connection status of each cables
     
     vector<bool> connectionStatus;
@@ -693,7 +767,7 @@ string ofApp::serialRead(int a){
     // for(int i=0; i< arduino.size(); i++){
     
     // The serial device can throw exeptions.
-
+    
     try
     {
         // Read all bytes from the device;
@@ -706,7 +780,7 @@ string ofApp::serialRead(int a){
             ofLog() << "buffer size: " << sz;
             for (std::size_t j = 0; j < sz; ++j)
             {
-               // std::cout << buffer[j];
+                // std::cout << buffer[j];
                 //ofLog() << "buf: " << buffer[j];
                 if(isalnum(buffer[j]) || buffer[j] == '|' || buffer[j] == '-' ){
                     finalBuffer.push_back(buffer[j]);
@@ -715,7 +789,7 @@ string ofApp::serialRead(int a){
                 
             }
             for(int i = 0; i< finalBuffer.size();i++){
-                        ofLog() << "New Buf : " << finalBuffer[i];
+                ofLog() << "New Buf : " << finalBuffer[i];
                 combinedStr += ofToString(finalBuffer[i]);
             }
         }
@@ -727,7 +801,7 @@ string ofApp::serialRead(int a){
     }
     //  }
     
-
+    
     return combinedStr;
 }
 
@@ -750,18 +824,18 @@ vector<int> ofApp::stringDecode(string s){
         seglist.push_back(temp);
     
     //ofLog() << "seglist.size() " << seglist.size();
-   /* for(int i=0; i<seglist.size(); i++){
-            seglist[i].erase(seglist[i].find_last_not_of(" \n\r\t")+1);
-        
-      //  ofLog() << "seglist[i] : " << seglist[i];
-        
-    }*/
+    /* for(int i=0; i<seglist.size(); i++){
+     seglist[i].erase(seglist[i].find_last_not_of(" \n\r\t")+1);
+     
+     //  ofLog() << "seglist[i] : " << seglist[i];
+     
+     }*/
     bool isContainParameter = false;
     
     for(int i=0; i < seglist.size(); i++){
         for(int j=0; j < SERIAL_PARAMETERES.size(); j++){
             if(seglist[i] == SERIAL_PARAMETERES[j]){ //check if anything match with SERIAL_PARAMETERS
-                     ofLog() << "SERIAL_PARAMETERES[j]" << SERIAL_PARAMETERES[j];
+                ofLog() << "SERIAL_PARAMETERES[j]" << SERIAL_PARAMETERES[j];
                 sToIntArray.push_back(j);
                 isContainParameter= true;
             }
@@ -774,14 +848,14 @@ vector<int> ofApp::stringDecode(string s){
     }
     //LOAD
     for(int i=0; i < sToIntArray.size(); i++){
-     ofLog() << "sToIntArray " << i << " : " << sToIntArray[i];
-     }
+        ofLog() << "sToIntArray " << i << " : " << sToIntArray[i];
+    }
     if(sToIntArray.size() == EEPROM.size()+1){
         currentdisplayLog = ofToString(currentDebugArduinoID) +" EEPROM LOADED";
         return sToIntArray;
     }
     else{
-       // vector<int> sToIntArray;
+        // vector<int> sToIntArray;
         return sToIntArray;
     }
     
@@ -798,8 +872,12 @@ void ofApp::exit()
     }
 }
 
+//--------------------------------------------------------------
+//--------------------------UNUSED -----------------------------
+//--------------------------------------------------------------
 
 //TODO: Unused for now
+//--------------------------------------------------------------
 
 void ofApp::onSerialBuffer(const ofx::IO::SerialBufferEventArgs& args)
 {
@@ -808,6 +886,8 @@ void ofApp::onSerialBuffer(const ofx::IO::SerialBufferEventArgs& args)
     serialMessages.push_back(message);
     ofLog() << "SERIALLLLLLLL : " << message.message;
 }
+
+//--------------------------------------------------------------
 
 void ofApp::onSerialError(const ofx::IO::SerialBufferErrorEventArgs& args)
 {
@@ -818,10 +898,15 @@ void ofApp::onSerialError(const ofx::IO::SerialBufferErrorEventArgs& args)
     serialMessages.push_back(message);
 }
 
-
-
 //--------------------------------------------------------------
-//--------------------------UNUSED -----------------------------
+void ofApp::removeSubstrs(string& s, string& p) {
+    string::size_type n = p.length();
+    for (string::size_type i = s.find(p);
+         i != string::npos;
+         i = s.find(p))
+        s.erase(i, n);
+}
+
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     

@@ -59,17 +59,19 @@ void stepper_style() {
 
     for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
       if (steppers[stepperNumber]->distanceToGo() == 0) {
-        steppers[stepperNumber]->setMaxSpeed(stepperSpeed[stepperNumber]);
-        steppers[stepperNumber]->setAcceleration(stepperAccel[stepperNumber]);
-        steppers[stepperNumber]->moveTo((inverseDir[stepperNumber])*stepperPos[stepperNumber]);
-       /* if (stepperNumber == 0) {
-          Serial.print("\t invers : ");
-          Serial.print((inverseDir[stepperNumber]));
-          Serial.print("\t Pos : ");
-          Serial.print(stepperPos[stepperNumber]);
-          Serial.print("\t A*B : ");
-          Serial.println((inverseDir[stepperNumber])*stepperPos[stepperNumber]);
-        }*/
+        if (stepperPos[stepperNumber] >= 0 && stepperAccel[stepperNumber] > 0 && stepperSpeed[stepperNumber] > 0) {
+          steppers[stepperNumber]->setMaxSpeed(stepperSpeed[stepperNumber]);
+          steppers[stepperNumber]->setAcceleration(stepperAccel[stepperNumber]);
+          steppers[stepperNumber]->moveTo((inverseDir[stepperNumber])*stepperPos[stepperNumber]);
+        }
+        /* if (stepperNumber == 0) {
+           Serial.print("\t invers : ");
+           Serial.print((inverseDir[stepperNumber]));
+           Serial.print("\t Pos : ");
+           Serial.print(stepperPos[stepperNumber]);
+           Serial.print("\t A*B : ");
+           Serial.println((inverseDir[stepperNumber])*stepperPos[stepperNumber]);
+          }*/
       }
     }
   }

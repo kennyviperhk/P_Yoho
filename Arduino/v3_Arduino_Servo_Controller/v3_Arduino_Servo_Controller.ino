@@ -104,7 +104,7 @@ void setup() {
     Load_Flash();
     Load_To_Variables();
     // ============ LIMIT SWITCH ================
-    pinMode(limitSwitch[stepperNumber], INPUT_PULLUP);
+    // pinMode(limitSwitch[stepperNumber], INPUT_PULLUP);
 
   }
 
@@ -119,10 +119,10 @@ void setup() {
   pinMode(BrakeRx, OUTPUT);
   pinMode(BrakeRy, OUTPUT);
 
-  digitalWrite(BrakeLx, HIGH);
-  digitalWrite(BrakeLy, HIGH);
-  digitalWrite(BrakeRx, HIGH);
-  digitalWrite(BrakeRy, HIGH);
+  digitalWrite(BrakeLx, LOW);
+  digitalWrite(BrakeLy, LOW);
+  digitalWrite(BrakeRx, LOW);
+  digitalWrite(BrakeRy, LOW);
 
   pinMode(DI1_SERVO_ON_lx, OUTPUT);
   pinMode(DI1_SERVO_ON_ly, OUTPUT);
@@ -160,11 +160,16 @@ void loop() {
     int limitSwitchReading[numOfStepper]  = {0, 0, 0, 0};
 
     for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
-      limitSwitchReading[stepperNumber] = digitalRead(limitSwitch[stepperNumber]);
-      steppers[stepperNumber]->setMaxSpeed((-inverseDir[stepperNumber])*home_speed);
-      steppers[stepperNumber]->setSpeed((-inverseDir[stepperNumber])*home_speed);
-
-      if (limitSwitchReading[stepperNumber] && !homeDone[stepperNumber]) {
+      limitSwitchReading[stepperNumber] = analogRead(limitSwitch[stepperNumber]);
+      steppers[stepperNumber]->setMaxSpeed((inverseDir[stepperNumber])*home_speed);
+      if (homeDone[stepperNumber]) {
+        steppers[stepperNumber]->setSpeed(0);
+      } else {
+       // if(stepperNumber == 1 || stepperNumber == 3){
+        steppers[stepperNumber]->setSpeed(-1 * (inverseDir[stepperNumber])*home_speed);
+       // }
+      }
+      if (limitSwitchReading[stepperNumber] > 500 && !homeDone[stepperNumber]) {
 
         steppers[stepperNumber]->setCurrentPosition(0);
         homeDone[stepperNumber] = true;

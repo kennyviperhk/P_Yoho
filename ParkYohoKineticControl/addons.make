@@ -1,3 +1,4 @@
+ofxAudioDecoder
 ofxGui
 ofxIO
 ofxInputField

@@ -1,4 +1,0 @@
-ofxGui
-ofxInputField
-ofxSimpleSerial
-ofxXmlSettings

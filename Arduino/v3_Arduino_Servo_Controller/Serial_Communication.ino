@@ -111,6 +111,12 @@ void char_decode(int inChar)
     inString = "";   // clear the string buffer for new input:
     Serial.print("online-");
     Serial1.print("online-");
+
+    digitalWrite(BrakeLx, HIGH);
+    digitalWrite(BrakeLy, HIGH);
+    digitalWrite(BrakeRx, HIGH);
+    digitalWrite(BrakeRy, HIGH);
+
     update_flag = true;
     exclude_print_val = true;
   }
@@ -127,7 +133,7 @@ void char_decode(int inChar)
     }
     exclude_print_val = true;
   }
-   else if (inChar == 'G') //HOME
+  else if (inChar == 'G') //HOME
   {
     GO_HOME = true;
 

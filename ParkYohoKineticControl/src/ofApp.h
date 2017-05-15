@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "KineticController.h"
+#include "MovementController.h"
 #include "MusicPlayer.h"
 
 #include "ofxSerial.h"
@@ -98,6 +99,12 @@ class ofApp : public ofBaseApp{
     MusicPlayer musicPlayer;
     bool showMusicPlayer;
     
+    //========== Movement Controller ===========
+    
+    //vector<MovementController> MovementControllers;
+    MovementController MovementController;
+    bool showMovementController;
+    
     //================== Serial ==================
     
     vector<bool> serialSetup();
@@ -133,6 +140,8 @@ class ofApp : public ofBaseApp{
     
     //================== debugMode ==================
     
+    int page;
+    int numOfPages;
     void guiSetup();
     
     bool debugMode;
@@ -204,6 +213,8 @@ class ofApp : public ofBaseApp{
     
     
     ofFbo kineticVisualizationFbo;
+    bool drawKineticVisualizationFbo;
+    bool drawDebugGui;
 
     //================== Config ==================
     

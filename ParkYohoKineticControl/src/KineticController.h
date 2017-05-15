@@ -31,7 +31,12 @@ public:
     {
         int zPos = index * drawDepth;
 
-        float extendCenteredCables = (2-((rightX+1)-(1-leftX)))*100;//extend lenght when cables get closer to center
+        //float extendCenteredCables = (2-((rightX+1)-(1-leftX)))*100;//extend lenght when cables get closer to center
+
+        float leftXcorr = ofMap(leftX, 0, 2, 2,0);
+        float cDist = abs(leftXcorr-rightX);
+       // ofLog() <<" leftX : " << leftX << " RightX : " << rightX;
+        float extendCenteredCables = ofMap(cDist,0,1,100,0) + 250 ;
         ofPushMatrix();
         ofTranslate(0, 100, zPos - totalCount * drawDepth/2);//translate to position, minus center value
         ofRotateY(10);
@@ -40,9 +45,9 @@ public:
         ofDrawBox(0, 0, 0, drawWidth, 10, drawDepth-2);//draw top support
         ofNoFill();
         ofSetColor(255);
-        float leftTop = -100-leftX * (drawWidth/-2.); //Kenny: I modified this
-        float rightTop = 100- rightX * (drawWidth/2.); //Kenny: I modified this
-        ofDrawBezier(leftTop, 0, 0, leftTop, -100 - leftY*300 - extendCenteredCables, 0, rightTop, -100 - rightY*300- extendCenteredCables, 0, rightTop, 0, 0);
+        float leftTop = -100-leftX * (drawWidth/-2.);
+        float rightTop = 100- rightX * (drawWidth/2.);
+        ofDrawBezier(leftTop, 0, 0, leftTop, -leftY * 400 - extendCenteredCables, 0, rightTop, -rightY * 400- extendCenteredCables, 0, rightTop, 0, 0);
         ofPopMatrix();
     }
     int drawWidth = 200;
@@ -74,14 +79,14 @@ public:
         
     }
     
-    void set(int arduinoID,int s, float lx,float ly,float rx,float ry)
+    void set(int cableNum, int arduinoID,int s, float lx,float ly,float rx,float ry)
     {
         style = s;
         leftX[arduinoID] = lx;
         leftY[arduinoID] = ly;
         rightX[arduinoID] = rx;
         rightY[arduinoID] = ry;
-        
+        cables = cableNum;
     }
     
     ofVec4f get(int arduinoID)
