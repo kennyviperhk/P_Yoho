@@ -19,7 +19,7 @@ void ofApp::setup(){
     //================== debugMode ==================
     
     page = 0;
-    numOfPages = 3;
+    numOfPages = 4;
     debugMode = true;
     isEmergencyStop = false;
     for(int i=0; i < arduino.size(); i++){
@@ -297,6 +297,57 @@ void ofApp::draw(){
                     currentdisplayLog = writeInTotal;
                     
                 }
+                if(currentStyle == 2){
+                    string writeInTotal = "SPEED - ACCEL - : ";
+                    
+                    string toWrite = "";
+                    
+                    toWrite+= ofToString(currentStyle);
+                    toWrite+= "-";
+                    
+                    toWrite+= ofToString((int)cableSpeedX);
+                    toWrite+= "-";
+                    toWrite+= ofToString((int)cableAccelX);
+                    toWrite+= "-";
+                    toWrite+= ofToString((int)cableSpeedY);
+                    toWrite+= "-";
+                    toWrite+= ofToString((int)cableAccelY);
+                    toWrite+= "-";
+                    
+                    writeInTotal=toWrite + " LX:";
+                    
+                    toWrite+= ofToString((int)cablePosLx[currentDebugArduinoID]);
+                    toWrite+= "-";
+                    toWrite+= ofToString((int)cablePosLx2[currentDebugArduinoID]);
+                    toWrite+= "-";
+                    
+                    writeInTotal=toWrite + " LY:";
+                    
+                    toWrite+= ofToString((int)cablePosLy[currentDebugArduinoID]);
+                    toWrite+= "-";
+                    toWrite+= ofToString((int)cablePosLy2[currentDebugArduinoID]);
+                    toWrite+= "-";
+                    
+                    writeInTotal=toWrite +" RX: ";
+
+                    toWrite+= ofToString((int)cablePosRx[currentDebugArduinoID]);
+                    toWrite+= "-";
+                    toWrite+= ofToString((int)cablePosRx2[currentDebugArduinoID]);
+                    toWrite+= "-";
+                    
+                    writeInTotal=toWrite +" RY: ";;
+                    
+                    toWrite+= ofToString((int)cablePosRy[currentDebugArduinoID]);
+                    toWrite+= "-";
+                    toWrite+= ofToString((int)cablePosRy2[currentDebugArduinoID]);
+                    
+                    writeInTotal=toWrite;
+                    
+                    serialWrite(currentDebugArduinoID, toWrite);
+                    currentdisplayLog = writeInTotal;
+                    
+                }
+
                 
                 
                 
@@ -367,11 +418,23 @@ void ofApp::draw(){
         drawKineticVisualizationFbo = false;
         showMusicPlayer = true;
         showMovementController = false;
-    }else{
+    }else if(page == 2){
         drawDebugGui = false;
         drawKineticVisualizationFbo = true;
         showMusicPlayer = false;
         showMovementController = true;
+    }else{
+    
+        drawDebugGui = true;
+        drawKineticVisualizationFbo = true;
+        showMusicPlayer = false;
+        showMovementController = false;
+        
+    guiCablePosLx2.draw();
+    guiCablePosLy2.draw();
+    guiCablePosRx2.draw();
+    guiCablePosRy2.draw();
+    guiCableSpeedAccelAll.draw();
     }
 }
 
@@ -624,6 +687,56 @@ void ofApp::guiSetup(){
     //ofFBO
     kineticVisualizationFbo.allocate(ofGetWidth(),ofGetHeight());
     
+    
+    //==== Style 2 =====
+    
+    guiCablePosLx2.setup("EEPROMReadWrite", "settings.xml", 100, 0);
+    guiCablePosLy2.setup("EEPROMReadWrite", "settings.xml", 100, 400);
+    guiCablePosRx2.setup("EEPROMReadWrite", "settings.xml", 200, 0);
+    guiCablePosRy2.setup("EEPROMReadWrite", "settings.xml", 200, 400);
+    for(int i=0; i< NUM_OF_CABLES; i++){
+        ofParameter<int> a;
+        a.set("P2 Lx" + ofToString(i),1500,0,MAX_X_POS); //lx,ly,rx,ry
+        ofParameter<int> b;
+        b.set("P2 Ly" + ofToString(i),1500,0,MAX_Y_POS);
+        ofParameter<int> c;
+        c.set("P2 Rx" + ofToString(i),1500,0,MAX_X_POS);
+        ofParameter<int> d;
+        d.set("P2 Ry" + ofToString(i),1500,0,MAX_Y_POS);
+        cablePosLx2.push_back(a);
+        cablePosLy2.push_back(b);
+        cablePosRx2.push_back(c);
+        cablePosRy2.push_back(d);
+        guiCablePosLx2.add(cablePosLx2[i]);
+        guiCablePosLy2.add(cablePosLy2[i]);
+        guiCablePosRx2.add(cablePosRx2[i]);
+        guiCablePosRy2.add(cablePosRy2[i]);
+    }
+    
+    guiCableSpeedAccelAll.setup("EEPROMReadWrite", "settings.xml", 400, 0);
+
+    cableSpeedX.set("S2 X ",800,0,MAX_X_SPEED);
+    cableAccelX.set("A2 X " ,300,0,MAX_X_ACCEL);
+    
+    cableSpeedY.set("S2 Y ",800,0,MAX_Y_SPEED);
+    cableAccelY.set("A2 Y ",300,0,MAX_Y_ACCEL);
+    
+    guiCableSpeedAccelAll.add(cableSpeedX);
+    guiCableSpeedAccelAll.add(cableAccelX);
+    guiCableSpeedAccelAll.add(cableSpeedY);
+    guiCableSpeedAccelAll.add(cableAccelY);
+    
+    guiCablePosLx2.setSize(guiPosCableW, guiCableH);
+    guiCablePosLx2.setWidthElements(guiPosCableW);
+    guiCablePosLy2.setSize(guiPosCableW, guiCableH);
+    guiCablePosLy2.setWidthElements(guiPosCableW);
+    guiCablePosRx2.setSize(guiPosCableW, guiCableH);
+    guiCablePosRx2.setWidthElements(guiPosCableW);
+    guiCablePosRy2.setSize(guiPosCableW, guiCableH);
+    guiCablePosRy2.setWidthElements(guiPosCableW);
+    
+    guiCableSpeedAccelAll.setSize(guiPosCableW, guiCableH);
+    guiCableSpeedAccelAll.setWidthElements(guiPosCableW);
     
 }
 

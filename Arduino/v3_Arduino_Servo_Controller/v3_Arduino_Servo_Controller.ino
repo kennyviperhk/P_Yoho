@@ -86,6 +86,12 @@ int home_accel = 100;
 //================ Style ================
 int style = 0; //0 command to go
 
+
+//style 2
+    long stepperPos1[numOfStepper];
+    long stepperPos2[numOfStepper];
+    bool abPos[numOfStepper];
+
 // ============ ============ ================
 // ============ ====SETUP=== ================
 // ============ ============ ================

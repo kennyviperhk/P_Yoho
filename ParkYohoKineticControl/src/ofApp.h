@@ -179,6 +179,24 @@ class ofApp : public ofBaseApp{
     vector<ofParameter<int>> cablePosRx; //lx,ly,rx,ry
     vector<ofParameter<int>> cablePosRy; //lx,ly,rx,ry
     
+//Style 2
+    
+    ofxPanel guiCablePosLx2;
+    ofxPanel guiCablePosLy2;
+    ofxPanel guiCablePosRx2;
+    ofxPanel guiCablePosRy2;
+    ofxPanel guiCableSpeedAccelAll;
+    
+    vector<ofParameter<int>> cablePosLx2; //lx,ly,rx,ry
+    vector<ofParameter<int>> cablePosLy2; //lx,ly,rx,ry
+    vector<ofParameter<int>> cablePosRx2; //lx,ly,rx,ry
+    vector<ofParameter<int>> cablePosRy2; //lx,ly,rx,ry
+    
+    ofParameter<int> cableSpeedX;
+    ofParameter<int> cableAccelX;
+    ofParameter<int> cableSpeedY;
+    ofParameter<int> cableAccelY;
+    
     
     //Cable Accel
     ofxPanel guiCableAccelLx;
