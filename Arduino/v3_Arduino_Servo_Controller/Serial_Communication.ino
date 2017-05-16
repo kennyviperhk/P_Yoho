@@ -117,6 +117,31 @@ void char_decode(int inChar)
     digitalWrite(BrakeRx, HIGH);
     digitalWrite(BrakeRy, HIGH);
 
+    digitalWrite(DI1_SERVO_ON_lx, HIGH);
+    digitalWrite(DI1_SERVO_ON_ly, HIGH);
+    digitalWrite(DI1_SERVO_ON_rx, HIGH);
+    digitalWrite(DI1_SERVO_ON_ry, HIGH);
+
+    update_flag = true;
+    exclude_print_val = true;
+  }
+  else if (inChar == 'V') //go offline, brake on
+  {
+    //DO STH HERE
+    inString = "";   // clear the string buffer for new input:
+    Serial.print("offline-");
+    Serial1.print("offline-");
+
+    digitalWrite(BrakeLx, LOW);
+    digitalWrite(BrakeLy, LOW);
+    digitalWrite(BrakeRx, LOW);
+    digitalWrite(BrakeRy, LOW);
+
+    digitalWrite(DI1_SERVO_ON_lx, LOW);
+    digitalWrite(DI1_SERVO_ON_ly, LOW);
+    digitalWrite(DI1_SERVO_ON_rx, LOW);
+    digitalWrite(DI1_SERVO_ON_ry, LOW);
+
     update_flag = true;
     exclude_print_val = true;
   }

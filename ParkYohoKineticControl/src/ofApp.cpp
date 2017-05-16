@@ -510,6 +510,7 @@ void ofApp::guiSetup(){
     
     //textField.addListener(this,&ofApp::serialTextInput);
     //--- Cable Position Control ---
+
     
     parametersCablePos.setName("cablePosition");
     guiCablePosLx.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 200, 0);
@@ -518,13 +519,13 @@ void ofApp::guiSetup(){
     guiCablePosRy.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 100, 400);
     for(int i=0; i< NUM_OF_CABLES; i++){
         ofParameter<int> a;
-        a.set("P Lx" + ofToString(i),0,0,5000); //lx,ly,rx,ry
+        a.set("P Lx" + ofToString(i),0,0,MAX_X_POS); //lx,ly,rx,ry
         ofParameter<int> b;
-        b.set("P Ly" + ofToString(i),0,0,10000);
+        b.set("P Ly" + ofToString(i),0,0,MAX_Y_POS);
         ofParameter<int> c;
-        c.set("P Rx" + ofToString(i),0,0,5000);
+        c.set("P Rx" + ofToString(i),0,0,MAX_X_POS);
         ofParameter<int> d;
-        d.set("P Ry" + ofToString(i),0,0,10000);
+        d.set("P Ry" + ofToString(i),0,0,MAX_Y_POS);
         cablePosLx.push_back(a);
         cablePosLy.push_back(b);
         cablePosRx.push_back(c);
@@ -536,6 +537,8 @@ void ofApp::guiSetup(){
     }
     //--- Cable Accel Control ---
     
+
+    
     parametersCableAccel.setName("cableAccel");
     guiCableAccelLx.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 310, 0);
     guiCableAccelLy.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 310, 400);
@@ -543,13 +546,13 @@ void ofApp::guiSetup(){
     guiCableAccelRy.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 260, 400);
     for(int i=0; i< NUM_OF_CABLES; i++){
         ofParameter<int> a;
-        a.set("A" + ofToString(i),1000,0,3000); //lx,ly,rx,ry
+        a.set("A" + ofToString(i),1000,0,MAX_X_SPEED); //lx,ly,rx,ry
         ofParameter<int> b;
-        b.set("A" + ofToString(i),1000,0,3000);
+        b.set("A" + ofToString(i),1000,0,MAX_Y_SPEED);
         ofParameter<int> c;
-        c.set("A" + ofToString(i),1000,0,3000);
+        c.set("A" + ofToString(i),1000,0,MAX_X_SPEED);
         ofParameter<int> d;
-        d.set("A" + ofToString(i),1000,0,3000);
+        d.set("A" + ofToString(i),1000,0,MAX_Y_SPEED);
         cableAccelLx.push_back(a);
         cableAccelLy.push_back(b);
         cableAccelRx.push_back(c);
@@ -568,13 +571,13 @@ void ofApp::guiSetup(){
     guiCableSpeedRy.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 370, 400);
     for(int i=0; i< NUM_OF_CABLES; i++){
         ofParameter<int> a;
-        a.set("S" + ofToString(i),1000,0,2000); //lx,ly,rx,ry
+        a.set("S" + ofToString(i),1000,0,MAX_X_ACCEL); //lx,ly,rx,ry
         ofParameter<int> b;
-        b.set("S" + ofToString(i),1000,0,2000);
+        b.set("S" + ofToString(i),1000,0,MAX_Y_ACCEL);
         ofParameter<int> c;
-        c.set("S" + ofToString(i),1000,0,2000);
+        c.set("S" + ofToString(i),1000,0,MAX_X_ACCEL);
         ofParameter<int> d;
-        d.set("S" + ofToString(i),1000,0,2000);
+        d.set("S" + ofToString(i),1000,0,MAX_Y_ACCEL);
         cableSpeedLx.push_back(a);
         cableSpeedLy.push_back(b);
         cableSpeedRx.push_back(c);
@@ -867,6 +870,7 @@ vector<int> ofApp::stringDecode(string s){
 //--------------------------------------------------------------
 void ofApp::exit()
 {
+    serialWrite(-1, "V");
     for(int i=0; i< arduino.size(); i++){
         arduino[i].unregisterAllEvents(this);
     }

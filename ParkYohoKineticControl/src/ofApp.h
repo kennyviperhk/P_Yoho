@@ -18,10 +18,18 @@
 #define NUM_OF_CABLES 20 //Todo Transfer definition /variables to xml
 #define BAUD 57600 //Todo Transfer definition /variables to xml
 
+#define MAX_X_POS 5000
+#define MAX_Y_POS 15000
+
+#define MAX_X_SPEED 3000
+#define MAX_Y_SPEED 4000
+
+#define MAX_X_ACCEL 2000
+#define MAX_Y_ACCEL 3000
 
 #define HOME_MAXSPEED     int_array[0]
-#define HOME_ACCELERATION     int_array[1]
-//RUNNING
+
+//RUNNING //TODO REVISE
 #define MAX_SPEED_X      int_array[2]
 #define MAX_ACCELERATION_X       int_array[3]
 #define MAX_SPEED_Y      int_array[4]

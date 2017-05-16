@@ -161,13 +161,17 @@ void loop() {
 
     for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
       limitSwitchReading[stepperNumber] = analogRead(limitSwitch[stepperNumber]);
-      steppers[stepperNumber]->setMaxSpeed((inverseDir[stepperNumber])*home_speed);
+
       if (homeDone[stepperNumber]) {
         steppers[stepperNumber]->setSpeed(0);
       } else {
-       // if(stepperNumber == 1 || stepperNumber == 3){
-        steppers[stepperNumber]->setSpeed(-1 * (inverseDir[stepperNumber])*home_speed);
-       // }
+        if (stepperNumber == 1 || stepperNumber == 3) {
+                steppers[stepperNumber]->setMaxSpeed((inverseDir[stepperNumber])*home_speed * 2);
+          steppers[stepperNumber]->setSpeed(-1 * (inverseDir[stepperNumber])*home_speed * 2);
+        } else {
+                steppers[stepperNumber]->setMaxSpeed((inverseDir[stepperNumber])*home_speed);
+          steppers[stepperNumber]->setSpeed(-1 * (inverseDir[stepperNumber])*home_speed);
+        }
       }
       if (limitSwitchReading[stepperNumber] > 500 && !homeDone[stepperNumber]) {
 
