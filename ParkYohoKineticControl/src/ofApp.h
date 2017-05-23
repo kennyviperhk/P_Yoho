@@ -247,6 +247,9 @@ class ofApp : public ofBaseApp{
     //int numOfCables;
     
     
+    //================== Song 1 ==================
+    
+    void song1();
     
 };
 

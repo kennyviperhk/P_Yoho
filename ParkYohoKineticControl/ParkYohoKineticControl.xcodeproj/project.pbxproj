@@ -970,6 +970,28 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
+			<key>790CD6606BE3D38A9AD52AF1</key>
+			<dict>
+				<key>fileRef</key>
+				<string>60F63F5C68476F0C9095B247</string>
+				<key>isa</key>
+				<string>PBXBuildFile</string>
+			</dict>
+			<key>60F63F5C68476F0C9095B247</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.cpp.cpp</string>
+				<key>fileEncoding</key>
+				<string>30</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>URIEncoding.cpp</string>
+				<key>path</key>
+				<string>../../../addons/ofxIO/libs/ofxIO/src/URIEncoding.cpp</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
 			<key>B1BF03D79762719793CC9F1A</key>
 			<dict>
 				<key>fileRef</key>
@@ -1481,6 +1503,7 @@
 					<string>13D68F0C2CAE7809D621924C</string>
 					<string>8D76B424A6DF4D70AACCDBAE</string>
 					<string>D1616DA13ECD5FC9DB4D5714</string>
+					<string>60F63F5C68476F0C9095B247</string>
 				</array>
 				<key>isa</key>
 				<string>PBXGroup</string>
@@ -1508,66 +1531,6 @@
 				<string>Base64Encoding.cpp</string>
 				<key>path</key>
 				<string>../../../addons/ofxIO/libs/ofxIO/src/Base64Encoding.cpp</string>
-				<key>sourceTree</key>
-				<string>SOURCE_ROOT</string>
-			</dict>
-			<key>3538D5A40C024D14F3F273BF</key>
-			<dict>
-				<key>explicitFileType</key>
-				<string>sourcecode.c.h</string>
-				<key>fileEncoding</key>
-				<string>30</string>
-				<key>isa</key>
-				<string>PBXFileReference</string>
-				<key>name</key>
-				<string>UniqueExpireLRUCache.h</string>
-				<key>path</key>
-				<string>../../../addons/ofxIO/libs/ofxIO/include/ofx/UniqueExpireLRUCache.h</string>
-				<key>sourceTree</key>
-				<string>SOURCE_ROOT</string>
-			</dict>
-			<key>038270DA6ACA13E6C027A072</key>
-			<dict>
-				<key>explicitFileType</key>
-				<string>sourcecode.c.h</string>
-				<key>fileEncoding</key>
-				<string>30</string>
-				<key>isa</key>
-				<string>PBXFileReference</string>
-				<key>name</key>
-				<string>UniqueExpireCache.h</string>
-				<key>path</key>
-				<string>../../../addons/ofxIO/libs/ofxIO/include/ofx/UniqueExpireCache.h</string>
-				<key>sourceTree</key>
-				<string>SOURCE_ROOT</string>
-			</dict>
-			<key>7FED5533BA07C2DA03F0ABC9</key>
-			<dict>
-				<key>explicitFileType</key>
-				<string>sourcecode.c.h</string>
-				<key>fileEncoding</key>
-				<string>30</string>
-				<key>isa</key>
-				<string>PBXFileReference</string>
-				<key>name</key>
-				<string>UniqueAccessExpireLRUCache.h</string>
-				<key>path</key>
-				<string>../../../addons/ofxIO/libs/ofxIO/include/ofx/UniqueAccessExpireLRUCache.h</string>
-				<key>sourceTree</key>
-				<string>SOURCE_ROOT</string>
-			</dict>
-			<key>BF304715448041CABDB6F49E</key>
-			<dict>
-				<key>explicitFileType</key>
-				<string>sourcecode.c.h</string>
-				<key>fileEncoding</key>
-				<string>30</string>
-				<key>isa</key>
-				<string>PBXFileReference</string>
-				<key>name</key>
-				<string>UniqueAccessExpireCache.h</string>
-				<key>path</key>
-				<string>../../../addons/ofxIO/libs/ofxIO/include/ofx/UniqueAccessExpireCache.h</string>
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
@@ -1616,7 +1579,7 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
-			<key>2F6C7F53A990035EB21AC78C</key>
+			<key>1E8B79D0091B95C305295952</key>
 			<dict>
 				<key>explicitFileType</key>
 				<string>sourcecode.c.h</string>
@@ -1625,9 +1588,9 @@
 				<key>isa</key>
 				<string>PBXFileReference</string>
 				<key>name</key>
-				<string>LRUCache.h</string>
+				<string>URIEncoding.h</string>
 				<key>path</key>
-				<string>../../../addons/ofxIO/libs/ofxIO/include/ofx/LRUCache.h</string>
+				<string>../../../addons/ofxIO/libs/ofxIO/include/ofx/IO/URIEncoding.h</string>
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
@@ -1956,6 +1919,7 @@
 					<string>FD35DEC21FE06BF7F1516022</string>
 					<string>E8AF8381484827A10A418B26</string>
 					<string>67B9F66F8197CB04B450E465</string>
+					<string>1E8B79D0091B95C305295952</string>
 				</array>
 				<key>isa</key>
 				<string>PBXGroup</string>
@@ -1979,100 +1943,15 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
-			<key>8425D8F4B3E525C269FBBD90</key>
-			<dict>
-				<key>explicitFileType</key>
-				<string>sourcecode.c.h</string>
-				<key>fileEncoding</key>
-				<string>30</string>
-				<key>isa</key>
-				<string>PBXFileReference</string>
-				<key>name</key>
-				<string>ExpireLRUCache.h</string>
-				<key>path</key>
-				<string>../../../addons/ofxIO/libs/ofxIO/include/ofx/ExpireLRUCache.h</string>
-				<key>sourceTree</key>
-				<string>SOURCE_ROOT</string>
-			</dict>
-			<key>4AA726A6FEDA3FBE35B34E19</key>
-			<dict>
-				<key>explicitFileType</key>
-				<string>sourcecode.c.h</string>
-				<key>fileEncoding</key>
-				<string>30</string>
-				<key>isa</key>
-				<string>PBXFileReference</string>
-				<key>name</key>
-				<string>ExpireCache.h</string>
-				<key>path</key>
-				<string>../../../addons/ofxIO/libs/ofxIO/include/ofx/ExpireCache.h</string>
-				<key>sourceTree</key>
-				<string>SOURCE_ROOT</string>
-			</dict>
-			<key>181F02B531162F6039F6ADC2</key>
-			<dict>
-				<key>explicitFileType</key>
-				<string>sourcecode.c.h</string>
-				<key>fileEncoding</key>
-				<string>30</string>
-				<key>isa</key>
-				<string>PBXFileReference</string>
-				<key>name</key>
-				<string>DirectoryWatcher.h</string>
-				<key>path</key>
-				<string>../../../addons/ofxIO/libs/ofxIO/include/ofx/DirectoryWatcher.h</string>
-				<key>sourceTree</key>
-				<string>SOURCE_ROOT</string>
-			</dict>
-			<key>84E9CE5123D831AC5EA325A1</key>
-			<dict>
-				<key>explicitFileType</key>
-				<string>sourcecode.c.h</string>
-				<key>fileEncoding</key>
-				<string>30</string>
-				<key>isa</key>
-				<string>PBXFileReference</string>
-				<key>name</key>
-				<string>AccessExpireLRUCache.h</string>
-				<key>path</key>
-				<string>../../../addons/ofxIO/libs/ofxIO/include/ofx/AccessExpireLRUCache.h</string>
-				<key>sourceTree</key>
-				<string>SOURCE_ROOT</string>
-			</dict>
-			<key>A3B73248CEBEBB4479B4F1BB</key>
-			<dict>
-				<key>explicitFileType</key>
-				<string>sourcecode.c.h</string>
-				<key>fileEncoding</key>
-				<string>30</string>
-				<key>isa</key>
-				<string>PBXFileReference</string>
-				<key>name</key>
-				<string>AccessExpireCache.h</string>
-				<key>path</key>
-				<string>../../../addons/ofxIO/libs/ofxIO/include/ofx/AccessExpireCache.h</string>
-				<key>sourceTree</key>
-				<string>SOURCE_ROOT</string>
-			</dict>
 			<key>D1C382A37EE661F51AA773CC</key>
 			<dict>
 				<key>children</key>
 				<array>
-					<string>DE22FF0057C30D5DDC12B349</string>
-					<string>A3B73248CEBEBB4479B4F1BB</string>
-					<string>84E9CE5123D831AC5EA325A1</string>
 					<string>181F02B531162F6039F6ADC2</string>
-					<string>4AA726A6FEDA3FBE35B34E19</string>
-					<string>8425D8F4B3E525C269FBBD90</string>
 					<string>81B9E335116A816EA1D2A2FA</string>
-					<string>2F6C7F53A990035EB21AC78C</string>
 					<string>9E2A709AC0FDCAC46BEC3DB4</string>
 					<string>B608BB92EA071BC82EB9F62F</string>
 					<string>469AA5350C4777BED9805BC4</string>
-					<string>BF304715448041CABDB6F49E</string>
-					<string>7FED5533BA07C2DA03F0ABC9</string>
-					<string>038270DA6ACA13E6C027A072</string>
-					<string>3538D5A40C024D14F3F273BF</string>
 				</array>
 				<key>isa</key>
 				<string>PBXGroup</string>
@@ -2108,7 +1987,7 @@
 				<key>sourceTree</key>
 				<string>&lt;group&gt;</string>
 			</dict>
-			<key>DE22FF0057C30D5DDC12B349</key>
+			<key>181F02B531162F6039F6ADC2</key>
 			<dict>
 				<key>explicitFileType</key>
 				<string>sourcecode.c.h</string>
@@ -2117,9 +1996,9 @@
 				<key>isa</key>
 				<string>PBXFileReference</string>
 				<key>name</key>
-				<string>AbstractCache.h</string>
+				<string>DirectoryWatcher.h</string>
 				<key>path</key>
-				<string>../../../addons/ofxIO/libs/ofxIO/include/ofx/AbstractCache.h</string>
+				<string>../../../addons/ofxIO/libs/ofxIO/include/ofx/DirectoryWatcher.h</string>
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
@@ -2187,6 +2066,88 @@
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
+			<key>FC2042CCE56D976895CD4536</key>
+			<dict>
+				<key>children</key>
+				<array>
+					<string>9912FEC53B46A243A4DAC743</string>
+				</array>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>name</key>
+				<string>include</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>DFC5BBCB8B0B86B7FF7C1CE8</key>
+			<dict>
+				<key>children</key>
+				<array>
+					<string>FC2042CCE56D976895CD4536</string>
+				</array>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>name</key>
+				<string>json</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>9912FEC53B46A243A4DAC743</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>30</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>json.hpp</string>
+				<key>path</key>
+				<string>../../../addons/ofxIO/libs/json/include/json.hpp</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
+			<key>EBAF198F99616C610926C7E2</key>
+			<dict>
+				<key>children</key>
+				<array>
+					<string>8628713AF7420163E5DCBD81</string>
+				</array>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>name</key>
+				<string>include</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>7131B8AF61291F2E2704864E</key>
+			<dict>
+				<key>children</key>
+				<array>
+					<string>EBAF198F99616C610926C7E2</string>
+				</array>
+				<key>isa</key>
+				<string>PBXGroup</string>
+				<key>name</key>
+				<string>cpp-lru-cache</string>
+				<key>sourceTree</key>
+				<string>&lt;group&gt;</string>
+			</dict>
+			<key>8628713AF7420163E5DCBD81</key>
+			<dict>
+				<key>explicitFileType</key>
+				<string>sourcecode.c.h</string>
+				<key>fileEncoding</key>
+				<string>30</string>
+				<key>isa</key>
+				<string>PBXFileReference</string>
+				<key>name</key>
+				<string>lrucache.hpp</string>
+				<key>path</key>
+				<string>../../../addons/ofxIO/libs/cpp-lru-cache/include/lrucache.hpp</string>
+				<key>sourceTree</key>
+				<string>SOURCE_ROOT</string>
+			</dict>
 			<key>671923EC06F4340D8255DA22</key>
 			<dict>
 				<key>children</key>
@@ -2218,6 +2179,8 @@
 				<key>children</key>
 				<array>
 					<string>B40D93E4E6198327D6DA7BFA</string>
+					<string>7131B8AF61291F2E2704864E</string>
+					<string>DFC5BBCB8B0B86B7FF7C1CE8</string>
 					<string>8FE15F6815C4A8DE40915EAE</string>
 					<string>92CF4367AF54E202BCF9E084</string>
 					<string>D86EF5293C3BFC96A82C8EB7</string>
@@ -3176,6 +3139,11 @@
 						<string>../../../addons/ofxIO/libs</string>
 						<string>../../../addons/ofxIO/libs/alphanum</string>
 						<string>../../../addons/ofxIO/libs/alphanum/include</string>
+						<string>../../../addons/ofxIO/libs/cpp-lru-cache</string>
+						<string>../../../addons/ofxIO/libs/cpp-lru-cache/include</string>
+						<string>../../../addons/ofxIO/libs/json</string>
+						<string>../../../addons/ofxIO/libs/json/include</string>
+						<string>../../../addons/ofxIO/libs/json/license</string>
 						<string>../../../addons/ofxIO/libs/lz4</string>
 						<string>../../../addons/ofxIO/libs/lz4/src</string>
 						<string>../../../addons/ofxIO/libs/ofxIO</string>
@@ -3270,6 +3238,11 @@
 						<string>../../../addons/ofxIO/libs</string>
 						<string>../../../addons/ofxIO/libs/alphanum</string>
 						<string>../../../addons/ofxIO/libs/alphanum/include</string>
+						<string>../../../addons/ofxIO/libs/cpp-lru-cache</string>
+						<string>../../../addons/ofxIO/libs/cpp-lru-cache/include</string>
+						<string>../../../addons/ofxIO/libs/json</string>
+						<string>../../../addons/ofxIO/libs/json/include</string>
+						<string>../../../addons/ofxIO/libs/json/license</string>
 						<string>../../../addons/ofxIO/libs/lz4</string>
 						<string>../../../addons/ofxIO/libs/lz4/src</string>
 						<string>../../../addons/ofxIO/libs/ofxIO</string>
@@ -3391,6 +3364,7 @@
 					<string>3C9A355A55D68A8E882FEF85</string>
 					<string>1CC07C1A616F29EB8EEC3D21</string>
 					<string>B1BF03D79762719793CC9F1A</string>
+					<string>790CD6606BE3D38A9AD52AF1</string>
 					<string>D81A435CE7FDF51B41956210</string>
 					<string>1298066D39CE7EC3DA60256A</string>
 					<string>868BEDC19B53FD512D7E3100</string>
@@ -3501,6 +3475,11 @@
 						<string>../../../addons/ofxIO/libs</string>
 						<string>../../../addons/ofxIO/libs/alphanum</string>
 						<string>../../../addons/ofxIO/libs/alphanum/include</string>
+						<string>../../../addons/ofxIO/libs/cpp-lru-cache</string>
+						<string>../../../addons/ofxIO/libs/cpp-lru-cache/include</string>
+						<string>../../../addons/ofxIO/libs/json</string>
+						<string>../../../addons/ofxIO/libs/json/include</string>
+						<string>../../../addons/ofxIO/libs/json/license</string>
 						<string>../../../addons/ofxIO/libs/lz4</string>
 						<string>../../../addons/ofxIO/libs/lz4/src</string>
 						<string>../../../addons/ofxIO/libs/ofxIO</string>
@@ -3585,6 +3564,11 @@
 						<string>../../../addons/ofxIO/libs</string>
 						<string>../../../addons/ofxIO/libs/alphanum</string>
 						<string>../../../addons/ofxIO/libs/alphanum/include</string>
+						<string>../../../addons/ofxIO/libs/cpp-lru-cache</string>
+						<string>../../../addons/ofxIO/libs/cpp-lru-cache/include</string>
+						<string>../../../addons/ofxIO/libs/json</string>
+						<string>../../../addons/ofxIO/libs/json/include</string>
+						<string>../../../addons/ofxIO/libs/json/license</string>
 						<string>../../../addons/ofxIO/libs/lz4</string>
 						<string>../../../addons/ofxIO/libs/lz4/src</string>
 						<string>../../../addons/ofxIO/libs/ofxIO</string>

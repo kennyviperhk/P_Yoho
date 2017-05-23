@@ -1,4 +1,12 @@
 #include "ofApp.h"
+
+void ofApp::song1(){
+    //================== Song 1 ==================
+
+
+
+}
+
 //--------------------------------------------------------------
 void ofApp::setup(){
     
@@ -161,6 +169,8 @@ void ofApp::update(){
      }
      */
     MovementController.update();
+
+
     
 }
 
@@ -251,6 +261,7 @@ void ofApp::draw(){
             if(style_Btn){
                 
                 if(currentStyle == 11){
+                    
                     string writeInTotal = "LX : ";
                     
                     string toWrite = "";
@@ -295,6 +306,10 @@ void ofApp::draw(){
                     
                     serialWrite(currentDebugArduinoID, toWrite);
                     currentdisplayLog = writeInTotal;
+                    
+                    //MovementControl
+                    
+                    //MovementController.getPoints();
                     
                 }
                 if(currentStyle == 2){

@@ -17,13 +17,15 @@ void stepper_style() {
   }
   if (style == 2) {
     //STYLE - SPEED_X - ACCEL_X - SPEED_Y - ACCEL_Y - POS1_LX - POS2_LX - POS1_LY - POS2_LY - POS1_RX - POS2_RX - POS1_RY - POS2_RY
-     
-    for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
-      stepperSpeed[stepperNumber] = input_value[1];
-      stepperAccel[stepperNumber] = input_value[2];
 
-      stepperSpeed[stepperNumber] = input_value[3];
-      stepperAccel[stepperNumber] = input_value[4];
+    for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
+      if (stepperNumber == 0 || stepperNumber == 2) {
+        stepperSpeed[stepperNumber] = input_value[1];
+        stepperAccel[stepperNumber] = input_value[2];
+      } else {
+        stepperSpeed[stepperNumber] = input_value[3];
+        stepperAccel[stepperNumber] = input_value[4];
+      }
       //abPos[stepperNumber] = true;
     }
 
@@ -45,12 +47,12 @@ void stepper_style() {
         steppers[stepperNumber]->setMaxSpeed(stepperSpeed[stepperNumber]);
         steppers[stepperNumber]->setAcceleration(stepperAccel[stepperNumber]);
         if (abPos[stepperNumber]) {
-       //   Serial.print(stepperNumber);
-        //  Serial.println("A");
+          //   Serial.print(stepperNumber);
+          //  Serial.println("A");
           steppers[stepperNumber]->moveTo((inverseDir[stepperNumber])*stepperPos1[stepperNumber]);
         } else {
-         //           Serial.print(stepperNumber);
-       //   Serial.println("B");
+          //           Serial.print(stepperNumber);
+          //   Serial.println("B");
           steppers[stepperNumber]->moveTo((inverseDir[stepperNumber])*stepperPos2[stepperNumber]);
         }
         abPos[stepperNumber] = !abPos[stepperNumber];

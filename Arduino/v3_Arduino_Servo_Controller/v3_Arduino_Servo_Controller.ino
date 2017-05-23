@@ -1,4 +1,3 @@
-
 /*  AccelStepper Library
    http://www.airspayce.com/mikem/arduino/AccelStepper/
    http://www.airspayce.com/mikem/arduino/AccelStepper/AccelStepper-1.56.zip
@@ -88,9 +87,9 @@ int style = 0; //0 command to go
 
 
 //style 2
-    long stepperPos1[numOfStepper];
-    long stepperPos2[numOfStepper];
-    bool abPos[numOfStepper];
+long stepperPos1[numOfStepper];
+long stepperPos2[numOfStepper];
+bool abPos[numOfStepper];
 
 // ============ ============ ================
 // ============ ====SETUP=== ================
@@ -140,12 +139,30 @@ void setup() {
   digitalWrite(DI1_SERVO_ON_rx, HIGH);
   digitalWrite(DI1_SERVO_ON_ry, HIGH);
 
+
+  digitalWrite(DI2_ALARM_RESET_lx, HIGH);
+  digitalWrite(DI2_ALARM_RESET_ly, HIGH);
+  digitalWrite(DI2_ALARM_RESET_rx, HIGH);
+  digitalWrite(DI2_ALARM_RESET_ry, HIGH);
+
+  delay(500);
+
+
+
+  digitalWrite(DI2_ALARM_RESET_lx, LOW);
+  digitalWrite(DI2_ALARM_RESET_ly, LOW);
+  digitalWrite(DI2_ALARM_RESET_rx, LOW);
+  digitalWrite(DI2_ALARM_RESET_ry, LOW);
   /*
     #define DI2_ALARM_RESET_lx 50
     #define DI2_ALARM_RESET_ly 51
     #define DI2_ALARM_RESET_rx 52
     #define DI2_ALARM_RESET_ry 53*/
 
+  pinMode(DO5_ALRM_lx, INPUT);
+  pinMode(DO5_ALRM_ly, INPUT);
+  pinMode(DO5_ALRM_rx, INPUT);
+  pinMode(DO5_ALRM_ry, INPUT);
 }
 
 
@@ -157,7 +174,7 @@ void loop() {
   // == == == == == == SERIAL == == == == == == == ==
   serial_decode();
   check_update();
-
+  alarm_check();
   if (isEmergencyStop) {
     //TODO -> check brake
   }
@@ -172,10 +189,10 @@ void loop() {
         steppers[stepperNumber]->setSpeed(0);
       } else {
         if (stepperNumber == 1 || stepperNumber == 3) {
-                steppers[stepperNumber]->setMaxSpeed((inverseDir[stepperNumber])*home_speed * 2);
+          steppers[stepperNumber]->setMaxSpeed((inverseDir[stepperNumber])*home_speed * 2);
           steppers[stepperNumber]->setSpeed(-1 * (inverseDir[stepperNumber])*home_speed * 2);
         } else {
-                steppers[stepperNumber]->setMaxSpeed((inverseDir[stepperNumber])*home_speed);
+          steppers[stepperNumber]->setMaxSpeed((inverseDir[stepperNumber])*home_speed);
           steppers[stepperNumber]->setSpeed(-1 * (inverseDir[stepperNumber])*home_speed);
         }
       }
