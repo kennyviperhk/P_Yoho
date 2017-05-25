@@ -57,7 +57,7 @@ int st = 9;
 int dir = 8;
 AccelStepper stepper (AccelStepper::DRIVER, st, dir);
 
-
+// L == up
 bool goHome = true;
 
 
@@ -185,9 +185,9 @@ void loop() {
       } else
     */
     if (reading3 > 500) {
-      stepper.setCurrentPosition(0);
-      Serial.println(reading3);
-     moveToPos = 0;
+  //    stepper.setCurrentPosition(0);
+    //  Serial.println(reading3);
+   //  moveToPos = 0;
       Serial.println("Reached Home A3");
   // stepper.run();
     }
@@ -234,6 +234,7 @@ void loop() {
     digitalWrite(DI1_SERVO_ON_ly, HIGH);
     digitalWrite(DI1_SERVO_ON_rx, HIGH);
     digitalWrite(DI1_SERVO_ON_ry, HIGH);
+
 
 
     if (inChar == 'l') {

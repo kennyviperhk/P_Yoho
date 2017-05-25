@@ -37,8 +37,17 @@ public:
         
         curveControls.setup("CurveReadWrite", "settings.xml", x1+w+10, y1);
         for(int i=0; i< 8; i++){
-            ofParameter<int> a;
-            a.set("C" + ofToString(i),0,0,1000); //lx,ly,rx,ry
+
+                ofParameter<int> a;
+                        if(i==0){
+                            a.set("C" + ofToString(i),10,0,400); //lx,ly,rx,ry
+                        }
+                        else if(i==1){
+                                a.set("C" + ofToString(i),10,0,20); //lx,ly,rx,ry
+                        }
+                        else{
+            a.set("C" + ofToString(i),100,0,1000);//lx,ly,rx,ry
+            }
             curves.push_back(a);
             curveControls.add(curves[i]);
             
@@ -60,10 +69,20 @@ public:
         vector<ofPoint> p;
         p.clear();
         for(int i=0; i< numOfCables; i++){
-            p.push_back(trail.getPointAtPercent((float)i/numOfCables));
+            p.push_back(trail.getPointAtPercent((float)i /numOfCables));
+            p[i].y = p[i].y * curves[1] + (curves[2]-500)*2.5;
+            p[i].x = p[i].x;
         }
+        
         return p;
         
+    }
+    
+    void setPoints(int a, int b, int c,int d){
+        curves[0] = a;
+        curves[1] = b;
+        curves[2] = c;
+        curves[3] = d;
     }
     
     void update(){
@@ -79,7 +98,7 @@ public:
             if (angle>=TWO_PI) { //if the angle is more than or equal to two PI (a full rotation measured in Radians) then make it zero.
                 angle=0;
             }
-            y=(curveH/2)+ (curveH/2)*sin(angle);
+            y=(curveH/2)+ (curveH/2)*sin(angle+ curves[3]);
             trail.addVertex(ofPoint(curveCoord.x+ x,curveCoord.y+ y));
         }
     };
@@ -95,7 +114,7 @@ public:
         trail.draw();
         for(int i=0; i< numOfCables; i++){
             ofSetColor(0, 140, 255);
-            ofPoint p = getPoints()[i];
+            ofPoint p = trail.getPointAtPercent((float)i/numOfCables);
             ofDrawCircle(p,5);
         }
         

@@ -1,12 +1,137 @@
 #include "ofApp.h"
 
 void ofApp::song1(){
-    //================== Song 1 ==================
+    
+    vector<ofPoint> mcPoints = MovementController.getPoints();
+    
+    for(int i=0; i < NUM_OF_CABLES; i++){
+        for(int j=0; j < 8; j++){
+            if(output_pts[j]){
+                if(j==0){
+                    cablePosLx[i] = mcPoints[i].y;
+                    if(cablePosLx[i] >= MAX_X_POS){
+                        cablePosLx[i] = MAX_X_POS;
+                    }else if (cablePosLx[i]<= 0){
+                        cablePosLx[i] = 0;
+                    }
+                }else if(j==1){
+                    cablePosLy[i] = mcPoints[i].y*6;
+                    
+                    if(cablePosLy[i] >= MAX_Y_POS){
+                        cablePosLy[i] = MAX_Y_POS;
+                    }else if (cablePosLy[i]<= 0){
+                        cablePosLy[i] = 0;
+                    }
+                }else if(j==2){
+                    cablePosRx[i] = mcPoints[i].y;
+                    
+                    if(cablePosRx[i] >= MAX_X_POS){
+                        cablePosRx[i] = MAX_X_POS;
+                    }else if (cablePosRx[i]<= 0){
+                        cablePosRx[i] = 0;
+                    }
+                }else if(j==3){
+                    cablePosRy[i] = mcPoints[i].y*6;
+                    
+                    if(cablePosRy[i] >= MAX_Y_POS){
+                        cablePosRy[i] = MAX_Y_POS;
+                    }else if (cablePosRy[i]<= 0){
+                        cablePosRy[i] = 0;
+                    }
+                }
+                else  if(j==4){
+                    cablePosLx2[i] = mcPoints[i].y;
+                    if(cablePosLx2[i] >= MAX_X_POS){
+                        cablePosLx2[i] = MAX_X_POS;
+                    }else if (cablePosLx2[i]<= 0){
+                        cablePosLx2[i] = 0;
+                    }
+                }else if(j==5){
+                    cablePosLy2[i] = mcPoints[i].y*6;
+                    
+                    if(cablePosLy2[i] >= MAX_Y_POS){
+                        cablePosLy2[i] = MAX_Y_POS;
+                    }else if (cablePosLy2[i]<= 0){
+                        cablePosLy2[i] = 0;
+                    }
+                }else if(j==6){
+                    cablePosRx2[i] = mcPoints[i].y;
+                    
+                    if(cablePosRx2[i] >= MAX_X_POS){
+                        cablePosRx2[i] = MAX_X_POS;
+                    }else if (cablePosRx2[i]<= 0){
+                        cablePosRx2[i] = 0;
+                    }
+                }else if(j==7){
+                    cablePosRy2[i] = mcPoints[i].y*6;
+                    
+                    if(cablePosRy2[i] >= MAX_Y_POS){
+                        cablePosRy2[i] = MAX_Y_POS;
+                    }else if (cablePosRy2[i]<= 0){
+                        cablePosRy2[i] = 0;
+                    }
+                    
+                }
+            }
+        }
+        
+        //================== Song 1 ==================
+        if(song1Stage == 0){
+            if(currTime - prevTime >timeDiff){
+                timeDiff = ofRandom(10000,20000);
+                ofLog() << "timeDiff ; "<< timeDiff;
+                prevTime = currTime;
+                setPattern = true;
+                
+            }
+            if(setPattern){
 
+                int option = (int)ofRandom(4);
+                if(option ==3){//TFTF , FTTF, TFTF, FTFT
+                    output_pts[1] = true;
+                    output_pts[3] = false;
 
+                    output_pts[0] = true;
+                    output_pts[2] = false;
+                }else if(option ==2)
+                    {
+                    output_pts[1] = false;
+                    output_pts[3] = true;
+                        
+                    output_pts[0] = true;
+                    output_pts[2] = false;
+      
+                }
+                else if(option ==1){
+                    output_pts[1] = true;
+                    output_pts[3] = false;
+                    
+                    output_pts[0] = false;
+                    output_pts[2] = true;
+                }
+                else {
+                    output_pts[1] = false;
+                    output_pts[3] = true;
+                    
+                    output_pts[0] = false;
+                    output_pts[2] = true;
+                }
+                MovementController.setPoints((int)ofRandom(30,62), ofRandom(7,13), 0, (int)ofRandom(0,700));
+                setPattern = false;
+                ofLog() << "Set Pattern";
+
+                writeStyle(2);
+
+            }
+        
+ 
+   
+        }
+      //      ofLog() << "currTime - prevTime ; "<< currTime - prevTime;
+    
+    }
 
 }
-
 //--------------------------------------------------------------
 void ofApp::setup(){
     
@@ -27,7 +152,7 @@ void ofApp::setup(){
     //================== debugMode ==================
     
     page = 0;
-    numOfPages = 4;
+    numOfPages = 5;
     debugMode = true;
     isEmergencyStop = false;
     for(int i=0; i < arduino.size(); i++){
@@ -63,11 +188,16 @@ void ofApp::setup(){
     showMovementController = false;
     
     
+    //================== Song 1 ==================
+    currentSong = 1;
+    song1Stage = 0;
 }
 
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    
+             currTime = ofGetElapsedTimeMillis();
     
     ofSetWindowTitle(ofToString(ofGetFrameRate()));
     
@@ -143,12 +273,13 @@ void ofApp::update(){
     //================== Kinectic Visualisation ==================
     
     
-    vector<ofPoint> mcPoints = MovementController.getPoints();
+    
+    
     
     
     for(int i=0; i< NUM_OF_CABLES; i++){
         
-        kinecticVisualisation.set(NUM_OF_CABLES ,i, currentStyle ,ofMap(cablePosLx[i],0,1000,0,2) ,ofMap(cablePosLy[i],0,1000,0,1),ofMap(cablePosRx[i],0,1000,0,2), ofMap(cablePosRy[i],0,1000,0,1));
+        kinecticVisualisation.set(NUM_OF_CABLES ,i, currentStyle ,ofMap(cablePosLx[i],0,MAX_X_POS,0,2) ,ofMap(cablePosLy[i],0,MAX_Y_POS,0,1),ofMap(cablePosRx[i],0,MAX_X_POS,0,2), ofMap(cablePosRy[i],0,MAX_Y_POS,0,1));
         
     }
     
@@ -169,8 +300,8 @@ void ofApp::update(){
      }
      */
     MovementController.update();
-
-
+    
+    
     
 }
 
@@ -217,10 +348,10 @@ void ofApp::draw(){
             // if(isArduinoConnected[i]){
             if(isArduinoConnectedBySerial[i]){
                 ofSetColor(0,updateColor[i],updateColor[i]);
-                ss2 << "Connected Devices (" << i << ") : " << arduino[i].getPortName() << "receivedMsg: " << prevReceivedString[i] << endl;
+                ss2 << "Connected Devices (" << i+1 << ") : " << arduino[i].getPortName() << "receivedMsg: " << prevReceivedString[i] << endl;
             }else{
                 ofSetColor(0,0,0);
-                ss2 << "Connected Devices (" << i << ") : " << "Disconnected" << endl;
+                ss2 << "Connected Devices (" << i+1 << ") : " << "Disconnected" << endl;
             }
             ofDrawBitmapString(ss2.str(), ofVec2f(20, 25*i + 100));
             
@@ -249,6 +380,10 @@ void ofApp::draw(){
                 
                 
             }
+            if(reset_Btn){
+                serialWrite(currentDebugArduinoID, "Q");
+            }
+            
             if(home_Btn){
                 serialWrite(currentDebugArduinoID, "H");
                 //manual home "G"
@@ -258,113 +393,17 @@ void ofApp::draw(){
             if(EEPROM_loadBtn){
                 
             }
+            if(style_Btn_all_same){
+                writeStyle(0);//specific = 0, all same = 1, all diff = 2
+                
+            }
+            
+            if(style_Btn_all){
+                writeStyle(1);//specific = 0, all same = 1, all diff = 2
+            }
+            
             if(style_Btn){
-                
-                if(currentStyle == 11){
-                    
-                    string writeInTotal = "LX : ";
-                    
-                    string toWrite = "";
-                    
-                    toWrite+= ofToString(currentStyle);
-                    toWrite+= "-";
-                    
-                    toWrite+= ofToString((int)cableSpeedLx[currentDebugArduinoID]);
-                    toWrite+= "-";
-                    toWrite+= ofToString((int)cableAccelLx[currentDebugArduinoID]);
-                    toWrite+= "-";
-                    toWrite+= ofToString((int)cablePosLx[currentDebugArduinoID]);
-                    toWrite+= "-";
-                    
-                    writeInTotal=toWrite + " LY:";
-                    
-                    toWrite+= ofToString((int)cableSpeedLy[currentDebugArduinoID]);
-                    toWrite+= "-";
-                    toWrite+= ofToString((int)cableAccelLy[currentDebugArduinoID]);
-                    toWrite+= "-";
-                    toWrite+= ofToString((int)cablePosLy[currentDebugArduinoID]);
-                    toWrite+= "-";
-                    
-                    writeInTotal=toWrite +" RX: ";
-                    
-                    toWrite+= ofToString((int)cableSpeedRx[currentDebugArduinoID]);
-                    toWrite+= "-";
-                    toWrite+= ofToString((int)cableAccelRx[currentDebugArduinoID]);
-                    toWrite+= "-";
-                    toWrite+= ofToString((int)cablePosRx[currentDebugArduinoID]);
-                    toWrite+= "-";
-                    
-                    writeInTotal=toWrite +" RY: ";;
-                    
-                    toWrite+= ofToString((int)cableSpeedRy[currentDebugArduinoID]);
-                    toWrite+= "-";
-                    toWrite+= ofToString((int)cableAccelRy[currentDebugArduinoID]);
-                    toWrite+= "-";
-                    toWrite+= ofToString((int)cablePosRy[currentDebugArduinoID]);
-                    
-                    writeInTotal=toWrite;
-                    
-                    serialWrite(currentDebugArduinoID, toWrite);
-                    currentdisplayLog = writeInTotal;
-                    
-                    //MovementControl
-                    
-                    //MovementController.getPoints();
-                    
-                }
-                if(currentStyle == 2){
-                    string writeInTotal = "SPEED - ACCEL - : ";
-                    
-                    string toWrite = "";
-                    
-                    toWrite+= ofToString(currentStyle);
-                    toWrite+= "-";
-                    
-                    toWrite+= ofToString((int)cableSpeedX);
-                    toWrite+= "-";
-                    toWrite+= ofToString((int)cableAccelX);
-                    toWrite+= "-";
-                    toWrite+= ofToString((int)cableSpeedY);
-                    toWrite+= "-";
-                    toWrite+= ofToString((int)cableAccelY);
-                    toWrite+= "-";
-                    
-                    writeInTotal=toWrite + " LX:";
-                    
-                    toWrite+= ofToString((int)cablePosLx[currentDebugArduinoID]);
-                    toWrite+= "-";
-                    toWrite+= ofToString((int)cablePosLx2[currentDebugArduinoID]);
-                    toWrite+= "-";
-                    
-                    writeInTotal=toWrite + " LY:";
-                    
-                    toWrite+= ofToString((int)cablePosLy[currentDebugArduinoID]);
-                    toWrite+= "-";
-                    toWrite+= ofToString((int)cablePosLy2[currentDebugArduinoID]);
-                    toWrite+= "-";
-                    
-                    writeInTotal=toWrite +" RX: ";
-
-                    toWrite+= ofToString((int)cablePosRx[currentDebugArduinoID]);
-                    toWrite+= "-";
-                    toWrite+= ofToString((int)cablePosRx2[currentDebugArduinoID]);
-                    toWrite+= "-";
-                    
-                    writeInTotal=toWrite +" RY: ";;
-                    
-                    toWrite+= ofToString((int)cablePosRy[currentDebugArduinoID]);
-                    toWrite+= "-";
-                    toWrite+= ofToString((int)cablePosRy2[currentDebugArduinoID]);
-                    
-                    writeInTotal=toWrite;
-                    
-                    serialWrite(currentDebugArduinoID, toWrite);
-                    currentdisplayLog = writeInTotal;
-                    
-                }
-
-                
-                
+                writeStyle(2);//specific = 0, all same = 1, all diff = 2
                 
             }
             
@@ -386,6 +425,7 @@ void ofApp::draw(){
         
         if(drawDebugGui){
             guiDebug.draw();
+            guiDebug2.draw();
         }
         
         guiCablePosLx.draw();
@@ -404,7 +444,7 @@ void ofApp::draw(){
         displayLog(currentdisplayLog);
         
     }else{
-       // ofBackground(100, 100, 100);
+        // ofBackground(100, 100, 100);
         
     }
     //================== Music Player ==================
@@ -421,35 +461,55 @@ void ofApp::draw(){
     if(showMovementController){
         MovementController.draw();
     }
+    if(showOffset){
+        guiCablePosLxOffset.draw();
+        guiCablePosLyOffset.draw();
+        guiCablePosRxOffset.draw();
+        guiCablePosRyOffset.draw();
+        
+    }
     
-
+    if(currentSong ==1){
+        song1();
+    }
+    
     if(page == 0){
         drawDebugGui = true;
         drawKineticVisualizationFbo = true;
         showMusicPlayer = false;
         showMovementController = false;
+        showOffset = false;
     }else if(page == 1){
+        drawDebugGui = true;
+        drawKineticVisualizationFbo = false;
+        showMusicPlayer = false;
+        showMovementController = false;
+        showOffset = true;
+    }else if(page == 2){
         drawDebugGui = false;
         drawKineticVisualizationFbo = false;
         showMusicPlayer = true;
         showMovementController = false;
-    }else if(page == 2){
-        drawDebugGui = false;
-        drawKineticVisualizationFbo = true;
-        showMusicPlayer = false;
-        showMovementController = true;
-    }else{
-    
+        showOffset = false;
+    }else if(page == 3){
         drawDebugGui = true;
         drawKineticVisualizationFbo = true;
         showMusicPlayer = false;
-        showMovementController = false;
+        showMovementController = true;
+        showOffset = false;
+    }else{
         
-    guiCablePosLx2.draw();
-    guiCablePosLy2.draw();
-    guiCablePosRx2.draw();
-    guiCablePosRy2.draw();
-    guiCableSpeedAccelAll.draw();
+        drawDebugGui = true;
+        drawKineticVisualizationFbo = true;
+        showMusicPlayer = false;
+        showMovementController = true;
+        showOffset = false;
+        
+        guiCablePosLx2.draw();
+        guiCablePosLy2.draw();
+        guiCablePosRx2.draw();
+        guiCablePosRy2.draw();
+        guiCableSpeedAccelAll.draw();
     }
 }
 
@@ -547,9 +607,13 @@ void ofApp::guiSetup(){
     //--- EEPROM ---
     parametersDebug.setName("settings");
     guiDebug.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 630, 0);
+    
     guiDebug.setSize(100, 1000);
     guiDebug.setWidthElements(100);
     
+    guiDebug2.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 830, 0);
+    guiDebug2.setSize(100, 1000);
+    guiDebug.setWidthElements(100);
     
     vector<string> EEPROM_names = {"HOME_MAXSPEED", "MAX_SPEED_X", "MAX_ACCELERATION_X", "MAX_SPEED_Y","MAX_ACCELERATION_Y","MAX_POSITION_LX","MAX_POSITION_LY","MAX_POSITION_RX","MAX_POSITION_RY","INVERT_DIR_LX","INVERT_DIR_LY","INVERT_DIR_RX","INVERT_DIR_RY"};
     
@@ -557,7 +621,8 @@ void ofApp::guiSetup(){
     vector<int> EEPROM_min = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     vector<int> EEPROM_max = {500, 1000, 5000, 1000,5000, 1000, 1000, 1000, 1000, 1, 1, 1, 1}; //Todo Transfer definition /variables to xml
     
-    guiDebug.add(currentDebugArduinoID.set("ArduinoID",0,0,NUM_OF_CABLES));
+    guiDebug.add(currentDebugArduinoID.set("Cable No + 1",0,0,NUM_OF_CABLES));
+    guiDebug.add(currentSong.set("Song",0,0,NUM_OF_CABLES));
     
     for(int i=0; i< EEPROM_names.size(); i++){
         ofParameter<int> a;
@@ -581,14 +646,67 @@ void ofApp::guiSetup(){
     guiDebug.add(textField.setup("Serial:", "0-0-0-0-0"));
     guiDebug.add(currentStyle.set("Style",11,0,NUM_OF_CABLES)); //TODO
     guiDebug.add(style_Btn.setup("Set Position:"));
+    guiDebug.add(style_Btn_all_same.setup("Set Position ALL Same:"));
+    guiDebug.add(style_Btn_all.setup("Set Position ALL:"));
+    guiDebug.add(reset_Btn.setup("Reset:"));
     guiDebug.add(home_Btn.setup("Home: "));
     guiDebug.add(all_Tog.setup("All Val:"));
     
-    guiDebug.add(all_Tog.setup("Set Position:"));
+    int numOfWaveForm = 4;
+    for(int i=0; i< 8; i++){
+        ofParameter<bool> a;
+        a.set("input " + ofToString(i),false);
+        ofParameter<bool> b;
+        string c = "";
+        if(i==0){
+            c+= "Lx";
+        }
+        if(i==1){
+            c+= "Ly";
+        }
+        if(i==2){
+            c+= "Rx";
+        }
+        if(i==3){
+            c+= "Ry";
+        }
+        if(i==4){
+            c+= "Lx2";
+        }
+        if(i==5){
+            c+= "Ly2";
+        }
+        if(i==6){
+            c+= "Rx2";
+        }
+        if(i==7){
+            c+= "Ry2";
+        }
+        
+        b.set(c,false);
+        input_pts.push_back(a);
+        output_pts.push_back(b);
+        guiDebug.add(input_pts[i]);
+        guiDebug.add(output_pts[i]);
+    }
+    
+    for(int i=0; i< NUM_OF_CABLES; i++){
+        ofParameter<bool> a;
+        if(i == 1 || i == 6 || i == 10 || i == 16 ){
+            a.set("input " + ofToString(i),false);
+        }else{
+            a.set("input " + ofToString(i),true);
+        }
+        working_cable.push_back(a);
+        guiDebug2.add(working_cable[i]);
+    }
+    
+    
+    //guiDebug.add(all_Tog.setup("Set Position:"));
     
     //textField.addListener(this,&ofApp::serialTextInput);
     //--- Cable Position Control ---
-
+    
     
     parametersCablePos.setName("cablePosition");
     guiCablePosLx.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 200, 0);
@@ -613,9 +731,41 @@ void ofApp::guiSetup(){
         guiCablePosRx.add(cablePosRx[i]);
         guiCablePosRy.add(cablePosRy[i]);
     }
+    
+    //--- Cable Position Offset Control ---
+    showOffset = false;
+    
+    parametersCablePosOffset.setName("cablePositionOffset");
+    guiCablePosLxOffset.setup("EEPROMReadWrite", "settings.xml",  100, 0);
+    guiCablePosLyOffset.setup("EEPROMReadWrite", "settings.xml",  100, 400);
+    guiCablePosRxOffset.setup("EEPROMReadWrite", "settings.xml",  200, 0);
+    guiCablePosRyOffset.setup("EEPROMReadWrite", "settings.xml",  200, 400);
+    for(int i=0; i< NUM_OF_CABLES; i++){
+        ofParameter<int> a;
+        a.set("Offset Lx" + ofToString(i),0,0,MAX_X_POS*0.1); //lx,ly,rx,ry
+        ofParameter<int> b;
+        b.set("Offset Ly" + ofToString(i),0,0,MAX_Y_POS*0.1);
+        ofParameter<int> c;
+        c.set("Offset Rx" + ofToString(i),0,0,MAX_X_POS*0.1);
+        ofParameter<int> d;
+        d.set("Offset Ry" + ofToString(i),0,0,MAX_Y_POS*0.1);
+        cablePosLxOffset.push_back(a);
+        cablePosLyOffset.push_back(b);
+        cablePosRxOffset.push_back(c);
+        cablePosRyOffset.push_back(d);
+        guiCablePosLxOffset.add(cablePosLxOffset[i]);
+        guiCablePosLyOffset.add(cablePosLyOffset[i]);
+        guiCablePosRxOffset.add(cablePosRxOffset[i]);
+        guiCablePosRyOffset.add(cablePosRyOffset[i]);
+    }
+    
+    
+    
+    
+    
     //--- Cable Accel Control ---
     
-
+    
     
     parametersCableAccel.setName("cableAccel");
     guiCableAccelLx.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 310, 0);
@@ -678,6 +828,16 @@ void ofApp::guiSetup(){
     guiCablePosRy.setSize(guiPosCableW, guiCableH);
     guiCablePosRy.setWidthElements(guiPosCableW);
     
+    
+    guiCablePosLxOffset.setSize(guiPosCableW, guiCableH);
+    guiCablePosLxOffset.setWidthElements(guiPosCableW);
+    guiCablePosLyOffset.setSize(guiPosCableW, guiCableH);
+    guiCablePosLyOffset.setWidthElements(guiPosCableW);
+    guiCablePosRxOffset.setSize(guiPosCableW, guiCableH);
+    guiCablePosRxOffset.setWidthElements(guiPosCableW);
+    guiCablePosRyOffset.setSize(guiPosCableW, guiCableH);
+    guiCablePosRyOffset.setWidthElements(guiPosCableW);
+    
     int guiCableW = 50;
     
     guiCableAccelLx.setSize(guiCableW, guiCableH);
@@ -729,12 +889,12 @@ void ofApp::guiSetup(){
     }
     
     guiCableSpeedAccelAll.setup("EEPROMReadWrite", "settings.xml", 400, 0);
-
-    cableSpeedX.set("S2 X ",800,0,MAX_X_SPEED);
-    cableAccelX.set("A2 X " ,300,0,MAX_X_ACCEL);
     
-    cableSpeedY.set("S2 Y ",800,0,MAX_Y_SPEED);
-    cableAccelY.set("A2 Y ",300,0,MAX_Y_ACCEL);
+    cableSpeedX.set("S2 X ",270,0,MAX_X_SPEED);
+    cableAccelX.set("A2 X " ,140,0,MAX_X_ACCEL);
+    
+    cableSpeedY.set("S2 Y ",280,0,MAX_Y_SPEED);
+    cableAccelY.set("A2 Y ",240,0,MAX_Y_ACCEL);
     
     guiCableSpeedAccelAll.add(cableSpeedX);
     guiCableSpeedAccelAll.add(cableAccelX);
@@ -763,6 +923,334 @@ void ofApp::displayLog(string s=""){
     ofSetColor(255, 255, 255);
     ofDrawBitmapString("Status: " + currentdisplayLog, 10, ofGetHeight()-10);
 }
+
+//--------------------------------------------------------------
+//--------------------------STYLE -----------------------------
+//--------------------------------------------------------------
+
+void ofApp::writeStyle(int s){ //specific = 0, all same = 1, all diff = 2
+    if (s==0){
+    
+        if(currentStyle == 11){
+            
+            string writeInTotal = "LX : ";
+            
+            string toWrite = "";
+            
+            toWrite+= ofToString(currentStyle);
+            toWrite+= "-";
+            
+            toWrite+= ofToString((int)cableSpeedLx[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cableAccelLx[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cablePosLx[currentDebugArduinoID]);
+            toWrite+= "-";
+            
+            writeInTotal=toWrite + " LY:";
+            
+            toWrite+= ofToString((int)cableSpeedLy[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cableAccelLy[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cablePosLy[currentDebugArduinoID]);
+            toWrite+= "-";
+            
+            writeInTotal=toWrite +" RX: ";
+            
+            toWrite+= ofToString((int)cableSpeedRx[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cableAccelRx[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cablePosRx[currentDebugArduinoID]);
+            toWrite+= "-";
+            
+            writeInTotal=toWrite +" RY: ";;
+            
+            toWrite+= ofToString((int)cableSpeedRy[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cableAccelRy[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cablePosRy[currentDebugArduinoID]);
+            
+            writeInTotal=toWrite;
+            
+            serialWrite(-1, toWrite);
+            currentdisplayLog = writeInTotal;
+            
+            //MovementController
+            
+            //MovementController.getPoints();
+            
+        }
+        
+        if(currentStyle == 2){
+            string writeInTotal = "SPEED - ACCEL - : ";
+            
+            string toWrite = "";
+            
+            toWrite+= ofToString(currentStyle);
+            toWrite+= "-";
+            
+            toWrite+= ofToString((int)cableSpeedX);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cableAccelX);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cableSpeedY);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cableAccelY);
+            toWrite+= "-";
+            
+            writeInTotal=toWrite + " LX:";
+            
+            toWrite+= ofToString((int)cablePosLx[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cablePosLx2[currentDebugArduinoID]);
+            toWrite+= "-";
+            
+            writeInTotal=toWrite + " LY:";
+            
+            toWrite+= ofToString((int)cablePosLy[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cablePosLy2[currentDebugArduinoID]);
+            toWrite+= "-";
+            
+            writeInTotal=toWrite +" RX: ";
+            
+            toWrite+= ofToString((int)cablePosRx[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cablePosRx2[currentDebugArduinoID]);
+            toWrite+= "-";
+            
+            writeInTotal=toWrite +" RY: ";;
+            
+            toWrite+= ofToString((int)cablePosRy[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cablePosRy2[currentDebugArduinoID]);
+            
+            writeInTotal=toWrite;
+            
+            serialWrite(-1, toWrite);
+            currentdisplayLog = writeInTotal;
+            
+        }
+
+    }
+    else if (s ==1){
+        for(int i=0; i< NUM_OF_CABLES; i++){
+            if(currentStyle == 11){
+                
+                string writeInTotal = "LX : ";
+                
+                string toWrite = "";
+                
+                toWrite+= ofToString(currentStyle);
+                toWrite+= "-";
+                
+                toWrite+= ofToString((int)cableSpeedLx[i]);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cableAccelLx[i]);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cablePosLx[i]);
+                toWrite+= "-";
+                
+                writeInTotal=toWrite + " LY:";
+                
+                toWrite+= ofToString((int)cableSpeedLy[i]);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cableAccelLy[i]);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cablePosLy[i]);
+                toWrite+= "-";
+                
+                writeInTotal=toWrite +" RX: ";
+                
+                toWrite+= ofToString((int)cableSpeedRx[i]);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cableAccelRx[i]);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cablePosRx[i]);
+                toWrite+= "-";
+                
+                writeInTotal=toWrite +" RY: ";;
+                
+                toWrite+= ofToString((int)cableSpeedRy[i]);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cableAccelRy[i]);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cablePosRy[i]);
+                
+                writeInTotal=toWrite;
+                
+                serialWrite(i, toWrite);
+                currentdisplayLog = writeInTotal;
+                
+                //MovementController
+                
+                //MovementController.getPoints();
+                
+            }
+            
+            if(currentStyle == 2){
+                string writeInTotal = "SPEED - ACCEL - : ";
+                
+                string toWrite = "";
+                
+                toWrite+= ofToString(currentStyle);
+                toWrite+= "-";
+                
+                toWrite+= ofToString((int)cableSpeedX);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cableAccelX);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cableSpeedY);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cableAccelY);
+                toWrite+= "-";
+                
+                writeInTotal=toWrite + " LX:";
+                
+                toWrite+= ofToString((int)cablePosLx[i]);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cablePosLx2[i]);
+                toWrite+= "-";
+                
+                writeInTotal=toWrite + " LY:";
+                
+                toWrite+= ofToString((int)cablePosLy[i]);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cablePosLy2[i]);
+                toWrite+= "-";
+                
+                writeInTotal=toWrite +" RX: ";
+                
+                toWrite+= ofToString((int)cablePosRx[i]);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cablePosRx2[i]);
+                toWrite+= "-";
+                
+                writeInTotal=toWrite +" RY: ";;
+                
+                toWrite+= ofToString((int)cablePosRy[i]);
+                toWrite+= "-";
+                toWrite+= ofToString((int)cablePosRy2[i]);
+                
+                writeInTotal=toWrite;
+                
+                serialWrite(i, toWrite);
+                currentdisplayLog = writeInTotal;
+                
+            }
+        }
+
+    }else if (s ==2){
+        if(currentStyle == 11){
+            
+            string writeInTotal = "LX : ";
+            
+            string toWrite = "";
+            
+            toWrite+= ofToString(currentStyle);
+            toWrite+= "-";
+            
+            toWrite+= ofToString((int)cableSpeedLx[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cableAccelLx[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cablePosLx[currentDebugArduinoID]);
+            toWrite+= "-";
+            
+            writeInTotal=toWrite + " LY:";
+            
+            toWrite+= ofToString((int)cableSpeedLy[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cableAccelLy[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cablePosLy[currentDebugArduinoID]);
+            toWrite+= "-";
+            
+            writeInTotal=toWrite +" RX: ";
+            
+            toWrite+= ofToString((int)cableSpeedRx[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cableAccelRx[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cablePosRx[currentDebugArduinoID]);
+            toWrite+= "-";
+            
+            writeInTotal=toWrite +" RY: ";;
+            
+            toWrite+= ofToString((int)cableSpeedRy[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cableAccelRy[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cablePosRy[currentDebugArduinoID]);
+            
+            writeInTotal=toWrite;
+            
+            serialWrite(currentDebugArduinoID, toWrite);
+            currentdisplayLog = writeInTotal;
+            
+            //MovementController
+            
+            //MovementController.getPoints();
+            
+        }
+        
+        if(currentStyle == 2){
+            string writeInTotal = "SPEED - ACCEL - : ";
+            
+            string toWrite = "";
+            
+            toWrite+= ofToString(currentStyle);
+            toWrite+= "-";
+            
+            toWrite+= ofToString((int)cableSpeedX);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cableAccelX);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cableSpeedY);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cableAccelY);
+            toWrite+= "-";
+            
+            writeInTotal=toWrite + " LX:";
+            
+            toWrite+= ofToString((int)cablePosLx[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cablePosLx2[currentDebugArduinoID]);
+            toWrite+= "-";
+            
+            writeInTotal=toWrite + " LY:";
+            
+            toWrite+= ofToString((int)cablePosLy[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cablePosLy2[currentDebugArduinoID]);
+            toWrite+= "-";
+            
+            writeInTotal=toWrite +" RX: ";
+            
+            toWrite+= ofToString((int)cablePosRx[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cablePosRx2[currentDebugArduinoID]);
+            toWrite+= "-";
+            
+            writeInTotal=toWrite +" RY: ";;
+            
+            toWrite+= ofToString((int)cablePosRy[currentDebugArduinoID]);
+            toWrite+= "-";
+            toWrite+= ofToString((int)cablePosRy2[currentDebugArduinoID]);
+            
+            writeInTotal=toWrite;
+            
+            serialWrite(currentDebugArduinoID, toWrite);
+            currentdisplayLog = writeInTotal;
+            
+        }
+
+    }
+}
+
 
 
 //--------------------------------------------------------------
@@ -852,24 +1340,27 @@ vector<bool> ofApp::serialSetup(){ //int give the connection status of each cabl
 
 void ofApp::serialWrite(int arduinoID, string sw){
     if(arduinoID == -1){
+        //for(int i=0; i< NUM_OF_CABLES; i++){
         for(int i=0; i< arduino.size(); i++){
-            // The serial device can throw exeptions.
-            try
-            {
-                std::string text = sw;
-                
-                ofx::IO::ByteBuffer textBuffer(text);
-                
-                arduino[i].writeBytes(textBuffer);
-                arduino[i].writeByte('\n');
-            }
-            catch (const std::exception& exc)
-            {
-                ofLogError("ofApp::update") << exc.what();
+            if(working_cable[i]){
+                // The serial device can throw exeptions.
+                try
+                {
+                    std::string text = sw;
+                    
+                    ofx::IO::ByteBuffer textBuffer(text);
+                    
+                    arduino[i].writeBytes(textBuffer);
+                    arduino[i].writeByte('\n');
+                }
+                catch (const std::exception& exc)
+                {
+                    ofLogError("ofApp::update") << exc.what();
+                }
             }
         }
     }
-    else if (isArduinoConnected[arduinoID]==TRUE && arduinoID >= 0)
+    else if (isArduinoConnected[arduinoID]==TRUE && arduinoID >= 0 && working_cable[arduinoID])
     {
         
         // The serial device can throw exeptions.
@@ -890,6 +1381,8 @@ void ofApp::serialWrite(int arduinoID, string sw){
         
     }
     else{ ofLog() << "Arduino: " <<arduinoID << "not connected";} // todo put in gui
+    
+    ofLog() << "Arduino Write: " <<arduinoID <<  ":  "<<sw;
 }
 
 string ofApp::serialRead(int a){

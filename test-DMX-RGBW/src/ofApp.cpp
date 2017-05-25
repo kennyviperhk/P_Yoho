@@ -24,7 +24,7 @@ void ofApp::setup() {
     
     load = true;
     
-    dmx.connect(port, modules * channelsPerModule);
+    dmx.connect(0, modules * channelsPerModule);
     dmx.update(true); // black on startup
 }
 

@@ -19,7 +19,7 @@
 #define BAUD 57600 //Todo Transfer definition /variables to xml
 
 #define MAX_X_POS 5000
-#define MAX_Y_POS 15000
+#define MAX_Y_POS 30000
 
 #define MAX_X_SPEED 3000
 #define MAX_Y_SPEED 4000
@@ -113,6 +113,7 @@ class ofApp : public ofBaseApp{
     MovementController MovementController;
     bool showMovementController;
     
+    
     //================== Serial ==================
     
     vector<bool> serialSetup();
@@ -154,17 +155,23 @@ class ofApp : public ofBaseApp{
     
     bool debugMode;
     ofxPanel guiDebug;
+ofxPanel guiDebug2;
     ofParameterGroup parametersDebug;
     ofXml settings;
     vector<ofParameter<int>> EEPROM;
     vector<ofxButton> EEPROM_btn;
-
     
     ofxButton EEPROM_saveBtn;
     ofxButton EEPROM_loadBtn;
     ofxButton style_Btn;
+    ofxButton style_Btn_all_same;
+    ofxButton style_Btn_all;
+    ofxButton reset_Btn;
     ofxButton home_Btn;
     ofxToggle all_Tog;
+    vector<ofParameter<bool>> working_cable;
+    vector<ofParameter<bool>> input_pts;
+    vector<ofParameter<bool>> output_pts;
     
     ofxTextField textField;
     
@@ -178,6 +185,19 @@ class ofApp : public ofBaseApp{
     vector<ofParameter<int>> cablePosLy; //lx,ly,rx,ry
     vector<ofParameter<int>> cablePosRx; //lx,ly,rx,ry
     vector<ofParameter<int>> cablePosRy; //lx,ly,rx,ry
+    
+    //Cable Pos Offset
+    ofxPanel guiCablePosLxOffset;
+    ofxPanel guiCablePosLyOffset;
+    ofxPanel guiCablePosRxOffset;
+    ofxPanel guiCablePosRyOffset;
+    ofParameterGroup parametersCablePosOffset;
+    vector<ofParameter<int>> cablePosLxOffset; //lx,ly,rx,ry
+    vector<ofParameter<int>> cablePosLyOffset; //lx,ly,rx,ry
+    vector<ofParameter<int>> cablePosRxOffset; //lx,ly,rx,ry
+    vector<ofParameter<int>> cablePosRyOffset; //lx,ly,rx,ry
+    
+    bool showOffset;
     
 //Style 2
     
@@ -224,6 +244,7 @@ class ofApp : public ofBaseApp{
     
     ofParameter<int> currentDebugArduinoID;
     ofParameter<int> currentStyle;
+    void writeStyle(int s);
     
     bool serialTrigger; //TO avoid ofxButton cause multiple click and send mutiple serial command;
     long prevSerialTriggerMillis; //TO avoid ofxButton cause multiple click and send mutiple serial command;
@@ -250,6 +271,15 @@ class ofApp : public ofBaseApp{
     //================== Song 1 ==================
     
     void song1();
+    int song1Stage;
+    ofParameter<int> currentSong;
     
+
+    
+    
+    long currTime;
+    long prevTime;
+    bool setPattern;
+    int timeDiff;
 };
 
