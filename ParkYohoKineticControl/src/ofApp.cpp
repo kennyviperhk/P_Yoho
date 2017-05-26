@@ -1,7 +1,6 @@
 #include "ofApp.h"
 
-void ofApp::song1(){
-    
+void ofApp::setPoints(){
     vector<ofPoint> mcPoints = MovementController.getPoints();
     
     for(int i=0; i < NUM_OF_CABLES; i++){
@@ -74,7 +73,13 @@ void ofApp::song1(){
                 }
             }
         }
-        
+    }
+
+}
+
+void ofApp::song1(){
+    
+    
         //================== Song 1 ==================
         if(song1Stage == 0){
             if(currTime - prevTime >timeDiff){
@@ -120,7 +125,7 @@ void ofApp::song1(){
                 setPattern = false;
                 ofLog() << "Set Pattern";
 
-                writeStyle(2);
+                writeStyle(1);
 
             }
         
@@ -129,7 +134,7 @@ void ofApp::song1(){
         }
       //      ofLog() << "currTime - prevTime ; "<< currTime - prevTime;
     
-    }
+    
 
 }
 //--------------------------------------------------------------
@@ -189,7 +194,7 @@ void ofApp::setup(){
     
     
     //================== Song 1 ==================
-    currentSong = 1;
+    currentSong = 0;
     song1Stage = 0;
 }
 
@@ -394,16 +399,16 @@ void ofApp::draw(){
                 
             }
             if(style_Btn_all_same){
-                writeStyle(0);//specific = 0, all same = 1, all diff = 2
+                writeStyle(0);//all same = 0, all diff = 1, specific = 2
                 
             }
             
             if(style_Btn_all){
-                writeStyle(1);//specific = 0, all same = 1, all diff = 2
+                writeStyle(1);//all same = 0, all diff = 1, specific = 2
             }
             
             if(style_Btn){
-                writeStyle(2);//specific = 0, all same = 1, all diff = 2
+                writeStyle(2);//all same = 0, all diff = 1, specific = 2
                 
             }
             
@@ -472,7 +477,7 @@ void ofApp::draw(){
     if(currentSong ==1){
         song1();
     }
-    
+    setPoints();
     if(page == 0){
         drawDebugGui = true;
         drawKineticVisualizationFbo = true;
@@ -928,7 +933,7 @@ void ofApp::displayLog(string s=""){
 //--------------------------STYLE -----------------------------
 //--------------------------------------------------------------
 
-void ofApp::writeStyle(int s){ //specific = 0, all same = 1, all diff = 2
+void ofApp::writeStyle(int s){
     if (s==0){
     
         if(currentStyle == 11){
@@ -1340,8 +1345,8 @@ vector<bool> ofApp::serialSetup(){ //int give the connection status of each cabl
 
 void ofApp::serialWrite(int arduinoID, string sw){
     if(arduinoID == -1){
-        //for(int i=0; i< NUM_OF_CABLES; i++){
-        for(int i=0; i< arduino.size(); i++){
+        for(int i=0; i< NUM_OF_CABLES; i++){
+       // for(int i=0; i< arduino.size(); i++){
             if(working_cable[i]){
                 // The serial device can throw exeptions.
                 try

@@ -12,13 +12,28 @@ void ofApp::setup() {
     panel1.add(save.set("save", false));
     panel1.add(load.set("load", false));
     
+    panel2.setup();
+    panel2.setPosition(400, 4);
+    panel2.setName("settings 0");
+    panel2.add(save.set("save", false));
+    panel2.add(load.set("load", false));
+    
     for(int module = 1; module <= modules; module++) {
-        string label = "mod" + ofToString(module);
-        panel1.add(red[module].set("red" +ofToString(module), 0, 0, 1));
-        panel1.add(green[module].set("green"+ofToString(module), 0, 0, 1));
-        panel1.add(blue[module].set("blue"+ofToString(module), 0, 0, 1));
-        panel1.add(white[module].set("white"+ofToString(module), 0, 0, 1));
-        
+                    string label = "mod" + ofToString(module);
+        if(module<10){
+   
+        panel1.add(red[module].set("red" +ofToString(module), 1, 0, 1));
+        panel1.add(green[module].set("green"+ofToString(module), 1, 0, 1));
+        panel1.add(blue[module].set("blue"+ofToString(module), 1, 0, 1));
+        panel1.add(white[module].set("white"+ofToString(module), 1, 0, 1));
+        }
+        else{
+
+            panel2.add(red[module].set("red" +ofToString(module), 1, 0, 1));
+            panel2.add(green[module].set("green"+ofToString(module), 1, 0, 1));
+            panel2.add(blue[module].set("blue"+ofToString(module), 1, 0, 1));
+            panel2.add(white[module].set("white"+ofToString(module), 1, 0, 1));
+        }
         //panel1.add(moduleNum[module].set(label, false));
     }
     
@@ -93,4 +108,5 @@ void ofApp::draw() {
     ofPopMatrix();
     
     panel1.draw();
+    panel2.draw();
 }

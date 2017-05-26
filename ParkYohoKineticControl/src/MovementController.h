@@ -88,7 +88,6 @@ public:
     void update(){
         x=0;
         
-        
         trail.clear();
         angle = 0;
         increment = (float)curves[0]/1000/TWO_PI;
@@ -106,7 +105,6 @@ public:
     void draw(){
         // ofEnableSmoothing();
         
-        
         ofSetColor(255,0,0);
         
         ofDrawRectangle(curveCoord.x, curveCoord.y, curveW, curveH);
@@ -121,8 +119,6 @@ public:
         // ofDisableSmoothing();
         curveControls.draw();
     };
-    
-    
     
 };
 

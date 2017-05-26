@@ -281,5 +281,7 @@ ofxPanel guiDebug2;
     long prevTime;
     bool setPattern;
     int timeDiff;
+    
+    void setPoints();
 };
 
