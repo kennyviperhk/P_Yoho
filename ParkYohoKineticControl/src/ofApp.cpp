@@ -74,38 +74,42 @@ void ofApp::setPoints(){
             }
         }
     }
-
+    
 }
 
-void ofApp::song1(){
+void ofApp::song(){
     
-    
+    if(prevSong != currentSong){
+        songStage = 0;
+        prevSong = currentSong;
+        ofLog() << "Song Reset";
+    }
+    if(currentSong ==1){
         //================== Song 1 ==================
-        if(song1Stage == 0){
+        if(songStage == 0){
             if(currTime - prevTime >timeDiff){
                 timeDiff = ofRandom(10000,20000);
                 ofLog() << "timeDiff ; "<< timeDiff;
                 prevTime = currTime;
                 setPattern = true;
-                
             }
             if(setPattern){
-
+                
                 int option = (int)ofRandom(4);
                 if(option ==3){//TFTF , FTTF, TFTF, FTFT
                     output_pts[1] = true;
                     output_pts[3] = false;
-
+                    
                     output_pts[0] = true;
                     output_pts[2] = false;
                 }else if(option ==2)
-                    {
+                {
                     output_pts[1] = false;
                     output_pts[3] = true;
-                        
+                    
                     output_pts[0] = true;
                     output_pts[2] = false;
-      
+                    
                 }
                 else if(option ==1){
                     output_pts[1] = true;
@@ -124,19 +128,81 @@ void ofApp::song1(){
                 MovementController.setPoints((int)ofRandom(30,62), ofRandom(7,13), 0, (int)ofRandom(0,700));
                 setPattern = false;
                 ofLog() << "Set Pattern";
-
+                
                 writeStyle(1);
-
+                
             }
-        
- 
-   
+            
         }
-      //      ofLog() << "currTime - prevTime ; "<< currTime - prevTime;
-    
-    
+    }else if(currentSong ==2){
+        if(currTime - prevTime >timeDiff){
+            timeDiff = 600;
+            ofLog() << "timeDiff ; "<< timeDiff;
+            prevTime = currTime;
+            setPattern = true;
+        }
+        
+        if(setPattern){
+            if(songStage == 0){
+                int option = (int)ofRandom(4);
+                if(option ==3){//TFTF , FTTF, TFTF, FTFT
+                    output_pts[1] = true;
+                    output_pts[3] = false;
+                    
+                    output_pts[0] = true;
+                    output_pts[2] = false;
+                }else if(option ==2)
+                {
+                    output_pts[1] = false;
+                    output_pts[3] = true;
+                    
+                    output_pts[0] = true;
+                    output_pts[2] = false;
+                    
+                }
+                else if(option ==1){
+                    output_pts[1] = true;
+                    output_pts[3] = false;
+                    
+                    output_pts[0] = false;
+                    output_pts[2] = true;
+                }
+                else {
+                    output_pts[1] = false;
+                    output_pts[3] = true;
+                    
+                    output_pts[0] = false;
+                    output_pts[2] = true;
+                }
+                MovementController.setPoints((int)ofRandom(30,62), ofRandom(7,13), 0, (int)ofRandom(0,700));
+                
+                currentDebugArduinoID =0;
+                songStage++;
+                
+            }else if (songStage == 1){
 
+                writeStyle(2);
+                currentDebugArduinoID++;
+                
+                
+                if(currentDebugArduinoID >= NUM_OF_CABLES ){
+                    currentDebugArduinoID = 0;
+                    songStage++;
+                }
+                
+                setPattern = false;
+            }else if (songStage == 2){
+                setPattern = false;
+                songStage=0;
+            }
+            
+        }
+        
+    }
+    
+    
 }
+
 //--------------------------------------------------------------
 void ofApp::setup(){
     
@@ -195,14 +261,14 @@ void ofApp::setup(){
     
     //================== Song 1 ==================
     currentSong = 0;
-    song1Stage = 0;
+    songStage = 0;
 }
 
 
 //--------------------------------------------------------------
 void ofApp::update(){
     
-             currTime = ofGetElapsedTimeMillis();
+    currTime = ofGetElapsedTimeMillis();
     
     ofSetWindowTitle(ofToString(ofGetFrameRate()));
     
@@ -474,9 +540,9 @@ void ofApp::draw(){
         
     }
     
-    if(currentSong ==1){
-        song1();
-    }
+    
+    song();
+    
     setPoints();
     if(page == 0){
         drawDebugGui = true;
@@ -626,7 +692,7 @@ void ofApp::guiSetup(){
     vector<int> EEPROM_min = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     vector<int> EEPROM_max = {500, 1000, 5000, 1000,5000, 1000, 1000, 1000, 1000, 1, 1, 1, 1}; //Todo Transfer definition /variables to xml
     
-    guiDebug.add(currentDebugArduinoID.set("Cable No + 1",0,0,NUM_OF_CABLES));
+    guiDebug.add(currentDebugArduinoID.set("Cable No + 1",0,0,NUM_OF_CABLES-1));
     guiDebug.add(currentSong.set("Song",0,0,NUM_OF_CABLES));
     
     for(int i=0; i< EEPROM_names.size(); i++){
@@ -697,7 +763,7 @@ void ofApp::guiSetup(){
     
     for(int i=0; i< NUM_OF_CABLES; i++){
         ofParameter<bool> a;
-        if(i == 1 || i == 6 || i == 10 || i == 16 ){
+        if(i == 1 || i == 6 || i == 16 || i == 11 || i == 10){
             a.set("input " + ofToString(i),false);
         }else{
             a.set("input " + ofToString(i),true);
@@ -779,13 +845,13 @@ void ofApp::guiSetup(){
     guiCableAccelRy.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 260, 400);
     for(int i=0; i< NUM_OF_CABLES; i++){
         ofParameter<int> a;
-        a.set("A" + ofToString(i),1000,0,MAX_X_SPEED); //lx,ly,rx,ry
+        a.set("A" + ofToString(i),200,0,MAX_X_SPEED); //lx,ly,rx,ry
         ofParameter<int> b;
-        b.set("A" + ofToString(i),1000,0,MAX_Y_SPEED);
+        b.set("A" + ofToString(i),500,0,MAX_Y_SPEED);
         ofParameter<int> c;
-        c.set("A" + ofToString(i),1000,0,MAX_X_SPEED);
+        c.set("A" + ofToString(i),200,0,MAX_X_SPEED);
         ofParameter<int> d;
-        d.set("A" + ofToString(i),1000,0,MAX_Y_SPEED);
+        d.set("A" + ofToString(i),500,0,MAX_Y_SPEED);
         cableAccelLx.push_back(a);
         cableAccelLy.push_back(b);
         cableAccelRx.push_back(c);
@@ -804,13 +870,13 @@ void ofApp::guiSetup(){
     guiCableSpeedRy.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 370, 400);
     for(int i=0; i< NUM_OF_CABLES; i++){
         ofParameter<int> a;
-        a.set("S" + ofToString(i),1000,0,MAX_X_ACCEL); //lx,ly,rx,ry
+        a.set("S" + ofToString(i),200,0,MAX_X_ACCEL); //lx,ly,rx,ry
         ofParameter<int> b;
-        b.set("S" + ofToString(i),1000,0,MAX_Y_ACCEL);
+        b.set("S" + ofToString(i),400,0,MAX_Y_ACCEL);
         ofParameter<int> c;
-        c.set("S" + ofToString(i),1000,0,MAX_X_ACCEL);
+        c.set("S" + ofToString(i),200,0,MAX_X_ACCEL);
         ofParameter<int> d;
-        d.set("S" + ofToString(i),1000,0,MAX_Y_ACCEL);
+        d.set("S" + ofToString(i),400,0,MAX_Y_ACCEL);
         cableSpeedLx.push_back(a);
         cableSpeedLy.push_back(b);
         cableSpeedRx.push_back(c);
@@ -935,7 +1001,7 @@ void ofApp::displayLog(string s=""){
 
 void ofApp::writeStyle(int s){
     if (s==0){
-    
+        
         if(currentStyle == 11){
             
             string writeInTotal = "LX : ";
@@ -1039,7 +1105,7 @@ void ofApp::writeStyle(int s){
             currentdisplayLog = writeInTotal;
             
         }
-
+        
     }
     else if (s ==1){
         for(int i=0; i< NUM_OF_CABLES; i++){
@@ -1147,7 +1213,7 @@ void ofApp::writeStyle(int s){
                 
             }
         }
-
+        
     }else if (s ==2){
         if(currentStyle == 11){
             
@@ -1252,7 +1318,7 @@ void ofApp::writeStyle(int s){
             currentdisplayLog = writeInTotal;
             
         }
-
+        
     }
 }
 
@@ -1278,9 +1344,13 @@ void ofApp::checkArduinoIsConnected(){
     if(ofGetFrameNum() < 200){
         
         if(300 %10 == 0){
+           // for(int i=0; i< arduino.size(); i++){
+           // serialWrite(i, "C");
+          //      ofSleepMillis(100);
+          //  }
             serialWrite(-1, "C");
             ofLog() << "hello";
-        }
+       }
     }
 }
 
@@ -1324,12 +1394,14 @@ vector<bool> ofApp::serialSetup(){ //int give the connection status of each cabl
                     
                     ofLogNotice("ofApp::setup") << "Successfully setup " << devicesInfo[i];
                     a++;
+                    ofSleepMillis(100);
                 }
                 else
                 {
                     ofLogNotice("ofApp::setup") << "Unable to setup " << devicesInfo[i];
                 }
             }
+            
         }
     }
     else
@@ -1346,7 +1418,7 @@ vector<bool> ofApp::serialSetup(){ //int give the connection status of each cabl
 void ofApp::serialWrite(int arduinoID, string sw){
     if(arduinoID == -1){
         for(int i=0; i< NUM_OF_CABLES; i++){
-       // for(int i=0; i< arduino.size(); i++){
+     //   for(int i=0; i< arduino.size(); i++){
             if(working_cable[i]){
                 // The serial device can throw exeptions.
                 try

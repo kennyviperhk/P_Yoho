@@ -21,11 +21,11 @@
 #define MAX_X_POS 5000
 #define MAX_Y_POS 30000
 
-#define MAX_X_SPEED 3000
-#define MAX_Y_SPEED 4000
+#define MAX_X_SPEED 1000
+#define MAX_Y_SPEED 1000
 
-#define MAX_X_ACCEL 2000
-#define MAX_Y_ACCEL 3000
+#define MAX_X_ACCEL 1000
+#define MAX_Y_ACCEL 1000
 
 #define HOME_MAXSPEED     int_array[0]
 
@@ -270,9 +270,10 @@ ofxPanel guiDebug2;
     
     //================== Song 1 ==================
     
-    void song1();
-    int song1Stage;
+    void song();
+    int songStage;
     ofParameter<int> currentSong;
+    int prevSong;
     
 
     

@@ -137,10 +137,17 @@ void char_decode(int inChar)
     digitalWrite(BrakeRx, LOW);
     digitalWrite(BrakeRy, LOW);
 
+/*
     digitalWrite(DI1_SERVO_ON_lx, LOW);
     digitalWrite(DI1_SERVO_ON_ly, LOW);
     digitalWrite(DI1_SERVO_ON_rx, LOW);
     digitalWrite(DI1_SERVO_ON_ry, LOW);
+*/
+    
+    digitalWrite(DI1_SERVO_ON_lx, HIGH);
+    digitalWrite(DI1_SERVO_ON_ly, HIGH);
+    digitalWrite(DI1_SERVO_ON_rx, HIGH);
+    digitalWrite(DI1_SERVO_ON_ry, HIGH);
 
     update_flag = true;
     exclude_print_val = true;
