@@ -1,215 +1,12 @@
 #include "ofApp.h"
 
-void ofApp::setPoints(){
-    vector<ofPoint> mcPoints = MovementController.getPoints();
-    
-    for(int i=0; i < NUM_OF_CABLES; i++){
-        for(int j=0; j < 8; j++){
-            if(output_pts[j]){
-                if(j==0){
-                    cablePosLx[i] = mcPoints[i].y;
-                    if(cablePosLx[i] >= MAX_X_POS){
-                        cablePosLx[i] = MAX_X_POS;
-                    }else if (cablePosLx[i]<= 0){
-                        cablePosLx[i] = 0;
-                    }
-                }else if(j==1){
-                    cablePosLy[i] = mcPoints[i].y*6;
-                    
-                    if(cablePosLy[i] >= MAX_Y_POS){
-                        cablePosLy[i] = MAX_Y_POS;
-                    }else if (cablePosLy[i]<= 0){
-                        cablePosLy[i] = 0;
-                    }
-                }else if(j==2){
-                    cablePosRx[i] = mcPoints[i].y;
-                    
-                    if(cablePosRx[i] >= MAX_X_POS){
-                        cablePosRx[i] = MAX_X_POS;
-                    }else if (cablePosRx[i]<= 0){
-                        cablePosRx[i] = 0;
-                    }
-                }else if(j==3){
-                    cablePosRy[i] = mcPoints[i].y*6;
-                    
-                    if(cablePosRy[i] >= MAX_Y_POS){
-                        cablePosRy[i] = MAX_Y_POS;
-                    }else if (cablePosRy[i]<= 0){
-                        cablePosRy[i] = 0;
-                    }
-                }
-                else  if(j==4){
-                    cablePosLx2[i] = mcPoints[i].y;
-                    if(cablePosLx2[i] >= MAX_X_POS){
-                        cablePosLx2[i] = MAX_X_POS;
-                    }else if (cablePosLx2[i]<= 0){
-                        cablePosLx2[i] = 0;
-                    }
-                }else if(j==5){
-                    cablePosLy2[i] = mcPoints[i].y*6;
-                    
-                    if(cablePosLy2[i] >= MAX_Y_POS){
-                        cablePosLy2[i] = MAX_Y_POS;
-                    }else if (cablePosLy2[i]<= 0){
-                        cablePosLy2[i] = 0;
-                    }
-                }else if(j==6){
-                    cablePosRx2[i] = mcPoints[i].y;
-                    
-                    if(cablePosRx2[i] >= MAX_X_POS){
-                        cablePosRx2[i] = MAX_X_POS;
-                    }else if (cablePosRx2[i]<= 0){
-                        cablePosRx2[i] = 0;
-                    }
-                }else if(j==7){
-                    cablePosRy2[i] = mcPoints[i].y*6;
-                    
-                    if(cablePosRy2[i] >= MAX_Y_POS){
-                        cablePosRy2[i] = MAX_Y_POS;
-                    }else if (cablePosRy2[i]<= 0){
-                        cablePosRy2[i] = 0;
-                    }
-                    
-                }
-            }
-        }
-    }
-    
-}
-
-void ofApp::song(){
-    
-    if(prevSong != currentSong){
-        songStage = 0;
-        prevSong = currentSong;
-        ofLog() << "Song Reset";
-    }
-    if(currentSong ==1){
-        //================== Song 1 ==================
-        if(songStage == 0){
-            if(currTime - prevTime >timeDiff){
-                timeDiff = ofRandom(10000,20000);
-                ofLog() << "timeDiff ; "<< timeDiff;
-                prevTime = currTime;
-                setPattern = true;
-            }
-            if(setPattern){
-                
-                int option = (int)ofRandom(4);
-                if(option ==3){//TFTF , FTTF, TFTF, FTFT
-                    output_pts[1] = true;
-                    output_pts[3] = false;
-                    
-                    output_pts[0] = true;
-                    output_pts[2] = false;
-                }else if(option ==2)
-                {
-                    output_pts[1] = false;
-                    output_pts[3] = true;
-                    
-                    output_pts[0] = true;
-                    output_pts[2] = false;
-                    
-                }
-                else if(option ==1){
-                    output_pts[1] = true;
-                    output_pts[3] = false;
-                    
-                    output_pts[0] = false;
-                    output_pts[2] = true;
-                }
-                else {
-                    output_pts[1] = false;
-                    output_pts[3] = true;
-                    
-                    output_pts[0] = false;
-                    output_pts[2] = true;
-                }
-                MovementController.setPoints((int)ofRandom(30,62), ofRandom(7,13), 0, (int)ofRandom(0,700));
-                setPattern = false;
-                ofLog() << "Set Pattern";
-                
-                writeStyle(1);
-                
-            }
-            
-        }
-    }else if(currentSong ==2){
-        if(currTime - prevTime >timeDiff){
-            timeDiff = 600;
-            ofLog() << "timeDiff ; "<< timeDiff;
-            prevTime = currTime;
-            setPattern = true;
-        }
-        
-        if(setPattern){
-            if(songStage == 0){
-                int option = (int)ofRandom(4);
-                if(option ==3){//TFTF , FTTF, TFTF, FTFT
-                    output_pts[1] = true;
-                    output_pts[3] = false;
-                    
-                    output_pts[0] = true;
-                    output_pts[2] = false;
-                }else if(option ==2)
-                {
-                    output_pts[1] = false;
-                    output_pts[3] = true;
-                    
-                    output_pts[0] = true;
-                    output_pts[2] = false;
-                    
-                }
-                else if(option ==1){
-                    output_pts[1] = true;
-                    output_pts[3] = false;
-                    
-                    output_pts[0] = false;
-                    output_pts[2] = true;
-                }
-                else {
-                    output_pts[1] = false;
-                    output_pts[3] = true;
-                    
-                    output_pts[0] = false;
-                    output_pts[2] = true;
-                }
-                MovementController.setPoints((int)ofRandom(30,62), ofRandom(7,13), 0, (int)ofRandom(0,700));
-                
-                currentDebugArduinoID =0;
-                songStage++;
-                
-            }else if (songStage == 1){
-
-                writeStyle(2);
-                currentDebugArduinoID++;
-                
-                
-                if(currentDebugArduinoID >= NUM_OF_CABLES ){
-                    currentDebugArduinoID = 0;
-                    songStage++;
-                }
-                
-                setPattern = false;
-            }else if (songStage == 2){
-                setPattern = false;
-                songStage=0;
-            }
-            
-        }
-        
-    }
-    
-    
-}
-
 //--------------------------------------------------------------
 void ofApp::setup(){
     
     ofSetFrameRate(60);
     
     //================== Serial ==================
-    
+
     isArduinoConnected = serialSetup();
     
     SERIAL_PARAMETERES = {"save", "load","online"};
@@ -262,6 +59,17 @@ void ofApp::setup(){
     //================== Song 1 ==================
     currentSong = 0;
     songStage = 0;
+
+#ifdef USEOSC
+    //================== OSC ==================
+    // listen on the given port
+    cout << "listening for osc messages on port " << R_PORT << "\n";
+    receiver.setup(R_PORT);
+    // open an outgoing connection to HOST:PORT
+    sender.setup(S_HOST, S_PORT);
+#else
+
+#endif
 }
 
 
@@ -275,7 +83,12 @@ void ofApp::update(){
     
     currMillis = ofGetElapsedTimeMillis();
     
+    //OSC
+#ifdef USEOSC
+        receivedString = readOSC();
+#else
     
+#endif
     //================== Serial ==================
     for(int i=0; i < arduino.size(); i++){
         receivedStringBuffer[i] += ofTrim(serialRead(i));
@@ -419,7 +232,12 @@ void ofApp::draw(){
             // if(isArduinoConnected[i]){
             if(isArduinoConnectedBySerial[i]){
                 ofSetColor(0,updateColor[i],updateColor[i]);
-                ss2 << "Connected Devices (" << i+1 << ") : " << arduino[i].getPortName() << "receivedMsg: " << prevReceivedString[i] << endl;
+#ifdef USEOSC
+                ss2 << "Connected Devices (" << i+1 << ") : " << prevReceivedString[i] << endl;
+                
+#else
+                ss2 << "Connected Devices (" << i+1 << ") : " << arduino[i].getPortName() << " : " << prevReceivedString[i] << endl;
+#endif
             }else{
                 ofSetColor(0,0,0);
                 ss2 << "Connected Devices (" << i+1 << ") : " << "Disconnected" << endl;
@@ -456,8 +274,12 @@ void ofApp::draw(){
             }
             
             if(home_Btn){
+                if(all_Tog){
+                    serialWrite(-1, "H");
+                }else{
                 serialWrite(currentDebugArduinoID, "H");
-                //manual home "G"
+                }
+                                //manual home "G"
                 //serialWrite(currentDebugArduinoID, 1-1-1-1);
                 //serialWrite(currentDebugArduinoID, "G");
             }
@@ -586,6 +408,86 @@ void ofApp::draw(){
 
 
 //--------------------------------------------------------------
+//-------------------------- OSC -------------------------------
+//--------------------------------------------------------------
+#ifdef USEOSC
+
+//--------------------------------------------------------------
+void ofApp::sendOSC(int ar, string s){
+    ofxOscMessage m;
+    m.setAddress("/serial/");
+    m.addIntArg(ar);
+    m.addStringArg(s);
+    sender.sendMessage(m, false);
+    
+}
+
+vector<string> ofApp::readOSC(){
+    
+    vector<string> read;
+    
+    for(int i=0; i< NUM_OF_CABLES; i++){
+        read.push_back("");
+    }
+    
+    int currentArduinoID = -1;
+    
+    // check for waiting messages
+    while(receiver.hasWaitingMessages()){
+        // get the next message
+        ofxOscMessage m;
+        receiver.getNextMessage(m);
+        
+        // check for mouse moved message
+        if(m.getAddress() == "/serial/in"){
+            // the single argument is a string
+            string mouseButtonState = m.getArgAsString(0);
+            ofLog() << mouseButtonState;
+            
+            receivedString[0] = mouseButtonState;
+            
+        }
+        // check for an image being sent (note: the size of the image depends greatly on your network buffer sizes - if an image is too big the message won't come through )
+        else{
+            // unrecognized message: display on the bottom of the screen
+            string msg_string;
+            string getString = "";
+            msg_string = m.getAddress();
+            msg_string += ": ";
+            for(int i = 0; i < m.getNumArgs(); i++){
+                // get the argument type
+                msg_string += m.getArgTypeName(i);
+                msg_string += ":";
+                // display the argument - make sure we get the right type
+                if(m.getArgType(i) == OFXOSC_TYPE_INT32){
+                    //msg_string += ofToString(m.getArgAsInt32(i));
+                    currentArduinoID = m.getArgAsInt32(i);
+                }
+                else if(m.getArgType(i) == OFXOSC_TYPE_FLOAT){
+                    msg_string += ofToString(m.getArgAsFloat(i));
+                }
+                else if(m.getArgType(i) == OFXOSC_TYPE_STRING){
+                    msg_string += m.getArgAsString(i);
+                    getString+= m.getArgAsString(i);
+                }
+                else{
+                    msg_string += "unknown";
+                }
+
+            }
+            ofLog() << " currentArduinoID:  "<< currentArduinoID << " String: " << getString;
+            read[currentArduinoID] = getString;
+        
+        }
+        
+    }
+    return read;
+
+}
+#else
+#endif
+
+//--------------------------------------------------------------
 void ofApp::keyReleased(int key){
     switch (key){
         case 's':
@@ -593,6 +495,14 @@ void ofApp::keyReleased(int key){
             if(currentStyle >NUM_OF_CABLES){ //todo
                 currentStyle=0;
             }
+            break;
+            
+        case 'a':
+            ofLog() << "Hello";
+#ifdef USEOSC
+            sendOSC(currentDebugArduinoID, "Testing");
+#else
+#endif
             break;
             
         case 'd':
@@ -640,10 +550,7 @@ void ofApp::keyReleased(int key){
             if(page < 0 ){
                 page = numOfPages-1;
             }
-            
             break;
-            
-            
             
         default:
             break;
@@ -721,8 +628,9 @@ void ofApp::guiSetup(){
     guiDebug.add(style_Btn_all.setup("Set Position ALL:"));
     guiDebug.add(reset_Btn.setup("Reset:"));
     guiDebug.add(home_Btn.setup("Home: "));
-    guiDebug.add(all_Tog.setup("All Val:"));
+    guiDebug.add(all_Tog.setup("ALL TOGGLE:",false));
     
+    all_Tog = false;
     int numOfWaveForm = 4;
     for(int i=0; i< 8; i++){
         ofParameter<bool> a;
@@ -763,7 +671,7 @@ void ofApp::guiSetup(){
     
     for(int i=0; i< NUM_OF_CABLES; i++){
         ofParameter<bool> a;
-        if(i == 1 || i == 6 || i == 16 || i == 11 || i == 10){
+        if(i == 10){
             a.set("input " + ofToString(i),false);
         }else{
             a.set("input " + ofToString(i),true);
@@ -773,7 +681,7 @@ void ofApp::guiSetup(){
     }
     
     
-    //guiDebug.add(all_Tog.setup("Set Position:"));
+   // guiDebug.add(all_Tog.setup("SET ALL:"));
     
     //textField.addListener(this,&ofApp::serialTextInput);
     //--- Cable Position Control ---
@@ -995,9 +903,219 @@ void ofApp::displayLog(string s=""){
     ofDrawBitmapString("Status: " + currentdisplayLog, 10, ofGetHeight()-10);
 }
 
+
+
+
+
 //--------------------------------------------------------------
 //--------------------------STYLE -----------------------------
 //--------------------------------------------------------------
+
+void ofApp::setPoints(){
+    vector<ofPoint> mcPoints = MovementController.getPoints();
+    
+    for(int i=0; i < NUM_OF_CABLES; i++){
+        for(int j=0; j < 8; j++){
+            if(output_pts[j]){
+                if(j==0){
+                    cablePosLx[i] = mcPoints[i].y;
+                    if(cablePosLx[i] >= MAX_X_POS){
+                        cablePosLx[i] = MAX_X_POS;
+                    }else if (cablePosLx[i]<= 0){
+                        cablePosLx[i] = 0;
+                    }
+                }else if(j==1){
+                    cablePosLy[i] = mcPoints[i].y*6;
+                    
+                    if(cablePosLy[i] >= MAX_Y_POS){
+                        cablePosLy[i] = MAX_Y_POS;
+                    }else if (cablePosLy[i]<= 0){
+                        cablePosLy[i] = 0;
+                    }
+                }else if(j==2){
+                    cablePosRx[i] = mcPoints[i].y;
+                    
+                    if(cablePosRx[i] >= MAX_X_POS){
+                        cablePosRx[i] = MAX_X_POS;
+                    }else if (cablePosRx[i]<= 0){
+                        cablePosRx[i] = 0;
+                    }
+                }else if(j==3){
+                    cablePosRy[i] = mcPoints[i].y*6;
+                    
+                    if(cablePosRy[i] >= MAX_Y_POS){
+                        cablePosRy[i] = MAX_Y_POS;
+                    }else if (cablePosRy[i]<= 0){
+                        cablePosRy[i] = 0;
+                    }
+                }
+                else  if(j==4){
+                    cablePosLx2[i] = mcPoints[i].y;
+                    if(cablePosLx2[i] >= MAX_X_POS){
+                        cablePosLx2[i] = MAX_X_POS;
+                    }else if (cablePosLx2[i]<= 0){
+                        cablePosLx2[i] = 0;
+                    }
+                }else if(j==5){
+                    cablePosLy2[i] = mcPoints[i].y*6;
+                    
+                    if(cablePosLy2[i] >= MAX_Y_POS){
+                        cablePosLy2[i] = MAX_Y_POS;
+                    }else if (cablePosLy2[i]<= 0){
+                        cablePosLy2[i] = 0;
+                    }
+                }else if(j==6){
+                    cablePosRx2[i] = mcPoints[i].y;
+                    
+                    if(cablePosRx2[i] >= MAX_X_POS){
+                        cablePosRx2[i] = MAX_X_POS;
+                    }else if (cablePosRx2[i]<= 0){
+                        cablePosRx2[i] = 0;
+                    }
+                }else if(j==7){
+                    cablePosRy2[i] = mcPoints[i].y*6;
+                    
+                    if(cablePosRy2[i] >= MAX_Y_POS){
+                        cablePosRy2[i] = MAX_Y_POS;
+                    }else if (cablePosRy2[i]<= 0){
+                        cablePosRy2[i] = 0;
+                    }
+                    
+                }
+            }
+        }
+    }
+    
+}
+
+//--------------------------------------------------------------
+
+void ofApp::song(){
+    
+    if(prevSong != currentSong){
+        songStage = 0;
+        prevSong = currentSong;
+        ofLog() << "Song Reset";
+    }
+    if(currentSong ==1){
+        //================== Song 1 ==================
+        if(songStage == 0){
+            if(currTime - prevTime >timeDiff){
+                timeDiff = ofRandom(10000,20000);
+                ofLog() << "timeDiff ; "<< timeDiff;
+                prevTime = currTime;
+                setPattern = true;
+            }
+            if(setPattern){
+                
+                int option = (int)ofRandom(4);
+                if(option ==3){//TFTF , FTTF, TFTF, FTFT
+                    output_pts[1] = true;
+                    output_pts[3] = false;
+                    
+                    output_pts[0] = true;
+                    output_pts[2] = false;
+                }else if(option ==2)
+                {
+                    output_pts[1] = false;
+                    output_pts[3] = true;
+                    
+                    output_pts[0] = true;
+                    output_pts[2] = false;
+                    
+                }
+                else if(option ==1){
+                    output_pts[1] = true;
+                    output_pts[3] = false;
+                    
+                    output_pts[0] = false;
+                    output_pts[2] = true;
+                }
+                else {
+                    output_pts[1] = false;
+                    output_pts[3] = true;
+                    
+                    output_pts[0] = false;
+                    output_pts[2] = true;
+                }
+                MovementController.setPoints((int)ofRandom(30,62), ofRandom(7,13), 0, (int)ofRandom(0,700));
+                setPattern = false;
+                ofLog() << "Set Pattern";
+                
+                writeStyle(1);
+                
+            }
+            
+        }
+    }else if(currentSong ==2){
+        if(currTime - prevTime >timeDiff){
+            timeDiff = 600;
+            ofLog() << "timeDiff ; "<< timeDiff;
+            prevTime = currTime;
+            setPattern = true;
+        }
+        
+        if(setPattern){
+            if(songStage == 0){
+                int option = (int)ofRandom(4);
+                if(option ==3){//TFTF , FTTF, TFTF, FTFT
+                    output_pts[1] = true;
+                    output_pts[3] = false;
+                    
+                    output_pts[0] = true;
+                    output_pts[2] = false;
+                }else if(option ==2)
+                {
+                    output_pts[1] = false;
+                    output_pts[3] = true;
+                    
+                    output_pts[0] = true;
+                    output_pts[2] = false;
+                    
+                }
+                else if(option ==1){
+                    output_pts[1] = true;
+                    output_pts[3] = false;
+                    
+                    output_pts[0] = false;
+                    output_pts[2] = true;
+                }
+                else {
+                    output_pts[1] = false;
+                    output_pts[3] = true;
+                    
+                    output_pts[0] = false;
+                    output_pts[2] = true;
+                }
+                MovementController.setPoints((int)ofRandom(30,62), ofRandom(7,13), 0, (int)ofRandom(0,700));
+                
+                currentDebugArduinoID =0;
+                songStage++;
+                
+            }else if (songStage == 1){
+                
+                writeStyle(2);
+                currentDebugArduinoID++;
+                
+                
+                if(currentDebugArduinoID >= NUM_OF_CABLES ){
+                    currentDebugArduinoID = 0;
+                    songStage++;
+                }
+                
+                setPattern = false;
+            }else if (songStage == 2){
+                setPattern = false;
+                songStage=0;
+            }
+            
+        }
+        
+    }
+    
+    
+}
+
 
 void ofApp::writeStyle(int s){
     if (s==0){
@@ -1333,6 +1451,12 @@ void ofApp::loadButtonPressed(){
     
 }
 
+
+
+
+
+
+
 //--------------------------------------------------------------
 //-----------------SERIAL COMMUNICATION ------------------------
 //--------------------------------------------------------------
@@ -1344,25 +1468,35 @@ void ofApp::checkArduinoIsConnected(){
     if(ofGetFrameNum() < 200){
         
         if(300 %10 == 0){
-           // for(int i=0; i< arduino.size(); i++){
-           // serialWrite(i, "C");
-          //      ofSleepMillis(100);
-          //  }
+            // for(int i=0; i< arduino.size(); i++){
+            // serialWrite(i, "C");
+            //      ofSleepMillis(100);
+            //  }
             serialWrite(-1, "C");
             ofLog() << "hello";
-       }
+        }
     }
 }
 
 //--------------------------------------------------------------
 vector<bool> ofApp::serialSetup(){ //int give the connection status of each cables
     
+    
+    
     vector<bool> connectionStatus;
+    
     
     for(int i=0; i< NUM_OF_CABLES; i++){
         connectionStatus.push_back(0);
     }
+#ifdef USEOSC
     
+    for(int i=0; i< NUM_OF_CABLES; i++){
+        arduino.push_back(true);
+        isArduinoConnected.push_back(true);
+    }
+    
+#else
     std::vector<ofx::IO::SerialDeviceInfo> devicesInfo = ofx::IO::SerialDeviceUtils::listDevices();
     ofLogNotice("ofApp::setup") << "Connected Devices: ";
     for (std::size_t i = 0; i < devicesInfo.size(); ++i)
@@ -1411,24 +1545,54 @@ vector<bool> ofApp::serialSetup(){ //int give the connection status of each cabl
     
     ofSleepMillis(1000); //Keep it - Arduino Mega needs time to initiate (Autoreset issue)
     
+    
+    
+#endif
     return connectionStatus;
     
 }
 
 void ofApp::serialWrite(int arduinoID, string sw){
+    
+    
+    
+#ifdef USEOSC
+      if(arduinoID == -1){
+          
+          for(int i=0; i< NUM_OF_CABLES; i++){
+              sendOSC(i, sw);
+          }
+      }else if (arduinoID >= 0 && working_cable[arduinoID]){
+          sendOSC(arduinoID, sw);
+      }
+    
+
+#else
+    
     if(arduinoID == -1){
-        for(int i=0; i< NUM_OF_CABLES; i++){
-     //   for(int i=0; i< arduino.size(); i++){
+
+        int arraySize = 0;
+        if(arduino.size() <= NUM_OF_CABLES){
+            arraySize = arduino.size();
+        }else{
+            arraySize = NUM_OF_CABLES;
+        }
+        for(int i=0; i< arraySize; i++){
+            //    for(int i=0; i< arduino.size(); i++){
             if(working_cable[i]){
-                // The serial device can throw exeptions.
+                // The serial device can throw exceptions.
                 try
                 {
                     std::string text = sw;
+                    
+
+                    
                     
                     ofx::IO::ByteBuffer textBuffer(text);
                     
                     arduino[i].writeBytes(textBuffer);
                     arduino[i].writeByte('\n');
+
                 }
                 catch (const std::exception& exc)
                 {
@@ -1436,6 +1600,7 @@ void ofApp::serialWrite(int arduinoID, string sw){
                 }
             }
         }
+
     }
     else if (isArduinoConnected[arduinoID]==TRUE && arduinoID >= 0 && working_cable[arduinoID])
     {
@@ -1444,11 +1609,12 @@ void ofApp::serialWrite(int arduinoID, string sw){
         try
         {
             std::string text = sw;
-            
+
             ofx::IO::ByteBuffer textBuffer(text);
             
             arduino[arduinoID].writeBytes(textBuffer);
             arduino[arduinoID].writeByte('\n');
+
         }
         catch (const std::exception& exc)
         {
@@ -1460,6 +1626,7 @@ void ofApp::serialWrite(int arduinoID, string sw){
     else{ ofLog() << "Arduino: " <<arduinoID << "not connected";} // todo put in gui
     
     ofLog() << "Arduino Write: " <<arduinoID <<  ":  "<<sw;
+#endif
 }
 
 string ofApp::serialRead(int a){
@@ -1468,7 +1635,11 @@ string ofApp::serialRead(int a){
     // for(int i=0; i< arduino.size(); i++){
     
     // The serial device can throw exeptions.
+#ifdef USEOSC
     
+
+
+#else
     try
     {
         // Read all bytes from the device;
@@ -1502,7 +1673,7 @@ string ofApp::serialRead(int a){
     }
     //  }
     
-    
+#endif
     return combinedStr;
 }
 
@@ -1569,9 +1740,13 @@ vector<int> ofApp::stringDecode(string s){
 void ofApp::exit()
 {
     serialWrite(-1, "V");
+#ifdef USEOSC
+#else
+    
     for(int i=0; i< arduino.size(); i++){
         arduino[i].unregisterAllEvents(this);
     }
+#endif
 }
 
 //--------------------------------------------------------------

@@ -10,6 +10,20 @@
 #include "ofxInputField.h"
 
 
+#define USEOSC
+#ifdef USEOSC
+
+#include "ofxOsc.h"
+
+#define R_HOST "localhost"
+#define R_PORT 12346
+
+#define S_HOST "localhost"
+#define S_PORT 12345
+
+#else
+
+#endif
 
 #include <iostream>
 #include <string>
@@ -127,7 +141,13 @@ class ofApp : public ofBaseApp{
     bool initOnUpdate;
     long checkArduinoMillis; //todo
     
-    vector<ofx::IO::BufferedSerialDevice> arduino;
+
+#ifdef USEOSC
+        vector<bool> arduino;
+#else
+        vector<ofx::IO::BufferedSerialDevice> arduino;
+#endif
+
     
     //unused
     //void sendChar();
@@ -284,5 +304,17 @@ ofxPanel guiDebug2;
     int timeDiff;
     
     void setPoints();
+    
+#ifdef USEOSC
+    //================== OSC ==================
+    //send
+    ofxOscSender sender;
+    void sendOSC(int arduino, string s);
+    //read
+    vector<string> readOSC();
+    ofxOscReceiver receiver;
+#else
+    
+#endif
 };
 
