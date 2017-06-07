@@ -88,7 +88,7 @@ void ofApp::update(){
         receivedString = readOSC();
 #else
     
-#endif
+
     //================== Serial ==================
     for(int i=0; i < arduino.size(); i++){
         receivedStringBuffer[i] += ofTrim(serialRead(i));
@@ -116,7 +116,7 @@ void ofApp::update(){
         }
     }
     
-    
+#endif
     
     if(initOnUpdate){
         checkArduinoIsConnected();
@@ -419,7 +419,7 @@ void ofApp::sendOSC(int ar, string s){
     m.addIntArg(ar);
     m.addStringArg(s);
     sender.sendMessage(m, false);
-    
+    ofLog() << "sending OSC : " << ar << " : " << s;
 }
 
 vector<string> ofApp::readOSC(){
@@ -671,11 +671,11 @@ void ofApp::guiSetup(){
     
     for(int i=0; i< NUM_OF_CABLES; i++){
         ofParameter<bool> a;
-        if(i == 10){
-            a.set("input " + ofToString(i),false);
-        }else{
+      //  if(i == 10){
+        //    a.set("input " + ofToString(i),false);
+       // }else{
             a.set("input " + ofToString(i),true);
-        }
+       // }
         working_cable.push_back(a);
         guiDebug2.add(working_cable[i]);
     }

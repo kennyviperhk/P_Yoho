@@ -157,36 +157,22 @@ void ofApp::update(){
     
 
     for(int i=0; i < NUM_OF_CABLES; i++){
-        if(prevReceivedString[i] != receivedString[i]){
+        if(prevReceivedString[i] != receivedString[i] && receivedString[i] != "" && receivedString[i] != " "){
             sendOSC(i, receivedString[i]);
             prevReceivedString[i] = receivedString[i];
             displayText[i] = receivedString[i];
            // receivedString[i] = "";
             ofLog() << "receivedString and Send: " << receivedString[i];
             updateColor[i] = 255;
+            
         }
         if(updateColor[i]>0){
             updateColor[i]--;
         }
 
-        
+  
         
         //}
-    }
-
-    for(int i=0; i< arduino.size(); i++){
-        // ofLog() << "receivedString : "<< i << " : "<<receivedString[i];
-        if(receivedString[i].size() > 0){
-            prevReceivedString[i] = receivedString[i];
-            receivedString[i]="";
-            updateColor[i] = 255;
-        }
-        if(updateColor[i]>0){
-            updateColor[i]--;
-        }
-        // ofLog() << "prevReceivedString : "<< i << " : "<<prevReceivedString[i];
-        //ofLog() << "updateColor : "<< i << " : "<<updateColor[i];
-        
     }
 
     
@@ -217,20 +203,25 @@ void ofApp::sendOSC(int ar, string s){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    std::stringstream ss;
-    ss << "FrameRate : "<< ofGetFrameRate() << endl;
+    
+    ofBackground(0, 0, 100);
+    ofSetColor(255);
+    
+
     
     for(int i=0; i< NUM_OF_CABLES; i++){
         //ofSetColor(255);
-        ofSetColor(0,updateColor[i],updateColor[i]);
+        std::stringstream ss;
+
+
         ss << "<<< " + ofToString(i+1) + " : "+ receivedOSCString[i] << endl;
         ss << ">>>    : " << displayText[i] << endl;
         ss << " " << endl;
-        ofDrawBitmapString(ss.str(), ofVec2f(20, 20));
-
-        
+        ofSetColor(255,updateColor[i],updateColor[i]);
+        ofDrawBitmapString(ss.str(),  ofVec2f(20, 30*i + 20));
         
     }
+ //           ss << "FrameRate : "<< ofGetFrameRate() << endl;
 }
 
 //--------------------------------------------------------------

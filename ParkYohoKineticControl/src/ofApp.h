@@ -15,10 +15,10 @@
 
 #include "ofxOsc.h"
 
-#define R_HOST "localhost"
+//#define R_HOST "localhost"
 #define R_PORT 12346
 
-#define S_HOST "localhost"
+#define S_HOST "10.0.1.66"
 #define S_PORT 12345
 
 #else
