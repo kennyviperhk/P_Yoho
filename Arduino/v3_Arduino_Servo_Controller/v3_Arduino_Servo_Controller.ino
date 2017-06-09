@@ -180,6 +180,16 @@ void loop() {
   }
   else if (GO_HOME) { //TODO
 
+    digitalWrite(BrakeLx, HIGH);
+    digitalWrite(BrakeLy, HIGH);
+    digitalWrite(BrakeRx, HIGH);
+    digitalWrite(BrakeRy, HIGH);
+
+    digitalWrite(DI1_SERVO_ON_lx, HIGH);
+    digitalWrite(DI1_SERVO_ON_ly, HIGH);
+    digitalWrite(DI1_SERVO_ON_rx, HIGH);
+    digitalWrite(DI1_SERVO_ON_ry, HIGH);
+
     int limitSwitchReading[numOfStepper]  = {0, 0, 0, 0};
 
     for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
@@ -200,7 +210,7 @@ void loop() {
 
         steppers[stepperNumber]->setCurrentPosition(0);
         homeDone[stepperNumber] = true;
-        Serial.print("home-");
+        Serial.print("hm-");
         Serial.print(stepperNumber);
         Serial.print("-");
       }
@@ -209,7 +219,7 @@ void loop() {
 
     if (homeDone[0] && homeDone[1] && homeDone[2] && homeDone[3]) {
       GO_HOME = false; //done with go home
-      Serial.print("allHome");
+      Serial.print("allhm");
       Serial.println("|");
     }
 

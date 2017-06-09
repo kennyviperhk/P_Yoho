@@ -24,6 +24,9 @@ public:
     int curveW;
     int curveH;
     
+    int max_x_pos;
+    int max_y_pos;
+    
     int numOfCables;
     
     
@@ -32,8 +35,10 @@ public:
         
     }
     
-    void setup(int cableNum, int x1, int y1,int w, int h){
-        
+    void setup(int cableNum, int x1, int y1,int w, int h, int x_range, int y_range){
+    
+        max_x_pos = x_range;
+        max_y_pos = y_range;
         
         curveControls.setup("CurveReadWrite", "settings.xml", x1+w+10, y1);
         for(int i=0; i< 8; i++){
@@ -43,7 +48,10 @@ public:
                             a.set("C" + ofToString(i),10,0,400); //lx,ly,rx,ry
                         }
                         else if(i==1){
-                                a.set("C" + ofToString(i),10,0,20); //lx,ly,rx,ry
+                                a.set("C" + ofToString(i),40,0,100); //lx,ly,rx,ry
+                        }
+                        else if(i==2){
+                            a.set("D" + ofToString(i),max_x_pos/2,0,max_x_pos); //lx,ly,rx,ry
                         }
                         else{
             a.set("C" + ofToString(i),100,0,1000);//lx,ly,rx,ry
@@ -60,9 +68,8 @@ public:
         curveW = w;
         curveH = h;
         numOfCables = cableNum;
-        
-        
-        
+     
+
     }
     
     vector<ofPoint> getPoints(){
@@ -70,7 +77,7 @@ public:
         p.clear();
         for(int i=0; i< numOfCables; i++){
             p.push_back(trail.getPointAtPercent((float)i /numOfCables));
-            p[i].y = p[i].y * curves[1] + (curves[2]-500)*2.5;
+            p[i].y = p[i].y * curves[1] + (curves[2]-max_x_pos/2)*4;
             p[i].x = p[i].x;
         }
         

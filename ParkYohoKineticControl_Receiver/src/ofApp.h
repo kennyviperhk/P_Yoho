@@ -5,7 +5,6 @@
 #include "ofxOsc.h"
 #include "ofxSerial.h"
 
-#define R_HOST "localhost"
 #define R_PORT 12345
 
 #define S_HOST "localhost"
@@ -14,7 +13,7 @@
 #define NUM_MSG_STRINGS 20
 
 
-#define NUM_OF_CABLES 20 //Todo Transfer definition /
+#define NUM_OF_CABLES 32 //Todo Transfer definition /
 #define BAUD 57600 //Todo Transfer definition /variables to xml
 
 class SerialMessage
@@ -99,7 +98,7 @@ class ofApp : public ofBaseApp{
     vector<SerialMessage> serialMessages;
     
     string receivedMsg;
-    vector<string> prevReceivedString;
+    vector<bool> isReceivedString;
     vector<string> receivedStringBuffer;
     vector<string> receivedString;
     vector<int> updateColor;

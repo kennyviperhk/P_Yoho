@@ -109,8 +109,8 @@ void char_decode(int inChar)
   {
     //DO STH HERE
     inString = "";   // clear the string buffer for new input:
-    Serial.print("online-");
-    Serial1.print("online-");
+    Serial.print("on");
+    Serial1.print("on");
 
     digitalWrite(BrakeLx, HIGH);
     digitalWrite(BrakeLy, HIGH);
@@ -129,8 +129,8 @@ void char_decode(int inChar)
   {
     //DO STH HERE
     inString = "";   // clear the string buffer for new input:
-    Serial.print("offline-");
-    Serial1.print("offline-");
+    Serial.print("off");
+    Serial1.print("off");
 
     digitalWrite(BrakeLx, LOW);
     digitalWrite(BrakeLy, LOW);
@@ -156,8 +156,8 @@ void char_decode(int inChar)
   {
     GO_HOME = true;
 
-    Serial.print("home-");
-    Serial1.print("home-");
+    Serial.print("hm");
+    Serial1.print("hm");
     inString = "";   // clear the string buffer for new input:
     for (int i = 0; i < numOfStepper; i++)
     {
@@ -169,8 +169,8 @@ void char_decode(int inChar)
   {
     GO_HOME = true;
 
-    Serial.print("manualHome-");
-    Serial1.print("manualHome-");
+    Serial.print("mhm");
+    Serial1.print("mhm");
     inString = "";   // clear the string buffer for new input:
     for (int i = 0; i < numOfStepper; i++)
     {
@@ -202,8 +202,8 @@ void char_decode(int inChar)
     }
     Write_Flash();
     Load_To_Variables();
-    Serial.print("save-");
-    Serial1.print("save-");
+    Serial.print("sa-");
+    Serial1.print("sa-");
     for (int i = 0; i < int_array_size; i++) {
 
       Serial.print(int_array[i]);
@@ -224,8 +224,8 @@ void char_decode(int inChar)
     //DO STH HERE
     inString = "";   // clear the string buffer for new input:
     Load_Flash();
-    Serial.print("load-");
-    Serial1.print("load-");
+    Serial.print("lo");
+    Serial1.print("lo");
     for (int i = 0; i < int_array_size; i++) {
 
       Serial.print(int_array[i]);
@@ -245,8 +245,8 @@ void char_decode(int inChar)
     //DO STH HERE
     inString = "";   // clear the string buffer for new input:
 
-    Serial.print("EMERGENCY STOP ON === R to release");
-    Serial1.print("EMERGENCY STOP ON === R to release");
+    Serial.print("EMGY STP - R");
+    Serial1.print("EMGY STP - R");
     isEmergencyStop = true;
     Serial.print("\t");
     Serial1.print("\t");
@@ -260,8 +260,8 @@ void char_decode(int inChar)
     //DO STH HERE
     inString = "";   // clear the string buffer for new input:
 
-    Serial.print("EMERGENCY STOP OFF");
-    Serial1.print("EMERGENCY STOP OFF");
+    Serial.print("EMGY OFF");
+    Serial1.print("EMGY OFF");
     isEmergencyStop = false;
     Serial.print("\t");
     Serial1.print("\t");
@@ -275,8 +275,8 @@ void char_decode(int inChar)
     //DO STH HERE
     inString = "";   // clear the string buffer for new input:
 
-    Serial.print("Restarting...");
-    Serial1.print("Restarting...");
+    Serial.print("re");
+    Serial1.print("re");
 
     soft_restart();
 

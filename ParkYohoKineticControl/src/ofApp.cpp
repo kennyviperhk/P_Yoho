@@ -3,13 +3,13 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     
-    ofSetFrameRate(60);
+    ofSetFrameRate(25);
     
     //================== Serial ==================
 
     isArduinoConnected = serialSetup();
     
-    SERIAL_PARAMETERES = {"save", "load","online"};
+    SERIAL_PARAMETERES = {"sa", "lo","on", "allhm"}; //save, load, online
     serialTrigger = true;
     prevSerialTriggerMillis = ofGetElapsedTimeMillis();
     
@@ -20,7 +20,7 @@ void ofApp::setup(){
     //================== debugMode ==================
     
     page = 0;
-    numOfPages = 5;
+    numOfPages = 6;
     debugMode = true;
     isEmergencyStop = false;
     for(int i=0; i < arduino.size(); i++){
@@ -39,6 +39,10 @@ void ofApp::setup(){
     showMusicPlayer = false;
     musicPlayer.setup();
     
+    //================== Dmx Light ==================
+    
+    DmxLight.setup();
+    
     //================== Movement Controls ==================
     int mcX = 10;
     int mcY = 200;
@@ -52,7 +56,7 @@ void ofApp::setup(){
      MovementControllers[i].setup(NUM_OF_CABLES,mcX,mcY+ (i*mcH)+ mcHg,mcW,mcH);
      }
      */
-    MovementController.setup(NUM_OF_CABLES,mcX,mcY,mcW,mcH);
+    MovementController.setup(NUM_OF_CABLES,mcX,mcY,mcW,mcH,MAX_X_POS,MAX_Y_POS);
     showMovementController = false;
     
     
@@ -176,6 +180,9 @@ void ofApp::update(){
     
     //================== Music Player ==================
     musicPlayer.update();
+    
+    //================== Dmx Light ==================
+    DmxLight.update();
     
     //================== Movement Controls ==================
     /*
@@ -390,7 +397,7 @@ void ofApp::draw(){
         showMusicPlayer = false;
         showMovementController = true;
         showOffset = false;
-    }else{
+    }else if(page == 4){
         
         drawDebugGui = true;
         drawKineticVisualizationFbo = true;
@@ -403,6 +410,11 @@ void ofApp::draw(){
         guiCablePosRx2.draw();
         guiCablePosRy2.draw();
         guiCableSpeedAccelAll.draw();
+        
+    }else{
+        //================== Dmx Light ==================
+        DmxLight.draw();
+    
     }
 }
 
@@ -925,7 +937,7 @@ void ofApp::setPoints(){
                         cablePosLx[i] = 0;
                     }
                 }else if(j==1){
-                    cablePosLy[i] = mcPoints[i].y*6;
+                    cablePosLy[i] = mcPoints[i].y*(MAX_Y_POS/MAX_X_POS);
                     
                     if(cablePosLy[i] >= MAX_Y_POS){
                         cablePosLy[i] = MAX_Y_POS;
@@ -941,7 +953,7 @@ void ofApp::setPoints(){
                         cablePosRx[i] = 0;
                     }
                 }else if(j==3){
-                    cablePosRy[i] = mcPoints[i].y*6;
+                    cablePosRy[i] = mcPoints[i].y*(MAX_Y_POS/MAX_X_POS);
                     
                     if(cablePosRy[i] >= MAX_Y_POS){
                         cablePosRy[i] = MAX_Y_POS;
@@ -957,7 +969,7 @@ void ofApp::setPoints(){
                         cablePosLx2[i] = 0;
                     }
                 }else if(j==5){
-                    cablePosLy2[i] = mcPoints[i].y*6;
+                    cablePosLy2[i] = mcPoints[i].y*(MAX_Y_POS/MAX_X_POS);
                     
                     if(cablePosLy2[i] >= MAX_Y_POS){
                         cablePosLy2[i] = MAX_Y_POS;
@@ -973,7 +985,7 @@ void ofApp::setPoints(){
                         cablePosRx2[i] = 0;
                     }
                 }else if(j==7){
-                    cablePosRy2[i] = mcPoints[i].y*6;
+                    cablePosRy2[i] = mcPoints[i].y*(MAX_Y_POS/MAX_X_POS);
                     
                     if(cablePosRy2[i] >= MAX_Y_POS){
                         cablePosRy2[i] = MAX_Y_POS;
@@ -1467,7 +1479,7 @@ void ofApp::checkArduinoIsConnected(){
     
     if(ofGetFrameNum() < 200){
         
-        if(300 %10 == 0){
+        if(ofGetFrameNum() %30 == 0){
             // for(int i=0; i< arduino.size(); i++){
             // serialWrite(i, "C");
             //      ofSleepMillis(100);
@@ -1485,18 +1497,34 @@ vector<bool> ofApp::serialSetup(){ //int give the connection status of each cabl
     
     vector<bool> connectionStatus;
     
+
     
     for(int i=0; i< NUM_OF_CABLES; i++){
         connectionStatus.push_back(0);
     }
 #ifdef USEOSC
     
+#ifdef RECEIVER_IS_WINDOWS
+    //USING 32 port and Windows, To connect arduino in sequence, we have to do it one by one
+    
+    for(int i=0; i<NUM_OF_SERIAL_TO_INIT; i++){
+        if(i == 0){
+            arduino.push_back(true);
+            isArduinoConnected.push_back(true);
+        }
+        
+    }
+#else
+    
     for(int i=0; i< NUM_OF_CABLES; i++){
         arduino.push_back(true);
         isArduinoConnected.push_back(true);
     }
     
+#endif
+    
 #else
+    
     std::vector<ofx::IO::SerialDeviceInfo> devicesInfo = ofx::IO::SerialDeviceUtils::listDevices();
     ofLogNotice("ofApp::setup") << "Connected Devices: ";
     for (std::size_t i = 0; i < devicesInfo.size(); ++i)
@@ -1516,6 +1544,7 @@ vector<bool> ofApp::serialSetup(){ //int give the connection status of each cabl
             {
                 // Connect to the first matching device.
                 ofx::IO::BufferedSerialDevice device;
+                
                 arduino.push_back(device);
                 
                 bool success = arduino[a].setup(devicesInfo[i], BAUD);
@@ -1747,6 +1776,8 @@ void ofApp::exit()
         arduino[i].unregisterAllEvents(this);
     }
 #endif
+    
+    DmxLight.exit();
 }
 
 //--------------------------------------------------------------

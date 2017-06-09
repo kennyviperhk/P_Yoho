@@ -1,34 +1,44 @@
 #pragma once
 
+//DEFINITION
+
+//#define USEOSC
+#define RECEIVER_IS_WINDOWS
+
+//INCLUDES
+
 #include "ofMain.h"
+
 #include "KineticController.h"
 #include "MovementController.h"
 #include "MusicPlayer.h"
+#include "DmxLight.h"
+#include "Timeline.h"
+#include "Keyframe.h"
 
 #include "ofxSerial.h"
 #include "ofxGui.h"
 #include "ofxInputField.h"
 
+#include <iostream>
+#include <string>
+#include <regex>
 
-#define USEOSC
+
 #ifdef USEOSC
+    #include "ofxOsc.h"
+    #define R_PORT 12346
 
-#include "ofxOsc.h"
-
-//#define R_HOST "localhost"
-#define R_PORT 12346
-
-#define S_HOST "10.0.1.66"
-#define S_PORT 12345
+    //#define S_HOST "192.168.0.101"
+    #define S_HOST "localhost"
+    #define S_PORT 12345
 
 #else
 
 #endif
 
-#include <iostream>
-#include <string>
-#include <regex>
 
+#define NUM_OF_SERIAL_TO_INIT 32
 #define NUM_OF_CABLES 20 //Todo Transfer definition /variables to xml
 #define BAUD 57600 //Todo Transfer definition /variables to xml
 
@@ -63,6 +73,7 @@
  //command: send motor index [0-4] - position [0-10000] - interpolation style [0-4?] - 3 style parameters ... (example: time to position [0 - 100000ms])
 
  todo:
+ //DETECT HOME
 //controllable single module:
  accel, speed, pos (send to arduino), flip dir, 
  
@@ -143,8 +154,10 @@ class ofApp : public ofBaseApp{
     
 
 #ifdef USEOSC
+        vector<bool> isArduioPort;
         vector<bool> arduino;
 #else
+        vector<ofx::IO::BufferedSerialDevice> comPort;
         vector<ofx::IO::BufferedSerialDevice> arduino;
 #endif
 
@@ -175,7 +188,7 @@ class ofApp : public ofBaseApp{
     
     bool debugMode;
     ofxPanel guiDebug;
-ofxPanel guiDebug2;
+    ofxPanel guiDebug2;
     ofParameterGroup parametersDebug;
     ofXml settings;
     vector<ofParameter<int>> EEPROM;
@@ -304,6 +317,11 @@ ofxPanel guiDebug2;
     int timeDiff;
     
     void setPoints();
+    
+    
+     //========== DMX Light ===========
+    DmxLight DmxLight;
+    
     
 #ifdef USEOSC
     //================== OSC ==================
