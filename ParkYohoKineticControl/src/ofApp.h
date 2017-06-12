@@ -295,7 +295,9 @@ class ofApp : public ofBaseApp{
     ofFbo kineticVisualizationFbo;
     bool drawKineticVisualizationFbo;
     bool drawDebugGui;
-
+    int num_of_online;
+    long prevOnlineCheckingMillis;
+    
     //================== Config ==================
     
     //int numOfCables;

@@ -126,6 +126,8 @@ void ofApp::update(){
         checkArduinoIsConnected();
     }
     
+
+    
     for(int i=0; i< receivedString.size(); i++){
         if(stringDecode(receivedString[i]).size()>=1){
             if(stringDecode(receivedString[i])[0] == 1){ //load
@@ -143,6 +145,18 @@ void ofApp::update(){
             
         }
     }
+    
+    //Online Cable Checking - TODO
+    if(currMillis - prevOnlineCheckingMillis < 5000){
+        num_of_online = 0;
+        for (int i=0; i< NUM_OF_CABLES; i++){
+            if(isArduinoConnectedBySerial[i]){
+                num_of_online++;
+            }
+            
+        }
+    }
+
     
     for(int i=0; i< arduino.size(); i++){
         // ofLog() << "receivedString : "<< i << " : "<<receivedString[i];
