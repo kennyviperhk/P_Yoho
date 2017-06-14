@@ -23,7 +23,7 @@ void ofApp::setup(){
     numOfPages = 6;
     debugMode = true;
     isEmergencyStop = false;
-    for(int i=0; i < arduino.size(); i++){
+    for(int i=0; i < NUM_OF_SERIAL_TO_INIT; i++){
         receivedString.push_back("");
         receivedStringBuffer.push_back("");
         prevReceivedString.push_back("");
@@ -44,6 +44,7 @@ void ofApp::setup(){
     DmxLight.setup();
     
     //================== Movement Controls ==================
+    
     int mcX = 10;
     int mcY = 200;
     int mcW = 500;
@@ -59,9 +60,8 @@ void ofApp::setup(){
     MovementController.setup(NUM_OF_CABLES,mcX,mcY,mcW,mcH,MAX_X_POS,MAX_Y_POS);
     showMovementController = false;
     
-    
     //================== Song 1 ==================
-    currentSong = 0;
+    currentSong = 3;
     songStage = 0;
 
 #ifdef USEOSC
@@ -126,8 +126,6 @@ void ofApp::update(){
         checkArduinoIsConnected();
     }
     
-
-    
     for(int i=0; i< receivedString.size(); i++){
         if(stringDecode(receivedString[i]).size()>=1){
             if(stringDecode(receivedString[i])[0] == 1){ //load
@@ -158,7 +156,7 @@ void ofApp::update(){
     }
 
     
-    for(int i=0; i< arduino.size(); i++){
+    for(int i=0; i< NUM_OF_SERIAL_TO_INIT; i++){
         // ofLog() << "receivedString : "<< i << " : "<<receivedString[i];
         if(receivedString[i].size() > 0){
             prevReceivedString[i] = receivedString[i];
@@ -197,6 +195,8 @@ void ofApp::update(){
     
     //================== Dmx Light ==================
     DmxLight.update();
+    
+
     
     //================== Movement Controls ==================
     /*
@@ -445,14 +445,14 @@ void ofApp::sendOSC(int ar, string s){
     m.addIntArg(ar);
     m.addStringArg(s);
     sender.sendMessage(m, false);
-    ofLog() << "sending OSC : " << ar << " : " << s;
+   // ofLog() << "sending OSC : " << ar << " : " << s;
 }
 
 vector<string> ofApp::readOSC(){
     
     vector<string> read;
     
-    for(int i=0; i< NUM_OF_CABLES; i++){
+    for(int i=0; i< NUM_OF_SERIAL_TO_INIT; i++){
         read.push_back("");
     }
     
@@ -501,8 +501,13 @@ vector<string> ofApp::readOSC(){
                 }
 
             }
-            ofLog() << " currentArduinoID:  "<< currentArduinoID << " String: " << getString;
-            read[currentArduinoID] = getString;
+          //  ofLog() << " currentArduinoID:  "<< currentArduinoID << " String: " << getString;
+            for(int i=0; i< NUM_OF_SERIAL_TO_INIT; i++){
+                if(arduino[i] == currentArduinoID){
+                    read[i] = getString;
+                }
+            }
+
         
         }
         
@@ -1017,20 +1022,24 @@ void ofApp::setPoints(){
 //--------------------------------------------------------------
 
 void ofApp::song(){
-    
+
     if(prevSong != currentSong){
+        currentDebugArduinoID =-1;
         songStage = 0;
         prevSong = currentSong;
+        timeDiff = 0;
         ofLog() << "Song Reset";
     }
     if(currentSong ==1){
         //================== Song 1 ==================
-        if(songStage == 0){
+        if(songStage == 0){ // all move at the same time
             if(currTime - prevTime >timeDiff){
-                timeDiff = ofRandom(10000,20000);
+                timeDiff = ofRandom(60000,90000);
                 ofLog() << "timeDiff ; "<< timeDiff;
                 prevTime = currTime;
                 setPattern = true;
+                
+              // DmxLight.setAll((float)ofRandom(0,1), (float)ofRandom(0,1), (float)ofRandom(0,1), (float)ofRandom(0,1));
             }
             if(setPattern){
                 
@@ -1064,7 +1073,7 @@ void ofApp::song(){
                     output_pts[0] = false;
                     output_pts[2] = true;
                 }
-                MovementController.setPoints((int)ofRandom(30,62), ofRandom(7,13), 0, (int)ofRandom(0,700));
+                 MovementController.setPoints((int)ofRandom(30,90), ofRandom(35,37),(int)ofRandom(0,187),(int)ofRandom(0,1000));
                 setPattern = false;
                 ofLog() << "Set Pattern";
                 
@@ -1073,12 +1082,20 @@ void ofApp::song(){
             }
             
         }
-    }else if(currentSong ==2){
+    }else if(currentSong ==2){ //one by one
         if(currTime - prevTime >timeDiff){
-            timeDiff = 600;
+            
             ofLog() << "timeDiff ; "<< timeDiff;
             prevTime = currTime;
             setPattern = true;
+
+            if(currentDebugArduinoID > NUM_OF_CABLES-1){
+                timeDiff = ofRandom(60000,90000);
+                ofLog() << "reach cable 19";
+                 currentDebugArduinoID = -1;
+            }else{
+                timeDiff = 600;
+            }
         }
         
         if(setPattern){
@@ -1113,19 +1130,17 @@ void ofApp::song(){
                     output_pts[0] = false;
                     output_pts[2] = true;
                 }
-                MovementController.setPoints((int)ofRandom(30,62), ofRandom(7,13), 0, (int)ofRandom(0,700));
+                MovementController.setPoints((int)ofRandom(30,90), ofRandom(35,37),(int)ofRandom(0,187),(int)ofRandom(0,1000));
                 
-                currentDebugArduinoID =0;
+
                 songStage++;
                 
             }else if (songStage == 1){
-                
+            
                 writeStyle(2);
-                currentDebugArduinoID++;
-                
                 
                 if(currentDebugArduinoID >= NUM_OF_CABLES ){
-                    currentDebugArduinoID = 0;
+                    ofLog() << "STAGE END " << currentDebugArduinoID;
                     songStage++;
                 }
                 
@@ -1133,17 +1148,172 @@ void ofApp::song(){
             }else if (songStage == 2){
                 setPattern = false;
                 songStage=0;
+                currentDebugArduinoID = 0;
             }
             
         }
         
+    }else if(currentSong == 3){ //one by one
+        if(currTime - prevTime >timeDiff){
+            
+            //ofLog() << "timeDiff ; "<< timeDiff;
+            prevTime = currTime;
+            setPattern = true;
+
+            if(currentDebugArduinoID >= NUM_OF_CABLES ){
+                //timeDiff = ofRandom(60000,90000);
+  
+                ofLog() << "reach cable 19";
+                currentDebugArduinoID = -1;
+                
+            }else{
+                timeDiff = 600;
+                currentDebugArduinoID++;
+            }
+             ofLog() << "songStage : " << songStage;
+
+
+        }
+        
+        if(setPattern){
+            if(songStage == 0){
+
+                //set Y
+                output_pts[0] = false;
+                output_pts[2] = false;
+                
+                output_pts[1] = true;
+                output_pts[3] = true;
+                
+                MovementController.setPoints((int)ofRandom(45,46), ofRandom(28,29),(int)ofRandom(1125,1126),(int)ofRandom(525,526));
+                
+
+                if(currentDebugArduinoID == NUM_OF_CABLES ){
+                    songStage++;
+                }else{
+                    writeStyle(2);
+                }
+                
+                setPattern = false;
+                
+            }else if(songStage == 1){
+                
+                //set X
+                output_pts[0] = true;
+                output_pts[2] = true;
+                
+                output_pts[1] = false;
+                output_pts[3] = false;
+                
+                MovementController.setPoints((int)ofRandom(0,0), ofRandom(0,0),(int)ofRandom(68,69),(int)ofRandom(0,1000));
+                
+                if(currentDebugArduinoID == NUM_OF_CABLES ){
+        
+                    songStage++;
+                    timeDiff = ofRandom(25000,40000);
+                }else{
+                    writeStyle(2);
+                }
+                
+                setPattern = false;
+                
+            }else if(songStage == 2){
+                
+                //set Y
+                output_pts[0] = false;
+                output_pts[2] = false;
+                
+                output_pts[1] = true;
+                output_pts[3] = true;
+                
+                MovementController.setPoints((int)ofRandom(45,46), ofRandom(28,29),(int)ofRandom(1125,1126),(int)ofRandom(525,526));
+                
+                if(currentDebugArduinoID == NUM_OF_CABLES ){
+                    songStage++;
+                }else{
+                    writeStyle(2);
+                }
+                
+                setPattern = false;
+                
+            }else if(songStage == 3){
+                
+                //set X
+                output_pts[0] = true;
+                output_pts[2] = true;
+                
+                output_pts[1] = false;
+                output_pts[3] = false;
+                
+                MovementController.setPoints((int)ofRandom(50,51), ofRandom(25,26),(int)ofRandom(875,876),(int)ofRandom(50,51));
+                
+                if(currentDebugArduinoID == NUM_OF_CABLES ){
+                    
+                    songStage++;
+                    timeDiff = ofRandom(25000,40000);
+                }else{
+                    writeStyle(2);
+                }
+                
+                setPattern = false;
+                
+            }else if(songStage == 4){
+                
+                //set Y
+                output_pts[0] = false;
+                output_pts[2] = false;
+                
+                output_pts[1] = true;
+                output_pts[3] = true;
+                
+                MovementController.setPoints((int)ofRandom(50,51), ofRandom(25,26),(int)ofRandom(875,876),(int)ofRandom(50,51));
+                
+                if(currentDebugArduinoID == NUM_OF_CABLES ){
+                    songStage++;
+                }else{
+                    writeStyle(2);
+                }
+                
+                setPattern = false;
+                
+            }else if(songStage == 5){
+                
+                //set X
+                output_pts[0] = true;
+                output_pts[2] = true;
+                
+                output_pts[1] = false;
+                output_pts[3] = false;
+                
+                  MovementController.setPoints((int)ofRandom(45,46), ofRandom(28,29),(int)ofRandom(1125,1126),(int)ofRandom(525,526));
+                
+                if(currentDebugArduinoID == NUM_OF_CABLES ){
+                    
+                    songStage++;
+                     timeDiff = ofRandom(25000,40000);
+                }else{
+                    writeStyle(2);
+                }
+                
+                setPattern = false;
+                
+            }else if (songStage == 6){
+                setPattern = false;
+                songStage=0;
+   
+            }
+        }
+        
     }
+
     
     
 }
 
 
 void ofApp::writeStyle(int s){
+    ofLog() << "write Style " << s  << " current arduino " << currentDebugArduinoID;
+
     if (s==0){
         
         if(currentStyle == 11){
@@ -1359,6 +1529,7 @@ void ofApp::writeStyle(int s){
         }
         
     }else if (s ==2){
+            if(currentDebugArduinoID <= NUM_OF_CABLES-1 && currentDebugArduinoID >= 0){
         if(currentStyle == 11){
             
             string writeInTotal = "LX : ";
@@ -1413,6 +1584,7 @@ void ofApp::writeStyle(int s){
         }
         
         if(currentStyle == 2){
+
             string writeInTotal = "SPEED - ACCEL - : ";
             
             string toWrite = "";
@@ -1461,9 +1633,11 @@ void ofApp::writeStyle(int s){
             serialWrite(currentDebugArduinoID, toWrite);
             currentdisplayLog = writeInTotal;
             
+            
         }
-        
+            }
     }
+    
 }
 
 
@@ -1521,12 +1695,39 @@ vector<bool> ofApp::serialSetup(){ //int give the connection status of each cabl
 #ifdef RECEIVER_IS_WINDOWS
     //USING 32 port and Windows, To connect arduino in sequence, we have to do it one by one
     
+    vector<int> allComPort;
+    
     for(int i=0; i<NUM_OF_SERIAL_TO_INIT; i++){
-        if(i == 0){
-            arduino.push_back(true);
-            isArduinoConnected.push_back(true);
-        }
-        
+        allComPort.push_back(i);
+    }
+    arduino.push_back(allComPort[17]); //1
+    arduino.push_back(allComPort[21]); //2
+    arduino.push_back(allComPort[2]); //3
+    arduino.push_back(allComPort[3]); //4
+    arduino.push_back(allComPort[5]); //5
+    arduino.push_back(allComPort[20]); //6
+    arduino.push_back(allComPort[27]); //7
+    arduino.push_back(allComPort[6]); //8
+    arduino.push_back(allComPort[15]); //9
+    arduino.push_back(allComPort[16]); //10
+    arduino.push_back(allComPort[19]); //11
+    arduino.push_back(allComPort[25]); //12
+    arduino.push_back(allComPort[11]); //13
+    arduino.push_back(allComPort[12]); //14
+    arduino.push_back(allComPort[13]); //15
+    arduino.push_back(allComPort[14]); //16
+    arduino.push_back(allComPort[31]); //17
+    arduino.push_back(allComPort[1]); //18
+    arduino.push_back(allComPort[4]); //19
+    arduino.push_back(allComPort[18]); //20
+    for(int i = 20; i < NUM_OF_SERIAL_TO_INIT; i++){
+        arduino.push_back(300+i);
+    }
+    
+    
+    for(int i=0; i< NUM_OF_CABLES; i++){
+        ofLog() <<arduino[i];
+        isArduinoConnected.push_back(true);
     }
 #else
     
@@ -1603,10 +1804,10 @@ void ofApp::serialWrite(int arduinoID, string sw){
       if(arduinoID == -1){
           
           for(int i=0; i< NUM_OF_CABLES; i++){
-              sendOSC(i, sw);
+              sendOSC(arduino[i], sw);
           }
-      }else if (arduinoID >= 0 && working_cable[arduinoID]){
-          sendOSC(arduinoID, sw);
+      }else if (arduinoID >= 0 && working_cable[arduinoID] && arduinoID<arduino.size()){
+          sendOSC(arduino[arduinoID], sw);
       }
     
 

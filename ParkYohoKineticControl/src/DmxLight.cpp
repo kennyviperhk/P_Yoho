@@ -4,9 +4,8 @@
 void DmxLight::setup() {
     ofSetVerticalSync(true);
 
-    modules = 20;
-    channelsPerModule = 4;
-
+    modules = NUM_OF_DMX;
+    
     panel1.setup();
     panel1.setPosition(4, 4);
     panel1.setName("dmx0");
@@ -38,8 +37,8 @@ void DmxLight::setup() {
     }
 
     load = true;
-
-    dmx.connect(0, modules * channelsPerModule);  //Set Module ID
+    
+    dmx.connect(0, 80);  //Set Module ID
     dmx.update(true); // black on startup
 }
 
@@ -72,6 +71,28 @@ void DmxLight::update() {
     } else {
         ofSetColor(255);
         ofDrawBitmapString("Could not connect to port " + ofToString(port), 250,20);
+    }
+  //  for(int i = 1; i <= modules; i++) {
+  //      ofLog() << ofLerp(red[i], pred[i], 0.1);
+  //  }
+}
+
+void DmxLight::set(int id, int r, int g, int b, int w) {
+    if(id < NUM_OF_DMX){
+        red[id] = r;
+        green[id] = g;
+        blue[id] = b;
+        white[id] = w;
+        
+    }
+}
+
+void DmxLight::setAll(int r, int g, int b, int w) {
+    for(int i=0; i < NUM_OF_DMX; i++){
+        red[i] = r;
+        green[i] = g;
+        blue[i] = b;
+        white[i] = w;
     }
 }
 
