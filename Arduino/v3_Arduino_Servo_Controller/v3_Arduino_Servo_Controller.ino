@@ -21,9 +21,7 @@
    |                  |
    |  Control Room    |
    |__________________|
-
-
-
+ß
   //Todo
   -Test Actual code with 4 motor and switches
 

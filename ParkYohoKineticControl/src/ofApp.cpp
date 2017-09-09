@@ -20,7 +20,7 @@ void ofApp::setup(){
     //================== debugMode ==================
     
     page = 0;
-    numOfPages = 6;
+    numOfPages = 7;
     debugMode = true;
     isEmergencyStop = false;
     for(int i=0; i < NUM_OF_SERIAL_TO_INIT; i++){
@@ -172,11 +172,7 @@ void ofApp::update(){
     }
     //================== Kinectic Visualisation ==================
     
-    
-    
-    
-    
-    
+
     for(int i=0; i< NUM_OF_CABLES; i++){
         
         kinecticVisualisation.set(NUM_OF_CABLES ,i, currentStyle ,ofMap(cablePosLx[i],0,MAX_X_POS,0,2) ,ofMap(cablePosLy[i],0,MAX_Y_POS,0,1),ofMap(cablePosRx[i],0,MAX_X_POS,0,2), ofMap(cablePosRy[i],0,MAX_Y_POS,0,1));
@@ -228,8 +224,6 @@ void ofApp::draw(){
         ofBackground(100, 0, 0);
         
         ofSetColor(255);
-        
-        
         
         if(drawKineticVisualizationFbo){
             kineticVisualizationFbo.draw(0,200,ofGetWidth()*0.7,ofGetHeight()*0.7);
@@ -425,10 +419,12 @@ void ofApp::draw(){
         guiCablePosRy2.draw();
         guiCableSpeedAccelAll.draw();
         
-    }else{
+    }else if(page == 5){
         //================== Dmx Light ==================
         DmxLight.draw();
-    
+        
+    }else{ //Page = 6 // ricci mode
+        currentSong = 4;
     }
 }
 
@@ -581,6 +577,10 @@ void ofApp::keyReleased(int key){
             if(page < 0 ){
                 page = numOfPages-1;
             }
+            break;
+            
+        case 'v': //Ricci Mode
+            page = 6;
             break;
             
         default:
@@ -1304,6 +1304,14 @@ void ofApp::song(){
             }
         }
         
+    }else if(currentSong == 4){ //ricci mode, debug one by one
+        currentStyle = 11;
+        
+        output_pts[0] = false;
+        output_pts[2] = false;
+        
+        output_pts[1] = false;
+        output_pts[3] = false;
     }
 
     
@@ -1922,6 +1930,28 @@ string ofApp::serialRead(int a){
 }
 
 //--------------------------------------------------------------
+
+void ofApp::onSerialBuffer(const ofx::IO::SerialBufferEventArgs& args)
+{
+    // Buffers will show up here when the marker character is found.
+    SerialMessage message(args.getBuffer().toString(), "", 500);
+    serialMessages.push_back(message);
+    ofLog() << "SERIALLLLLLLL : " << message.message;
+}
+
+//--------------------------------------------------------------
+
+void ofApp::onSerialError(const ofx::IO::SerialBufferErrorEventArgs& args)
+{
+    // Errors and their corresponding buffer (if any) will show up here.
+    SerialMessage message(args.getBuffer().toString(),
+                          args.getException().displayText(),
+                          500);
+    serialMessages.push_back(message);
+}
+
+
+//--------------------------------------------------------------
 vector<int> ofApp::stringDecode(string s){
     
     vector<int> sToIntArray;
@@ -2000,26 +2030,6 @@ void ofApp::exit()
 //--------------------------------------------------------------
 
 //TODO: Unused for now
-//--------------------------------------------------------------
-
-void ofApp::onSerialBuffer(const ofx::IO::SerialBufferEventArgs& args)
-{
-    // Buffers will show up here when the marker character is found.
-    SerialMessage message(args.getBuffer().toString(), "", 500);
-    serialMessages.push_back(message);
-    ofLog() << "SERIALLLLLLLL : " << message.message;
-}
-
-//--------------------------------------------------------------
-
-void ofApp::onSerialError(const ofx::IO::SerialBufferErrorEventArgs& args)
-{
-    // Errors and their corresponding buffer (if any) will show up here.
-    SerialMessage message(args.getBuffer().toString(),
-                          args.getException().displayText(),
-                          500);
-    serialMessages.push_back(message);
-}
 
 //--------------------------------------------------------------
 void ofApp::removeSubstrs(string& s, string& p) {

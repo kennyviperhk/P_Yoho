@@ -23,7 +23,6 @@
 #define BrakeRx A6
 #define BrakeRy A7
 
-
 #define DI2_ALARM_RESET_lx 50
 #define DI2_ALARM_RESET_ly 51
 #define DI2_ALARM_RESET_rx 52
@@ -34,8 +33,6 @@
 #define DO5_ALRM_ly 47
 #define DO5_ALRM_rx 48
 #define DO5_ALRM_ry 49
-
-
 
 const int buttonPin0 = A0;     // the number of the pushbutton pin
 const int buttonPin1 = A1;     // the number of the pushbutton pin
@@ -53,8 +50,8 @@ int prevReading2 = 0;
 int prevReading3 = 0;
 //========= STEPPER ========
 #include <AccelStepper.h>
-int st = 9;
-int dir = 8;
+int st = 3;
+int dir = 2;
 AccelStepper stepper (AccelStepper::DRIVER, st, dir);
 
 // L == up
@@ -81,7 +78,7 @@ void setup() {
   pinMode(buttonPin3, INPUT);
   pinMode(ledPin, OUTPUT);
 
-
+  alarm_reset();
 
 
   //
@@ -116,7 +113,7 @@ void setup() {
   digitalWrite(DI2_ALARM_RESET_rx, LOW);
   digitalWrite(DI2_ALARM_RESET_ry, LOW);
 
-
+alarm_reset();
 
   //========
   Serial.println("=== UReady to go home === ");
@@ -166,8 +163,8 @@ void loop() {
     digitalWrite(ledPin, buttonState);
     if (stepper.distanceToGo() == 0) {
 
-      stepper.setMaxSpeed(200);
-      stepper.setAcceleration(800);
+      stepper.setMaxSpeed(2000);
+      stepper.setAcceleration(8000);
       if (isLeft) {
         stepper.moveTo(-moveToPos);
       } else {
@@ -185,11 +182,11 @@ void loop() {
       } else
     */
     if (reading3 > 500) {
-  //    stepper.setCurrentPosition(0);
-    //  Serial.println(reading3);
-   //  moveToPos = 0;
+      //    stepper.setCurrentPosition(0);
+      //  Serial.println(reading3);
+      //  moveToPos = 0;
       Serial.println("Reached Home A3");
-  // stepper.run();
+      // stepper.run();
     }
     else {
       stepper.run();
