@@ -1306,12 +1306,34 @@ void ofApp::song(){
         
     }else if(currentSong == 4){ //ricci mode, debug one by one
         currentStyle = 11;
+         if(songStage == 0){
+             output_pts[0] = true;
+             output_pts[2] = true;
+             
+             output_pts[1] = true;
+             output_pts[3] = true;
+             MovementController.setPoints((int)ofRandom(0,0), ofRandom(0,0),(int)ofRandom(68,69),(int)ofRandom(0,1000));
+             currentDebugArduinoID = 0;
+             songStage++;
+         }else{
+             output_pts[0] = false;
+             output_pts[2] = false;
+             
+             output_pts[1] = false;
+             output_pts[3] = false;
+         
+         }
         
-        output_pts[0] = false;
-        output_pts[2] = false;
+        if(setPattern){
+            
+            setPattern = false;
+   
+        }
+                
         
-        output_pts[1] = false;
-        output_pts[3] = false;
+
+        
+   
     }
 
     
