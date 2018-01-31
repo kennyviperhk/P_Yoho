@@ -89,10 +89,14 @@ void stepper_style() {
         if (stepperNumber == 0 || stepperNumber == 2) { //x
           stepperSpeed[stepperNumber] = 800;
           stepperAccel[stepperNumber] = 800;
-          stepperPos[stepperNumber] = random(0, 8000);
+        //            stepperSpeed[stepperNumber] = 800;
+         // stepperAccel[stepperNumber] = 800;
+          stepperPos[stepperNumber] = random(0, 5000);
         } else { //Y
           stepperSpeed[stepperNumber] = 2000;
           stepperAccel[stepperNumber] = 2000;
+         //           stepperSpeed[stepperNumber] = 2000;
+        //  stepperAccel[stepperNumber] = 2000;
           stepperPos[stepperNumber] = random(0, 10000);
         }
 
