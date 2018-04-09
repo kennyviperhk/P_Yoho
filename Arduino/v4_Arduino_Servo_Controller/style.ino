@@ -7,10 +7,11 @@ void stepper_style() {
   //style 10 //AUTOMATIC TEST RUN FOR Ry
   style = input_value[0];
   if (style == 5) {
-    runTestStyle(-1, 800, 2000, 5000, 10000); // int XSpeedAccel,int YSpeedAccel,int maxXPos,int maxYPos
+    runTestStyle(-1, 2000, 2000, 5000, 10000); // int XSpeedAccel,int YSpeedAccel,int maxXPos,int maxYPos
+
   }
   if (style == 6) {
-    runTestStyle(-1, 400, 1000, 2500, 5000); // int XSpeedAccel,int YSpeedAccel,int maxXPos,int maxYPos
+    runTestStyle(-1, 2000, 2000, 2500, 5000); // int XSpeedAccel,int YSpeedAccel,int maxXPos,int maxYPos
   }
   if (style == 7) {
     runTestStyle(0, 400, 1000, 2500, 5000); // int XSpeedAccel,int YSpeedAccel,int maxXPos,int maxYPos
@@ -106,6 +107,9 @@ void stepper_style() {
     for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
       if (steppers[stepperNumber]->distanceToGo() == 0) {
         if (stepperPos[stepperNumber] >= 0 && stepperAccel[stepperNumber] > 0 && stepperSpeed[stepperNumber] > 0) {
+            /* Serial.print("mdone");
+            Serial.print(stepperNumber);
+            Serial.print("-");*/
           steppers[stepperNumber]->setMaxSpeed(stepperSpeed[stepperNumber]);
           steppers[stepperNumber]->setAcceleration(stepperAccel[stepperNumber]);
           steppers[stepperNumber]->moveTo((inverseDir[stepperNumber])*stepperPos[stepperNumber]);
@@ -116,21 +120,19 @@ void stepper_style() {
   if (style == 12) { // Time Specified Movement Controllers
 
 
-    //STYLE - POS - TIME - POS - TIME
-
-    int stepperNumber;
+    //STYLE - POS - TIME - POS - TIME - POS - TIME - POS - TIME
 
     stepperPos[0] = input_value[1];
-    stepperTime[0] = input_value[2] / 1000;
+    stepperTime[0] = input_value[2] / 1000.0;
 
     stepperPos[1] = input_value[3];
-    stepperTime[1] = input_value[4] / 1000;
+    stepperTime[1] = input_value[4] / 1000.0;
 
     stepperPos[2] = input_value[5];
-    stepperTime[2] = input_value[6] / 1000;
+    stepperTime[2] = input_value[6] / 1000.0;
 
     stepperPos[3] = input_value[7];
-    stepperTime[3] = input_value[8] / 1000;
+    stepperTime[3] = input_value[8] / 1000.0;
 
     for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
       if (stepperPos[stepperNumber] >= 0 && stepperTime[stepperNumber] > 0) {
@@ -139,9 +141,10 @@ void stepper_style() {
           if (currentMillis - prevStepperMillis[stepperNumber] > stepperTime[stepperNumber]) {
             Serial.print("mdone");
             Serial.print(stepperNumber);
+            Serial.print("-");
           }
           prevStepperMillis[stepperNumber] = currentMillis;
-          steppers[stepperNumber]->reset(-stepperPos[stepperNumber], stepperTime[stepperNumber]);
+          steppers[stepperNumber]->reset((inverseDir[stepperNumber])*stepperPos[stepperNumber], stepperTime[stepperNumber]);
         }
       }
     }

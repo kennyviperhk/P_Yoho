@@ -2,40 +2,49 @@
 
 //--------------------------------------------------------------
 void DmxLight::setup() {
-    ofSetVerticalSync(true);
-
+    
     modules = NUM_OF_DMX;
     
     panel1.setup();
-    panel1.setPosition(4, 4);
+    panel1.setPosition(ofGetWidth() - 210, 4);
     panel1.setName("dmx0");
     panel1.add(save.set("save", false));
     panel1.add(load.set("load", false));
 
     panel2.setup();
-    panel2.setPosition(400, 4);
+    panel2.setPosition(ofGetWidth() - 100, 4);
     panel2.setName("dmx1");
     panel2.add(save.set("save", false));
     panel2.add(load.set("load", false));
+    
 
     for(int module = 1; module <= modules; module++) {
         string label = "mod" + ofToString(module);
-            if(module<10){
+            if(module<11){
 
-                panel1.add(red[module].set("red" +ofToString(module), 1, 0, 1));
-                panel1.add(green[module].set("green"+ofToString(module), 1, 0, 1));
-                panel1.add(blue[module].set("blue"+ofToString(module), 1, 0, 1));
-                panel1.add(white[module].set("white"+ofToString(module), 1, 0, 1));
+                panel1.add(red[module].set("r " +ofToString(module), 1, 0, 1));
+                panel1.add(green[module].set("g "+ofToString(module), 1, 0, 1));
+                panel1.add(blue[module].set("b "+ofToString(module), 1, 0, 1));
+                panel1.add(white[module].set("w "+ofToString(module), 1, 0, 1));
         }
         else{
 
-            panel2.add(red[module].set("red" +ofToString(module), 1, 0, 1));
-            panel2.add(green[module].set("green"+ofToString(module), 1, 0, 1));
-            panel2.add(blue[module].set("blue"+ofToString(module), 1, 0, 1));
-            panel2.add(white[module].set("white"+ofToString(module), 1, 0, 1));
+            panel2.add(red[module].set("r " +ofToString(module), 1, 0, 1));
+            panel2.add(green[module].set("g "+ofToString(module), 1, 0, 1));
+            panel2.add(blue[module].set("b "+ofToString(module), 1, 0, 1));
+            panel2.add(white[module].set("w "+ofToString(module), 1, 0, 1));
         }
     }
 
+    int guiW = 100;
+    int guiH = 500;
+    panel1.setSize(guiW, guiH);
+    panel1.setWidthElements(guiW);
+    panel2.setSize(guiW, guiH);
+    panel2.setWidthElements(guiW);
+
+    
+    
     load = true;
     
     dmx.connect(0, 80);  //Set Module ID
@@ -97,13 +106,12 @@ void DmxLight::setAll(int r, int g, int b, int w) {
 }
 
 void DmxLight::draw() {
-    ofBackground(0);
     ofPushMatrix();
 
-    ofTranslate(256, 0);
+    ofTranslate(ofGetWidth() - 800, 0); // Position of the Text
     int channel = 1;
     for(int module = 1; module <= modules; module++) {
-        string label = "module " + ofToString(module);
+        string label = "DMX " + ofToString(module);
         int rc = channel++;
         int gc = channel++;
         int bc = channel++;
@@ -114,16 +122,16 @@ void DmxLight::draw() {
         int w = dmx.getLevel(wc);
         ofSetColor(r, g, b);
         ofFill();
-        ofDrawRectangle(4, module * 16 + 6, 14, 14);
+        ofDrawRectangle(4, ofGetHeight()/2 + module * 16 + 6, 14, 14);
         ofSetColor(255);
         ofNoFill();
-        ofDrawRectangle(4, module * 16 + 6, 14, 14);
+        ofDrawRectangle(4, ofGetHeight()/2 + module * 16 + 6, 14, 14);
         string rs = ofToString(rc) + ":" + ofToString(r);
         string gs = ofToString(gc) + ":" + ofToString(g);
         string bs = ofToString(bc) + ":" + ofToString(b);
         string ws = ofToString(wc) + ":" + ofToString(w);
         string text = label + " (" + rs + ", " + gs + ", " + bs + ", " + ws + ")";
-        ofDrawBitmapString(text, 24, module * 16 + 16);
+        ofDrawBitmapString(text, 24, ofGetHeight()/2 + module * 16 + 16);
     }
 
     ofPopMatrix();

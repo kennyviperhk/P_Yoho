@@ -62,6 +62,9 @@ long stepperTime[numOfStepper]  = {0, 0, 0, 0};  // Travel Time to POS
 
   AccelStepper* steppers[numOfStepper] = { &stepperLx, &stepperLy, &stepperRx, &stepperRy};
 */
+const int timeStep = 100;  // ms
+const float minReturnSpeed = 100;
+
 
 MyStepper stepperLx (AccelStepper::DRIVER, lxStep, lxDir);
 MyStepper stepperLy (AccelStepper::DRIVER, lyStep, lyDir);
@@ -118,6 +121,9 @@ void setup() {
     steppers[stepperNumber]->setMaxSpeed(stepperSpeed[stepperNumber]);
     steppers[stepperNumber]->setAcceleration(stepperAccel[stepperNumber]);
     steppers[stepperNumber]->moveTo(stepperPos[stepperNumber]);
+
+    steppers[stepperNumber]->setMinReturnSpeed(minReturnSpeed);  // should be positive
+    steppers[stepperNumber]->setTimeStepInMillis(timeStep);
 
     //steppers[stepperNumber]->setPinsInverted(true, true, true); //(directionInvert,stepInvert,enableInvert)
     Load_Flash();
@@ -247,7 +253,13 @@ void loop() {
     stepper_style();
 
     for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
-      steppers[stepperNumber]->run();
+      if(style == 12){
+        if (!steppers[stepperNumber]->isCompleteTotDist()) {
+          steppers[stepperNumber]->myRun();
+        }
+       }else{
+        steppers[stepperNumber]->run();
+       }
     }
     // ============ ENCODER ================
 

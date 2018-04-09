@@ -44,6 +44,9 @@
 #define MAX_X_POS 5000
 #define MAX_Y_POS 30000
 
+#define MAX_X_TIME 60000
+#define MAX_Y_TIME 60000
+
 #define MAX_X_SPEED 1000
 #define MAX_Y_SPEED 1000
 
@@ -129,13 +132,13 @@ class ofApp : public ofBaseApp{
     //========== MusicPlayer ===========
     
     MusicPlayer musicPlayer;
-    bool showMusicPlayer;
+    bool drawMusicPlayer;
     
     //========== Movement Controller ===========
     
     //vector<MovementController> MovementControllers;
     MovementController MovementController;
-    bool showMovementController;
+    bool drawMovementController;
     
     //================== Serial ==================
     
@@ -188,7 +191,9 @@ class ofApp : public ofBaseApp{
     ofxPanel guiDebug;
     ofxPanel guiDebug2;
     ofParameterGroup parametersDebug;
-    ofXml settings;
+    ofXml XML;
+    void saveSettings();
+    void loadSettings();
     vector<ofParameter<int>> EEPROM;
     vector<ofxButton> EEPROM_btn;
     
@@ -216,6 +221,17 @@ class ofApp : public ofBaseApp{
     vector<ofParameter<int>> cablePosLy; //lx,ly,rx,ry
     vector<ofParameter<int>> cablePosRx; //lx,ly,rx,ry
     vector<ofParameter<int>> cablePosRy; //lx,ly,rx,ry
+    
+    //Cable Time
+    ofxPanel guiCableTimeLx;
+    ofxPanel guiCableTimeLy;
+    ofxPanel guiCableTimeRx;
+    ofxPanel guiCableTimeRy;
+    ofParameterGroup parametersCableTime;
+    vector<ofParameter<int>> cableTimeLx; //lx,ly,rx,ry
+    vector<ofParameter<int>> cableTimeLy; //lx,ly,rx,ry
+    vector<ofParameter<int>> cableTimeRx; //lx,ly,rx,ry
+    vector<ofParameter<int>> cableTimeRy; //lx,ly,rx,ry
     
     //Cable Pos Offset
     ofxPanel guiCablePosLxOffset;
@@ -266,6 +282,7 @@ class ofApp : public ofBaseApp{
     ofxPanel guiCableSpeedLy;
     ofxPanel guiCableSpeedRx;
     ofxPanel guiCableSpeedRy;
+    
     //ofxPanel guiCableAccel;
     ofParameterGroup parametersCableSpeed;
     vector<ofParameter<int>> cableSpeedLx; //lx,ly,rx,ry
@@ -288,11 +305,15 @@ class ofApp : public ofBaseApp{
     bool isEmergencyStop;
     
     void loadButtonPressed();
-    
-    
+
     ofFbo kineticVisualizationFbo;
     bool drawKineticVisualizationFbo;
     bool drawDebugGui;
+    bool drawPosGui;
+    bool drawSpeedAccelGui;
+    bool drawTimeGui;
+    
+    bool drawDmx;
     int num_of_online;
     long prevOnlineCheckingMillis;
     
@@ -303,14 +324,11 @@ class ofApp : public ofBaseApp{
     
     //================== Song 1 ==================
     
-    void song();
+    void exhibition(int s);
     int songStage;
-    ofParameter<int> currentSong;
+    ofParameter<int> exhibitionMode;
     int prevSong;
-    
 
-    
-    
     long currTime;
     long prevTime;
     bool setPattern;
@@ -334,5 +352,9 @@ class ofApp : public ofBaseApp{
 #else
     
 #endif
+    
+    
+    
+        std::stringstream ss_info;
 };
 
