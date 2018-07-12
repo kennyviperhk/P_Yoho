@@ -25,12 +25,12 @@
 #include <regex>
 
 #ifdef USEOSC
-    #include "ofxOsc.h"
-    #define R_PORT 12346
+#include "ofxOsc.h"
+#define R_PORT 12346
 
-    #define S_HOST "192.168.0.101"
-    //#define S_HOST "localhost"
-    #define S_PORT 12345
+#define S_HOST "192.168.0.101"
+//#define S_HOST "localhost"
+#define S_PORT 12345
 
 #else
 
@@ -70,14 +70,14 @@
 #define INVERT_DIR_RY      int_array[13]
 
 /*
- notes: 
+ notes:
  
  //command: send motor index [0-4] - position [0-10000] - interpolation style [0-4?] - 3 style parameters ... (example: time to position [0 - 100000ms])
-
+ 
  todo:
  //DETECT HOME
-//controllable single module:
- accel, speed, pos (send to arduino), flip dir, 
+ //controllable single module:
+ accel, speed, pos (send to arduino), flip dir,
  
  //call for assure connection
  
@@ -105,14 +105,14 @@ public:
 };
 
 class ofApp : public ofBaseApp{
-
-	public:
-		void setup();
-		void update();
-		void draw();
-        void exit();
-        void keyReleased(int key);
-   
+    
+public:
+    void setup();
+    void update();
+    void draw();
+    void exit();
+    void keyReleased(int key);
+    
     void keyPressed(int key){};
     void mouseMoved(int x, int y ){};
     void mouseDragged(int x, int y, int button){};
@@ -153,15 +153,15 @@ class ofApp : public ofBaseApp{
     bool initOnUpdate;
     long checkArduinoMillis; //todo
     
-
+    
 #ifdef USEOSC
-        vector<bool> isArduioPort;
-        vector<int> arduino;
+    vector<bool> isArduioPort;
+    vector<int> arduino;
 #else
-        vector<ofx::IO::BufferedSerialDevice> comPort;
-        vector<ofx::IO::BufferedSerialDevice> arduino;
+    vector<ofx::IO::BufferedSerialDevice> comPort;
+    vector<ofx::IO::BufferedSerialDevice> arduino;
 #endif
-
+    
     
     //unused
     //void sendChar();
@@ -183,13 +183,18 @@ class ofApp : public ofBaseApp{
     
     //================== debugMode ==================
     
+
+    
     int page;
     int numOfPages;
     void guiSetup();
+    void guiDraw();
     
     bool debugMode;
     ofxPanel guiDebug;
     ofxPanel guiDebug2;
+    ofxPanel guiDebugSingleCableCtrl;
+    
     ofParameterGroup parametersDebug;
     ofXml XML;
     void saveSettings();
@@ -199,15 +204,22 @@ class ofApp : public ofBaseApp{
     
     ofxButton EEPROM_saveBtn;
     ofxButton EEPROM_loadBtn;
-    ofxButton style_Btn;
-    ofxButton style_Btn_all_same;
-    ofxButton style_Btn_all;
+    ofxButton sendStyleBtn;
+    ofxButton sendStyleBtn_all_same;
+    ofxButton sendStyleBtn_all;
     ofxButton reset_Btn;
     ofxButton home_Btn;
     ofxToggle all_Tog;
     vector<ofParameter<bool>> working_cable;
     vector<ofParameter<bool>> input_pts;
     vector<ofParameter<bool>> output_pts;
+    
+    vector<ofParameter<int>> singleCablePos;
+    vector<ofParameter<bool>> singleCablePosLoop;
+    ofxButton singleCableResetBtn;
+    ofxButton singleCableResetAllBtn;
+    ofxButton singleCableHomeAllBtn;
+    ofxButton singleCableSendStyleBtn;
     
     ofxTextField textField;
     
@@ -246,7 +258,7 @@ class ofApp : public ofBaseApp{
     
     bool showOffset;
     
-//Style 2
+    //Style 2
     
     ofxPanel guiCablePosLx2;
     ofxPanel guiCablePosLy2;
@@ -290,12 +302,14 @@ class ofApp : public ofBaseApp{
     vector<ofParameter<int>> cableSpeedRx; //lx,ly,rx,ry
     vector<ofParameter<int>> cableSpeedRy; //lx,ly,rx,ry
     
-    ofParameter<int> currentDebugArduinoID;
+    ofParameter<int> currCableID;
+    ofParameter<int> prevCableID;
     ofParameter<int> currentStyle;
     void writeStyle(int s);
     
     bool serialTrigger; //TO avoid ofxButton cause multiple click and send mutiple serial command;
     long prevSerialTriggerMillis; //TO avoid ofxButton cause multiple click and send mutiple serial command;
+    long prevSingleCableLoopMillis;
     long currMillis;
     
     void displayLog(string s);
@@ -305,10 +319,10 @@ class ofApp : public ofBaseApp{
     bool isEmergencyStop;
     
     void loadButtonPressed();
-
+    
     ofFbo kineticVisualizationFbo;
     bool drawKineticVisualizationFbo;
-    bool drawDebugGui;
+    vector<bool> drawDebugGui;
     bool drawPosGui;
     bool drawSpeedAccelGui;
     bool drawTimeGui;
@@ -324,11 +338,11 @@ class ofApp : public ofBaseApp{
     
     //================== Song 1 ==================
     
-    void exhibition(int s);
+    void movement(int s);
     int songStage;
-    ofParameter<int> exhibitionMode;
+    ofParameter<int> movementMode;
     int prevSong;
-
+    
     long currTime;
     long prevTime;
     bool setPattern;
@@ -337,7 +351,7 @@ class ofApp : public ofBaseApp{
     void setPoints();
     
     
-     //========== DMX Light ===========
+    //========== DMX Light ===========
     DmxLight DmxLight;
     
     
@@ -353,8 +367,7 @@ class ofApp : public ofBaseApp{
     
 #endif
     
-    
-    
-        std::stringstream ss_info;
+    std::stringstream ss_info;
 };
+
 
