@@ -553,20 +553,20 @@ void ofApp::keyReleased(int key){
                 writeStyle(2);
             }
             break;
-        case '7': //power on/off
+        case '5': //power on/off
             movementMode = 0;
             break;
-        case '8': //lights on/off
+        case '6': //lights on/off
             if(movementMode == 1){
                 movementMode = 0;
             }else{
                 movementMode = 1;
             }
             break;
-        case '9': //Reset and Home
+        case '7': //Reset and Home
             movementMode = 2;
             break;
-        case '0': //Mode Selection
+        case '8': //Mode Selection
             if(movementMode>= 2){
                 movementMode++;
             }else{
@@ -575,6 +575,9 @@ void ofApp::keyReleased(int key){
             if(movementMode > 4){
                 movementMode = 2;
             }
+            break;
+            
+        case '9': //Reserved
             break;
             
         default:
