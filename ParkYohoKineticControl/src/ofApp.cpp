@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    
+  
     ofSetFrameRate(25);
     
     //================== Serial ==================
@@ -35,10 +35,22 @@ void ofApp::setup(){
     loadSettings();
     guiSetup();
     
-    //================== Music Player ==================
+    //================== Timeline/Music Player ==================
     
     drawMusicPlayer = false;
-    musicPlayer.setup();
+ //   musicPlayer.setup();
+    
+    timelinePlayer.setup();
+    ofAddListener(timelinePlayer.onKeyFrameEntered, this, &ofApp::onKeyframe);
+    timelinePlayer.loadButtonPressed();
+    
+    isExhibitionMode = true;
+    timelinePlayer.exhibitionMode(isExhibitionMode);
+    
+    // ofLog() << "ffMovie.getDuration() : " << ffmovie.getDuration();
+    // timelinePlayer.setDuration(ffMovie.getDuration()*1000);
+    
+        showBeginTrigger = false;
     
     //================== Dmx Light ==================
     
@@ -183,8 +195,14 @@ void ofApp::update(){
     kineticVisualizationFbo.end();
     
     
-    //================== Music Player ==================
-    musicPlayer.update();
+    //================== Music/Timeline Player ==================
+ //   musicPlayer.update();
+    if(currMillis - prevShowBeginMillis > SHOW_DELAY_TIME && showBeginTrigger){
+        timelinePlayer.loadButtonPressed();
+        timelinePlayer.playButtonPressed();
+        showBeginTrigger =false;
+    }
+    
     
     //================== Dmx Light ==================
     DmxLight.update();
@@ -208,7 +226,13 @@ void ofApp::draw(){
     
     ss_info << "'space'  --> Emergency Stop : " << endl;
     ss_info << "'d'      --> Debug Mode     : "<< debugMode << endl;
-    ss_info << "'e'      --> Movement Mode: "<< movementMode << endl;
+    ss_info << " " << endl;
+    ss_info << "'5'      --> power on/off: " << endl;
+    ss_info << "'6'      --> lights on/off" << endl;
+    ss_info << "'7'      --> Reset and Home"<< endl;
+    ss_info << "'8'      --> Mode Selection: " << movementMode << endl;
+    ss_info << "'9'      --> Reserved " << endl;
+    
     ss_info << " " << endl;
     if(isEmergencyStop){
         ofBackground(255, 0, 0);
@@ -293,7 +317,18 @@ void ofApp::draw(){
             drawSpeedAccelGui = true;
             drawDmx = true;
             
-        }else{ //Page = 6 // ricci mode
+        }else if(page == 6){ //Page = 6 // ricci mode
+            movementMode = 4;
+            drawDebugGui = {false,false,true};
+            drawPosGui = true;
+            drawSpeedAccelGui = false;
+            drawKineticVisualizationFbo = true;
+            drawMusicPlayer = false;
+            drawMovementController = false;
+            showOffset = false;
+            drawDmx = false;
+        }
+        else{ //Page = 7 // mp3
             movementMode = 4;
             drawDebugGui = {false,false,true};
             drawPosGui = true;
@@ -449,7 +484,7 @@ void ofApp::draw(){
             ofSetColor(200,200,200);
             ss2 << "Arduino (" << i+1 << ") : " << "OFFLINE" << endl;
         }
-        ofDrawBitmapString(ss2.str(), ofVec2f(20, 20*i + 150));
+        ofDrawBitmapString(ss2.str(), ofVec2f(20, 20*i + 250));
         
     }
     
@@ -1110,7 +1145,8 @@ void ofApp::guiDraw(){
     }
     //================== Music Player ==================
     if(drawMusicPlayer){
-        musicPlayer.draw();
+       // musicPlayer.draw();
+        timelinePlayer.draw();
     }
     
     //================== Dmx Light ==================
@@ -1273,6 +1309,7 @@ void ofApp::movement(int s){
         drawTimeGui = false;
         drawDmx = true;
         drawMovementController = false;
+        drawMusicPlayer = false;
         
         DmxLight.setAll((float)1.0, (float)1.0, (float)1.0, (float)1.0);
         
@@ -1306,6 +1343,7 @@ void ofApp::movement(int s){
         drawTimeGui = false;
         drawDmx = true;
         drawMovementController = false;
+        drawMusicPlayer = false;
         
         DmxLight.setAll((float)1.0, (float)1.0, (float)1.0, (float)1.0);
         
@@ -1372,6 +1410,7 @@ void ofApp::movement(int s){
         drawTimeGui = false;
         drawMovementController = true;
         drawDmx = false;
+        drawMusicPlayer = false;
         
         //---- BEGIN -----
         if(currTime - prevTime >timeDiff){
@@ -1526,36 +1565,38 @@ void ofApp::movement(int s){
         }
         
         
-    }else if(s == 4){ //one by one
+    }else if(s == 4){ //MP3
         
         //----- INFO -----
-        ofBackground(0, 0, 120);
+        ofBackground(120, 0, 120);
         ss_info << "MODE : MP3 : " << endl;
+        
+        DmxLight.setAll((float)1.0, (float)1.0, (float)1.0, (float)1.0);
         
         drawPosGui = true;
         drawTimeGui = true;
         drawMovementController = true;
         drawDmx = false;
+        drawMusicPlayer = true;
         
+        ofLog() << "Show Begin";
+        
+        //showDoneMillis = currMillis;
+        
+        /*
         //---- BEGIN -----
         if(currTime - prevTime >timeDiff){
             
             ofLog() << "timeDiff ; "<< timeDiff;
+            timeDiff = SHOW_DELAY_TIME;
             prevTime = currTime;
             setPattern = true;
-            
-            if(currCableID > NUM_OF_CABLES-1){
-                timeDiff = ofRandom(60000,90000);
-                ofLog() << "reach cable 19";
-                currCableID = -1;
-            }else{
-                timeDiff = 600;
-            }
         }
         
         if(setPattern){
             if(songStage == 0){
-                int option = (int)ofRandom(4);
+                int option = 0;
+                
                 if(option ==3){//TFTF , FTTF, TFTF, FTFT
                     output_pts[1] = true;
                     output_pts[3] = false;
@@ -1592,23 +1633,16 @@ void ofApp::movement(int s){
                 
             }else if (songStage == 1){
                 
-                writeStyle(2);
-                
-                if(currCableID >= NUM_OF_CABLES ){
-                    ofLog() << "STAGE END " << currCableID;
-                    songStage++;
-                }
-                
                 setPattern = false;
             }else if (songStage == 2){
                 setPattern = false;
                 songStage=0;
                 currCableID = 0;
             }
-            
+         
         }
-        
-    }else if(s == 5){  // all move at the same time
+           */
+    }else if(s == 5){  // ALL SAME
         
         if(songStage == 0){
             if(currTime - prevTime >timeDiff){
@@ -1661,6 +1695,8 @@ void ofApp::movement(int s){
             }
             
         }
+        
+
     }else if(s == 6){ //ricci mode, debug one by one
         currentStyle = 11;
         if(songStage == 0){
@@ -1684,6 +1720,9 @@ void ofApp::movement(int s){
         if(setPattern){
             setPattern = false;
         }
+    }else{
+        
+       
     }
 }
 
@@ -2411,6 +2450,60 @@ vector<int> ofApp::stringDecode(string s){
         return sToIntArray;
     }
     
+}
+
+//--------------------------------------------------------------
+//---------------------- Music Timeline Player------------------
+//--------------------------------------------------------------
+//--------------------------------------------------------------
+//================ Show Control ====================
+//--------------------------------------------------------------
+void ofApp::isShowBegin(bool sb){
+    if(sb){ //begin
+        prevShowBeginMillis = currMillis;
+        showBeginTrigger = true;
+        page = 7;
+        currentStyle = 12;
+    }
+    else{ //reset
+        timelinePlayer.stopButtonPressed();
+        serialWrite(-1, "Q"); //Reset and Home All
+    }
+    
+}
+
+
+
+void ofApp::onKeyframe(Keyframe &kf){
+    /*
+    if(kf.timelineId < NUM_OF_CABLES *2  && kf.timelineId%2==0){ //LY
+        ofLog() << "LY HAS KEYFRAME : " << kf.timelineId << " " << kf.val << " " << kf.x;
+        currCableID = kf.timelineId /2 ;
+        cableTimeLy[currentArduinoID] = timelinePlayer.getTimelineValue(kf.timelineId + 1, kf.x);
+        cableTimeRy[currentArduinoID] = 0; //means no input
+        currentMotor = 0;
+        writeStyleMode(2);
+        
+    }else if(kf.timelineId >= NUM_OF_CABLES *2  && kf.timelineId%2==0 && kf.timelineId < NUM_OF_CABLES *4){ //RY
+        currCableID = kf.timelineId /2 - NUM_OF_CABLES;
+        currentMotor = 1;
+        cableTimeLy[currentArduinoID] = 0; //means no input
+        cableTimeRy[currentArduinoID] = timelinePlayer.getTimelineValue(kf.timelineId + 1, kf.x);
+        writeStyleMode(2);
+        ofLog() << "RY HAS KEYFRAME : " << kf.timelineId << " " << kf.val << " " << kf.x;
+    }else{
+        
+        // currentArduinoID = kf.timelineId /2 - NUM_OF_CABLES;
+        //currentMotor = 1;
+        currentArduinoID = 0;
+        cableTimeLy[currentArduinoID] = 0; //means no input
+        cableTimeRy[currentArduinoID] = 0;//means no input
+        writeStyleMode(0);
+        ofLog() << "LED HAS KEYFRAME : " << kf.timelineId << " " << kf.val << " " << kf.x;
+        //ofLog() << "LED " << LEDStyle;
+        // writeStyleMode(2);
+    }
+    */
 }
 
 //--------------------------------------------------------------

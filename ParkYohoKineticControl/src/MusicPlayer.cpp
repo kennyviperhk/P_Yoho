@@ -49,7 +49,7 @@ void MusicPlayer::setup() {
 		timeline.setup();
 		ofAddListener(timeline.keyframeSelectedEvent, this, &MusicPlayer::keyFrameSelected);
 		ofAddListener(timeline.keyframeDeselectedEvent, this, &MusicPlayer::keyFrameDeselected);
-		timelines.push_back(timeline);
+
 	}
 	
 	

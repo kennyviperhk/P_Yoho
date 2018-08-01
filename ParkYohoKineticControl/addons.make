@@ -1,4 +1,5 @@
 ofxAudioDecoder
+ofxCsv
 ofxDmx
 ofxGui
 ofxIO

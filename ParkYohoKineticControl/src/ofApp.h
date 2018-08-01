@@ -11,10 +11,10 @@
 
 #include "KineticController.h"
 #include "MovementController.h"
-#include "MusicPlayer.h"
+//#include "MusicPlayer.h"
 #include "DmxLight.h"
-#include "Timeline.h"
-#include "Keyframe.h"
+#include "TimelinePlayer.h"
+
 
 #include "ofxSerial.h"
 #include "ofxGui.h"
@@ -68,6 +68,10 @@
 #define INVERT_DIR_LY      int_array[11]
 #define INVERT_DIR_RX      int_array[12]
 #define INVERT_DIR_RY      int_array[13]
+
+
+//Timeline
+#define SHOW_DELAY_TIME 0 //time to delay video begins after getting serial signal
 
 /*
  notes:
@@ -128,12 +132,16 @@ public:
     
     
     KinecticVisualisation kinecticVisualisation;
+
+    //================== MusicPlayer / Timeline player ==================
     
-    //========== MusicPlayer ===========
+    //   MusicPlayer musicPlayer;
+    TimelinePlayer timelinePlayer;
+    void onKeyframe(Keyframe &kf);
     
-    MusicPlayer musicPlayer;
+    bool isExhibitionMode;
     bool drawMusicPlayer;
-    
+
     //========== Movement Controller ===========
     
     //vector<MovementController> MovementControllers;
@@ -368,6 +376,13 @@ public:
 #endif
     
     std::stringstream ss_info;
+    
+    
+    //================ Show Control ==============
+    void isShowBegin(bool sb);
+    bool showBeginTrigger;
+    long prevShowBeginMillis;
+
 };
 
 

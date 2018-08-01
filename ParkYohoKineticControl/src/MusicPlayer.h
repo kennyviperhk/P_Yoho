@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include "ofMain.h"
 #include "ofxGui.h"
-#include "Timeline.h"
 #include "ofxXmlSettings.h"
 
 
@@ -42,11 +41,6 @@ class
 			vector <float> fftHistory; //history for fftSum
 			vector <float> timeHistory; //history for the time of sound
 			float graphScale; //draw scale for the graph 
-
-
-			//-----------------------     Timeline      -------------------
-			vector <Timeline> timelines;
-
 
 			//-----------------------     GUI      -------------------
 			ofxButton playButton;
