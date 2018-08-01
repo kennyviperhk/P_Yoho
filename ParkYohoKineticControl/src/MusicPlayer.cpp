@@ -1,4 +1,21 @@
 #include "MusicPlayer.h"
+void MusicPlayer::getDuration() {
+    computeSoundDuration();
+
+    return duration;
+}
+
+void MusicPlayer::computeSoundDuration() {
+    //set to half position and get the millisecond there
+    mp3.play();
+    mp3.setPosition(0.5f);
+    duration = mp3.getPositionMS()*2 -1;
+    mp3.setPosition(0);
+    mp3.stop();
+    ofLog() << "Sound Duration : " << duration;
+    printf("SOUND LENGTH: %i\n\n", duration);
+}
+
 
 //--------------------------------------------------------------
 void MusicPlayer::setup() {
@@ -19,7 +36,9 @@ void MusicPlayer::setup() {
 			mp3.load(dir.getPath(currentTrack));
 		}
 	}
+        /*
 	lastPauseSoundTime = 0;
+
 	//-----------------------     FFT      -------------------
 
 	// the fft needs to be smoothed out, so we create an array of floats
@@ -86,6 +105,7 @@ void MusicPlayer::setup() {
 	
 
 	gui.loadFromFile("musicPlayerSettings.xml");
+     */
 }
 
 //--------------------------------------------------------------
@@ -98,7 +118,7 @@ void MusicPlayer::update() {
 	// update the sound playing system:
 	ofSoundUpdate();
 
-
+/*
 
 	//-----------------------     FFT      -------------------
 
@@ -149,12 +169,12 @@ void MusicPlayer::update() {
 	for (int i = 0; i < 20; i++) {
 		timelines[i].update();
 	}
-	
+	*/
 }
 
 //--------------------------------------------------------------
 void MusicPlayer::draw() {
-
+/*
 	//-----------------------     FFT      -------------------
 	ofPushStyle();
 	ofEnableAlphaBlending();
@@ -236,11 +256,12 @@ void MusicPlayer::draw() {
 	//-----------------------     GUI      -------------------
 
 	gui.draw();
-
+*/
+    
 }
 
 
-
+/*
 //---------------- Timeline functions ----------------
 
 //function for other classes to get the timeline's keyframes tweening value
@@ -313,11 +334,11 @@ void MusicPlayer::selectKeyButtonPressed() {
 		timelines[i].selectKeyframeOnClick();
 	}
 }
-
+*/
 //--------------------------------------------------------------
 //-----------------------     GUI EVENTS     -------------------
 //--------------------------------------------------------------
-
+/*
 //--------------------------------------------------------------
 void MusicPlayer::playButtonPressed() {
 	computeSoundDuration();
@@ -444,15 +465,6 @@ void MusicPlayer::graphScrollChanged(float &setScroll) {
 	graphScrollX = setScroll;
 }
 
-void MusicPlayer::computeSoundDuration() {
-	//set to half position and get the millisecond there
-	mp3.play();
-	mp3.setPosition(0.5f);
-	duration = mp3.getPositionMS()*2 -1;
-	mp3.setPosition(0);
-	mp3.stop();
-	printf("SOUND LENGTH: %i\n\n", duration);
-}
 
 void MusicPlayer::resetGraph() {
 	fftHistory.clear();
@@ -466,3 +478,4 @@ void MusicPlayer::resetGraph() {
 	}
 	selectedKeyframe = &nullKeyframe;
 }
+*/

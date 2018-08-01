@@ -16,7 +16,7 @@ class
 			void setup();
 			void update();
 			void draw();
-
+            void getDuration();
 
 			//-----------------------     MP3 Player      -------------------
 
@@ -24,8 +24,8 @@ class
 
 			ofSoundPlayer 		mp3;
 			int currentTrack;
-			int duration;
-
+			long duration;
+/*
 			//-----------------------     FFT      -------------------
 			float 				* fftSmoothed;
 			int nBandsToGet;
@@ -86,7 +86,7 @@ class
 		private:
 			int lastMaxSoundTime; //record the last max sound time, used for prevent redraw the graph when song looped
 			int lastPauseSoundTime; //record the time when the sound is paused
-			void computeSoundDuration(); //calculate the sound's duration when playing a new sound
+
 			void resetGraph(); //reset the fft sum graph and the timelines when playing a new sound
 			Keyframe *selectedKeyframe; //selected keyframe for editing its value
 			Keyframe nullKeyframe; //a keyframe that is null, i.e. no selected key frame
@@ -94,7 +94,9 @@ class
 			const float KEYFRAME_MAX_VALUE = 20.0f; //the maximum value for a keyframe in slider
 
 			void reloadTimelineFromSave();//load the timeline save file
-
+*/
+            private:
+                    void computeSoundDuration(); //calculate the sound's duration when playing a new sound
 	};
 
 

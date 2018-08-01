@@ -1273,6 +1273,7 @@ void ofApp::movement(int s){
         
         drawDebugGui = {false,false,false};
         drawPosGui = false;
+        drawTimeGui = false;
         drawSpeedAccelGui = false;
         drawKineticVisualizationFbo = true;
         drawMusicPlayer = false;
@@ -2322,7 +2323,7 @@ void ofApp::serialWrite(int arduinoID, string sw){
         
         
     }
-    else{ ofLog() << "Arduino: " <<arduinoID << "OFFLINE ";} // todo put in gui
+    else{ ofLog() << "Arduino: " <<arduinoID << " >> OFFLINE ";} // todo put in gui
     
     ofLog() << "Arduino Write: " <<arduinoID <<  ":  "<<sw;
 #endif

@@ -11,7 +11,7 @@
 
 #define KEYFRAME_MIN_VALUE 0
 #define KEYFRAME_MAX_VALUE 3400
-#define NUM_TIMELINE 31
+#define NUM_TIMELINE 12
 
 
 // A class that wrap the music player, fft graph, timeline
