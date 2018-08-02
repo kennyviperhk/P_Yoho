@@ -42,38 +42,15 @@ void Timeline::draw() {
     //draw the id of the timeline
     ofSetColor(50, 50, 50);
     string str;
-    if (id % 2) {
-        if (id < 12){
-            str = "Lx" + ofToString(id/2) +" Time";
-        }else if(id >= 12 && id < 24){
-            str = "Rx" + ofToString((id - 12)/2 ) +" Time";
-        }else if(id >= 24 && id < 26){
-            str = "FAN";
-        }else{
-            str = "LED";
-
-        }
-        //str = ofToString(id/2) + d + "Time";
+    if(id == 0){ str+= " Option";}
+    else if(id == 1){ str+= " Time";}
+    else if(id == 2){ str+= " Wave Param A";}
+    else if(id == 3){ str+= " Wave Param B";}
+    else if(id == 4){ str+= " Wave Param C";}
+    else if(id == 5){ str+= " Wave Param D";}
+    else{
+                    str = "Lx" + ofToString(id/2) +" Time";
     }
-    else {
-        if (id < 12){
-            str = "Lx" + ofToString(id/2) +" MoveTo";
-        }else if(id >= 12 && id < 24){
-            str = "Rx" + ofToString((id - 12)/2 ) +" MoveTo";
-        }else if(id >= 24 && id < 26){
-            str = "FAN";
-        }else{
-            str = "LED";
-
-        }
-        //str = ofToString(id/2) + "MoveTo";
-    }
-    if(id == 26){ str+= " Style";}
-    if(id == 27){ str+= " Interval";}
-    if(id == 28){ str+= " Fade";}
-    if(id == 29){ str+= " Min Range / Multiply";}
-    if(id == 30){ str+= " Max Range";}
-    
     ofDrawBitmapString(str, xPos, yPos + 15.0f);
     
     //draw keyframes

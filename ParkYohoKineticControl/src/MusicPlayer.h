@@ -16,8 +16,12 @@ class
 			void setup();
 			void update();
 			void draw();
-            void getDuration();
-
+        
+            long getDuration();
+            float getCurrentPos();
+        
+            string play();
+            float pause();
 			//-----------------------     MP3 Player      -------------------
 
 			ofDirectory dir;
@@ -41,7 +45,7 @@ class
 			vector <float> fftHistory; //history for fftSum
 			vector <float> timeHistory; //history for the time of sound
 			float graphScale; //draw scale for the graph 
-
+*/
 			//-----------------------     GUI      -------------------
 			ofxButton playButton;
 			ofxButton nextButton;
@@ -63,7 +67,7 @@ class
 
 			ofxPanel gui;
 
-
+/*
 			void playButtonPressed();
 			void nextButtonPressed();
 			void pauseButtonPressed();
@@ -95,8 +99,8 @@ class
 
 			void reloadTimelineFromSave();//load the timeline save file
 */
-            private:
-                    void computeSoundDuration(); //calculate the sound's duration when playing a new sound
+        private:
+            void computeSoundDuration(); //calculate the sound's duration when playing a new sound
 	};
 
 

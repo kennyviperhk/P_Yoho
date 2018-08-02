@@ -38,7 +38,7 @@ void ofApp::setup(){
     //================== Timeline/Music Player ==================
     
     drawMusicPlayer = false;
- //   musicPlayer.setup();
+    musicPlayer.setup();
     
     timelinePlayer.setup();
     ofAddListener(timelinePlayer.onKeyFrameEntered, this, &ofApp::onKeyframe);
@@ -196,7 +196,9 @@ void ofApp::update(){
     
     
     //================== Music/Timeline Player ==================
- //   musicPlayer.update();
+    musicPlayer.update();
+    timelinePlayer.update();
+    
     if(currMillis - prevShowBeginMillis > SHOW_DELAY_TIME && showBeginTrigger){
         timelinePlayer.loadButtonPressed();
         timelinePlayer.playButtonPressed();
@@ -1309,6 +1311,7 @@ void ofApp::movement(int s){
         drawPosGui = false;
         drawTimeGui = false;
         drawDmx = true;
+        drawKineticVisualizationFbo = true;
         drawMovementController = false;
         drawMusicPlayer = false;
         
@@ -1343,6 +1346,7 @@ void ofApp::movement(int s){
         drawPosGui = false;
         drawTimeGui = false;
         drawDmx = true;
+        drawKineticVisualizationFbo = true;
         drawMovementController = false;
         drawMusicPlayer = false;
         
@@ -1411,6 +1415,7 @@ void ofApp::movement(int s){
         drawTimeGui = false;
         drawMovementController = true;
         drawDmx = false;
+        drawKineticVisualizationFbo = true;
         drawMusicPlayer = false;
         
         //---- BEGIN -----
@@ -1577,25 +1582,30 @@ void ofApp::movement(int s){
         drawPosGui = true;
         drawTimeGui = true;
         drawMovementController = true;
+        drawKineticVisualizationFbo = true;
         drawDmx = false;
         drawMusicPlayer = true;
         
-        ofLog() << "Show Begin";
-        
-        //showDoneMillis = currMillis;
-        
-        /*
-        //---- BEGIN -----
-        if(currTime - prevTime >timeDiff){
-            
-            ofLog() << "timeDiff ; "<< timeDiff;
-            timeDiff = SHOW_DELAY_TIME;
-            prevTime = currTime;
-            setPattern = true;
+        if(timelinePlayer.getPlayButtonStatus()){
+            playTrack();
+            ofLog() << "play";
         }
         
-        if(setPattern){
+        //showDoneMillis = currMillis;
+        /*
+        if(currTime - prevTime >timeDiff){
+         // timeDiff = SHOW_DELAY_TIME;
+         prevTime = currTime;
+         setPattern = true;
+         
+        }
+        */
+
+
             if(songStage == 0){
+    
+               // playTrack();
+                
                 int option = 0;
                 
                 if(option ==3){//TFTF , FTTF, TFTF, FTFT
@@ -1627,12 +1637,24 @@ void ofApp::movement(int s){
                     output_pts[0] = false;
                     output_pts[2] = true;
                 }
+                
                 MovementController.setPoints((int)ofRandom(30,90), ofRandom(35,37),(int)ofRandom(0,187),(int)ofRandom(0,1000));
                 
                 
                 songStage++;
                 
             }else if (songStage == 1){
+                ofLog() << (int)(musicPlayer.getCurrentPos() * (float)currMusicDuration) ;
+                timelinePlayer.setCurrentTime((int)(musicPlayer.getCurrentPos() * (float)currMusicDuration));
+                ss_info << "Current MP3 Pos : " << (int)(musicPlayer.getCurrentPos() * (float)currMusicDuration)  << endl;
+
+              
+            }else{
+                
+            }
+            
+            /*
+            else if (songStage == 1){
                 
                 setPattern = false;
             }else if (songStage == 2){
@@ -1640,9 +1662,9 @@ void ofApp::movement(int s){
                 songStage=0;
                 currCableID = 0;
             }
-         
-        }
-           */
+         */
+        
+        
     }else if(s == 5){  // ALL SAME
         
         if(songStage == 0){
@@ -2473,7 +2495,19 @@ void ofApp::isShowBegin(bool sb){
     
 }
 
-
+void ofApp::playTrack(){
+    currMusicDuration = musicPlayer.getDuration();
+    timelinePlayer.setDuration(currMusicDuration);
+    ofLog() << "is Playing : " << musicPlayer.play();
+    timelinePlayer.playButtonPressed();
+}
+void ofApp::pauseTrack(){
+    musicPlayer.pause();
+    timelinePlayer.playButtonPressed();
+}
+void ofApp::setTrackisLoop(bool t){
+    timelinePlayer.setLoop(t);
+}
 
 void ofApp::onKeyframe(Keyframe &kf){
     /*

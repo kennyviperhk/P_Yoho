@@ -1,9 +1,33 @@
 #include "MusicPlayer.h"
-void MusicPlayer::getDuration() {
-    computeSoundDuration();
 
+
+
+string MusicPlayer::play() {
+    computeSoundDuration();
+    //resetGraph();
+    //reloadTimelineFromSave();
+    mp3.play();
+    return dir.getName(currentTrack);
+    //trackFileName.setup("Now Playing", dir.getName(currentTrack));
+}
+
+float MusicPlayer::pause() {
+    mp3.setPaused(true);
+    return mp3.getPosition();
+}
+
+long MusicPlayer::getDuration() {
+    computeSoundDuration();
     return duration;
 }
+
+float MusicPlayer::getCurrentPos() {
+    float playheadPos = 0;
+    if (mp3.getIsPlaying()) {
+    }
+    return mp3.getPosition();
+}
+
 
 void MusicPlayer::computeSoundDuration() {
     //set to half position and get the millisecond there
@@ -34,6 +58,7 @@ void MusicPlayer::setup() {
 		ofLogNotice(dir.getPath(i));
 		if (i == currentTrack) {
 			mp3.load(dir.getPath(currentTrack));
+            ofLog() << "MP3 loaded : " << dir.getPath(currentTrack);
 		}
 	}
         /*
@@ -111,15 +136,13 @@ void MusicPlayer::setup() {
 //--------------------------------------------------------------
 void MusicPlayer::update() {
 
-	ofBackground(80, 80, 20);
 
 	//-----------------------     MP3 Player      -------------------
 
 	// update the sound playing system:
 	ofSoundUpdate();
 
-/*
-
+    /*
 	//-----------------------     FFT      -------------------
 
 	// (5) grab the fft, and put in into a "smoothed" array,
@@ -174,6 +197,7 @@ void MusicPlayer::update() {
 
 //--------------------------------------------------------------
 void MusicPlayer::draw() {
+    
 /*
 	//-----------------------     FFT      -------------------
 	ofPushStyle();

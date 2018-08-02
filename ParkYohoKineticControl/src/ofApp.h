@@ -11,7 +11,7 @@
 
 #include "KineticController.h"
 #include "MovementController.h"
-//#include "MusicPlayer.h"
+#include "MusicPlayer.h"
 #include "DmxLight.h"
 #include "TimelinePlayer.h"
 
@@ -129,19 +129,21 @@ public:
     void gotMessage(ofMessage msg){};
     
     //========== kinecticVisualisation ===========
-    
-    
     KinecticVisualisation kinecticVisualisation;
 
     //================== MusicPlayer / Timeline player ==================
-    
-    //   MusicPlayer musicPlayer;
     TimelinePlayer timelinePlayer;
     void onKeyframe(Keyframe &kf);
     
     bool isExhibitionMode;
     bool drawMusicPlayer;
+    
+    MusicPlayer musicPlayer;
 
+    long currMusicDuration;
+    void playTrack();
+    void pauseTrack();
+    void setTrackisLoop(bool t);
     //========== Movement Controller ===========
     
     //vector<MovementController> MovementControllers;
@@ -202,6 +204,7 @@ public:
     ofxPanel guiDebug;
     ofxPanel guiDebug2;
     ofxPanel guiDebugSingleCableCtrl;
+
     
     ofParameterGroup parametersDebug;
     ofXml XML;

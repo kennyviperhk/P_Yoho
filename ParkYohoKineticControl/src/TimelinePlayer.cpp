@@ -75,13 +75,14 @@ void TimelinePlayer::setup() {
     
     
     
-    movie.load("ffmount.mp4");
-    movie.setLoopState(OF_LOOP_NORMAL);
-    movie.stop();
+   // movie.load("ffmount.mp4");
+  //  movie.setLoopState(OF_LOOP_NORMAL);
+  //  movie.stop();
+    /*
     
     ofLog() << "ffMovie.getDuration() : " << movie.getDuration();
     setDuration(movie.getDuration()*1000);
-    
+    */
     
     keyframeTimeSlider.addListener(this, &TimelinePlayer::keyframeTimeSliderChanged);
     gui.add(keyframeTimeSlider.set("Time Value", 0, 0, 0));//the slider is disabled at start, enabled when a keyframe is selected
@@ -100,10 +101,11 @@ void TimelinePlayer::update() {
     
     playheadSlider = currentTime;
     
+    /*
    if(!isExhibitionMode){
         movie.update();
     }
-    
+    */
     ofBackground(80, 20, 20);
     
     doLoop = repeatThisToggle;
@@ -113,7 +115,11 @@ void TimelinePlayer::update() {
     //record the history if sound is playig. Skip drawing if the sound is looped ( where the currnetTime < lastMaxSoundTime)
     if (isPlaying) {
         //advance the currentTime
-        currentTime = currentTime + (elapsedTime - lastFrameTime);
+        /*Internal Clock
+        //currentTime = currentTime + (elapsedTime - lastFrameTime);
+        //ofLog() << "currentTime : " << currentTime;
+         */
+
         //loop the player timeline
         if (currentTime >= duration ) {
             if (doLoop) {
@@ -284,11 +290,12 @@ void TimelinePlayer::draw() {
     //-----------------------     GUI      -------------------
     
     gui.draw();
-    
+    /*
     if(!isExhibitionMode){
         ofSetColor(255);
         movie.draw(700,0,320,180);
     }
+     */
 }
 
 
@@ -351,9 +358,22 @@ int TimelinePlayer::getCurrentTime() {
     return currentTime;
 }
 
+void TimelinePlayer::setCurrentTime(int c) {
+    if(isPlaying){
+            currentTime = c;
+    }
+}
+
 void TimelinePlayer::setDuration(int d) {
     duration = d;
+    playheadSlider.setMax(duration);
+    playheadSlider.setMin(0);
 }
+
+void TimelinePlayer::setLoop(bool t) {
+    repeatThisToggle = t;
+}
+
 
 /*
  //function for other classes to get the timeline's velocity
@@ -484,13 +504,25 @@ void TimelinePlayer::selectKeyButtonPressed() {
 //--------------------------------------------------------------
 void TimelinePlayer::playButtonPressed() {
     resetGraph();
-    //reloadTimelineFromSave();
+    reloadTimelineFromSave();
     isPlaying = true;
     currentTime = 0;
+    /*
     if(!isExhibitionMode){
         movie.setPosition(0);
         movie.play();
-    }
+    }*/
+}
+bool TimelinePlayer::getPlayButtonStatus(){
+    return playButton;
+}
+
+bool TimelinePlayer::getPauseButtonStatus(){
+    return pauseButton;
+}
+
+bool TimelinePlayer::getLoopButtonStatus(){
+    return repeatThisToggle;
 }
 
 //--------------------------------------------------------------
@@ -510,18 +542,19 @@ void TimelinePlayer::pauseButtonPressed() {
     if (isPlaying) {
         isPlaying = !isPlaying;
         lastPausePlayerTime = currentTime;
-        
+        /*
         if(!isExhibitionMode){
             movie.setPaused(true);
             movie.setPosition((float)currentTime / duration);
-       }
+       }*/
     } else {
         isPlaying = !isPlaying;
         currentTime = lastPausePlayerTime;
-        
+        /*
         if(!isExhibitionMode){
             movie.setPaused(false);
         }
+         */
     }
 }
 
@@ -529,11 +562,12 @@ void TimelinePlayer::stopButtonPressed() {
     
     isPlaying = false;
     lastPausePlayerTime = currentTime;
+    /*
     if(!isExhibitionMode){
         movie.setPaused(true);
         movie.setPosition((float)currentTime / duration);
     }
-    
+    */
 }
 
 void TimelinePlayer::mousePressed(int x, int y, int button) {
@@ -566,9 +600,11 @@ void TimelinePlayer::mouseDragged(int x, int y, int button) {
         currentTime = time;
         if (!isPlaying) {
             lastPausePlayerTime = time;
+            /*
            if(!isExhibitionMode){
                 movie.setPosition((float)currentTime / duration);
             }
+             */
         }
     }
 }
@@ -709,9 +745,11 @@ void TimelinePlayer::playheadSliderChanged(int &x) {
     currentTime = x;
     if (!isPlaying) {
         lastPausePlayerTime = x;
+        /*
         if(!isExhibitionMode){
             movie.setPosition((float)currentTime / duration);
         }
+         */
     }
 }
 

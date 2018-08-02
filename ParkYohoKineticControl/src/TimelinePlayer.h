@@ -1,5 +1,5 @@
-#ifndef __ParkYohoMusicPlayer__
-#define __ParkYohoMusicPlayer__
+#ifndef __ParkYohoTimelinePlayer__
+#define __ParkYohoTimelinePlayer__
 
 #include <stdio.h>
 #include "ofMain.h"
@@ -49,9 +49,7 @@ class
         float graphVScale;//Verticle scale to plot the graph
         vector <float> graphHistory; //history for fftSum
         vector <float> timeHistory; //history for the time of sound
-        
-        
-        
+
         //-----------------------     Timeline      -------------------
         vector <Timeline> timelines;
         ofEvent<Keyframe> onKeyFrameEntered; //event to listen for keyframe entered
@@ -110,7 +108,12 @@ class
         float getTimelineValue(int id, float t);//get the timeline value at speicfic time
         bool getIsKeyframe(int id, float t);//return if the speific time is a keyframe
         int getCurrentTime();
+        void setCurrentTime(int c);
         void setDuration(int d);
+        void setLoop(bool t);
+        bool getPlayButtonStatus();
+        bool getPauseButtonStatus();
+        bool getLoopButtonStatus();
         
         //Use this function to get the velocity of timeline
         //vector<float> getTimelineVelocity();
@@ -142,7 +145,7 @@ class
         
         
         bool isExhibitionMode;
-        ofVideoPlayer movie;
+        //ofVideoPlayer movie;
     };
 
 
