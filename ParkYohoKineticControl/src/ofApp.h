@@ -8,6 +8,7 @@
 //INCLUDES
 
 #include "ofMain.h"
+#include "ofEvents.h"
 
 #include "KineticController.h"
 #include "MovementController.h"
@@ -41,6 +42,7 @@
 #define NUM_OF_CABLES 20 //Todo Transfer definition /variables to xml
 #define BAUD 57600 //Todo Transfer definition /variables to xml
 
+
 #define MAX_X_POS 5000
 #define MAX_Y_POS 30000
 
@@ -69,9 +71,10 @@
 #define INVERT_DIR_RX      int_array[12]
 #define INVERT_DIR_RY      int_array[13]
 
-
+//========== settings ===========
 //Timeline
 #define SHOW_DELAY_TIME 0 //time to delay video begins after getting serial signal
+#define NUM_TIMELINE 14
 
 /*
  notes:
@@ -85,7 +88,7 @@
  
  //call for assure connection
  
- */
+*/
 
 class SerialMessage
 {
@@ -119,9 +122,9 @@ public:
     
     void keyPressed(int key){};
     void mouseMoved(int x, int y ){};
-    void mouseDragged(int x, int y, int button){};
-    void mousePressed(int x, int y, int button){};
-    void mouseReleased(int x, int y, int button){};
+    void mouseDragged(int x, int y, int button);
+    void mousePressed(int x, int y, int button);
+    void mouseReleased(int x, int y, int button);
     void mouseEntered(int x, int y){};
     void mouseExited(int x, int y){};
     void windowResized(int w, int h){};
@@ -141,15 +144,22 @@ public:
     MusicPlayer musicPlayer;
 
     long currMusicDuration;
-    void playTrack();
-    void pauseTrack();
+    void playTrack(bool & t);
+    void pauseTrack(bool & t);
     void setTrackisLoop(bool t);
+    
+    void changeTrackPos(float & pos);
+    
+    void musicAndTimelineSetup();
     //========== Movement Controller ===========
     
     //vector<MovementController> MovementControllers;
     MovementController MovementController;
     bool drawMovementController;
     
+    
+    //========== Movement ===========
+    void cableOption(int cb);
     //================== Serial ==================
     
     vector<bool> serialSetup();
@@ -193,8 +203,6 @@ public:
     
     //================== debugMode ==================
     
-
-    
     int page;
     int numOfPages;
     void guiSetup();
@@ -205,7 +213,6 @@ public:
     ofxPanel guiDebug2;
     ofxPanel guiDebugSingleCableCtrl;
 
-    
     ofParameterGroup parametersDebug;
     ofXml XML;
     void saveSettings();

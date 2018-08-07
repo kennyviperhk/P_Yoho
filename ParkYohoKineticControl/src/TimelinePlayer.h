@@ -11,7 +11,7 @@
 
 #define KEYFRAME_MIN_VALUE 0
 #define KEYFRAME_MAX_VALUE 3400
-#define NUM_TIMELINE 12
+
 
 
 // A class that wrap the music player, fft graph, timeline
@@ -21,16 +21,16 @@
 class
 	TimelinePlayer {
     public:
-        void setup();
+        void setup(int numOfTimeline);
         void update();
-        void draw();
+        void draw(int offsetY);
         //----------------------   CSV   ---------------------
         ofxCsv csv;
         ofxCsv csvRecorder;
         
         //-----------------------     Timeline Player      -------------------
         int duration = 3 * 60 * 1000;//the duration of the graph in ms
-        int isPlaying;
+        bool isPlaying;
         int currentTime;
         int lastMaxPlayerTime; // record the last max sound time, used for prevent redraw the graph when song looped
         int lastPausePlayerTime; //record the time when the sound is paused
@@ -111,8 +111,7 @@ class
         void setCurrentTime(int c);
         void setDuration(int d);
         void setLoop(bool t);
-        bool getPlayButtonStatus();
-        bool getPauseButtonStatus();
+        
         bool getLoopButtonStatus();
         
         //Use this function to get the velocity of timeline
@@ -124,6 +123,11 @@ class
         
         void exhibitionMode(bool t);
         
+        ofEvent<bool> onPlayStatus;
+        ofEvent<bool> onPauseStatus;
+        
+        ofEvent<float> onSliderChange;
+        
     private:
         void resetGraph(); //reset the fft sum graph and the timelines when playing a new sound
         Keyframe *selectedKeyframe; //selected keyframe for editing its value
@@ -132,7 +136,7 @@ class
        // const float KEYFRAME_MIN_VALUE = -30000.0f; //THe minimum value for a keyframe in slider
         //const float KEYFRAME_MAX_VALUE = 30000.0f; //the maximum value for a keyframe in slider
         
-        //const int NUM_TIMELINE = 24;
+
         void reloadTimelineFromSave();//load the timeline save file
         
         float graphScale = 0.05f; //draw scale for the graph  // for 0.05f , scale = 1/20
@@ -146,6 +150,11 @@ class
         
         bool isExhibitionMode;
         //ofVideoPlayer movie;
+        
+        
+        //Position of the timeline
+        int yPos;
+
     };
 
 

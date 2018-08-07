@@ -1,9 +1,11 @@
 #include "TimelinePlayer.h"
 
 //--------------------------------------------------------------
-void TimelinePlayer::setup() {
+void TimelinePlayer::setup(int numOfTimeline) {
+    
+    int NUM_TIMELINE = numOfTimeline;
     //--- Player property
-    isPlaying = 0;
+    isPlaying = false;
     lastPausePlayerTime = 0;
     lastMaxPlayerTime = 0;
     currentTime = 0;
@@ -92,13 +94,12 @@ void TimelinePlayer::setup() {
     
     playheadSlider.setMax(duration);
     playheadSlider.setMin(0);
+
 }
 
 //--------------------------------------------------------------
 void TimelinePlayer::update() {
-    
-    
-    
+
     playheadSlider = currentTime;
     
     /*
@@ -179,12 +180,11 @@ void TimelinePlayer::update() {
     for (int i = 0; i < timelines.size(); i++) {
         timelines[i].update();
     }
-    
-    
+
 }
 
 //--------------------------------------------------------------
-void TimelinePlayer::draw() {
+void TimelinePlayer::draw(int offsetY) {
     
     //-----------------------     FFT      -------------------
     ofPushStyle();
@@ -204,7 +204,7 @@ void TimelinePlayer::draw() {
     ofTranslate(-graphScrollX * graphWidth , 0, 0);//translate graph to current scroll
     
     //draw the value as a line graph
-    int offsetY = 200;//offset Y for drawing the graph
+    //offsetY = 400;//offset Y for drawing the graph
     ofSetColor(225);
     ofSetLineWidth(1);
     ofFill();
@@ -411,7 +411,7 @@ void TimelinePlayer::keyframeSliderChanged(int &val) {
 }
 
 void TimelinePlayer::keyFrameSelected(Keyframe &kf) {
-    //ofLog() << "select keyframe : " << kf.x;
+    ofLog() << "select keyframe : " << kf.x;
     
     //deselect all timeline's keyframes
     for (int i = 0; i < timelines.size(); i++) {
@@ -431,7 +431,7 @@ void TimelinePlayer::keyFrameSelected(Keyframe &kf) {
     }else{
         keyframeSlider.setMax(KEYFRAME_MAX_VALUE); //TODO
         keyframeSlider.setMin(KEYFRAME_MIN_VALUE);
-        ofLog() << " THere"  << (int)kf.timelineId;
+        ofLog() << " There"  << (int)kf.timelineId;
     }
     keyframeSlider.set(kf.val);
     
@@ -504,21 +504,17 @@ void TimelinePlayer::selectKeyButtonPressed() {
 //--------------------------------------------------------------
 void TimelinePlayer::playButtonPressed() {
     resetGraph();
-    reloadTimelineFromSave();
+    //reloadTimelineFromSave();
     isPlaying = true;
     currentTime = 0;
+    
+    bool t = true;
+    ofNotifyEvent(onPlayStatus, t, this);
     /*
     if(!isExhibitionMode){
         movie.setPosition(0);
         movie.play();
     }*/
-}
-bool TimelinePlayer::getPlayButtonStatus(){
-    return playButton;
-}
-
-bool TimelinePlayer::getPauseButtonStatus(){
-    return pauseButton;
 }
 
 bool TimelinePlayer::getLoopButtonStatus(){
@@ -556,6 +552,8 @@ void TimelinePlayer::pauseButtonPressed() {
         }
          */
     }
+    bool isPlay = !isPlaying;
+    ofNotifyEvent(onPauseStatus, isPlay , this);
 }
 
 void TimelinePlayer::stopButtonPressed() {
@@ -737,6 +735,8 @@ void TimelinePlayer::keyframeTimeSliderChanged(int &x) {
     if (selectedKeyframe->x != nullKeyframe.x) {
         selectedKeyframe->x = x;
     }
+    float pos = (float)(x/duration);
+    ofNotifyEvent(onSliderChange,pos, this);
 }
 
 

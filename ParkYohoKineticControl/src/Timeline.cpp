@@ -42,12 +42,13 @@ void Timeline::draw() {
     //draw the id of the timeline
     ofSetColor(50, 50, 50);
     string str;
-    if(id == 0){ str+= " Option";}
-    else if(id == 1){ str+= " Time";}
-    else if(id == 2){ str+= " Wave Param A";}
-    else if(id == 3){ str+= " Wave Param B";}
-    else if(id == 4){ str+= " Wave Param C";}
-    else if(id == 5){ str+= " Wave Param D";}
+    if(id == 0 || id == 7){ str+= " Option";}
+    else if(id == 1 || id == 8){ str+= " W Width";}
+    else if(id == 2 || id == 9){ str+= " W Height 1";}
+    else if(id == 3 || id == 10){ str+= " W Height 2";}
+    else if(id == 4 || id == 11){ str+= " W Offset";}
+    else if(id == 5 || id == 12){ str+= " T";}
+    else if(id == 6 || id == 13){ str+= " T Offset";}
     else{
                     str = "Lx" + ofToString(id/2) +" Time";
     }
@@ -135,9 +136,9 @@ void Timeline::mousePressed(int x, int y, int button) {
             //doAddKeyframeOnClick = false;
             
             //odd number of timeline add keyframes will add to even number of timeline
-            if (id % 2 == 0) {
-                keyframeAddedEvent.notify(this, newKf);
-            }
+          /*  if (id % 2 == 0) {
+         //       keyframeAddedEvent.notify(this, newKf);
+          }*/ 
         }else {
             //deselect the keyframe if there is a selected
             if (nullKeyframe.x != selectedKeyframe.x) {

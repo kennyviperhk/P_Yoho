@@ -76,7 +76,7 @@ public:
             rightX.push_back(0);
             rightY.push_back(0);
         }
-        
+        cam.setDistance(800);
     }
     
     void set(int cableNum, int arduinoID,int s, float lx,float ly,float rx,float ry)
@@ -138,8 +138,9 @@ public:
             cablesPositions[i].draw();
         }
         cam.end();
+
     }
-    
+
     ofEasyCam cam;
     
     vector<Cable> cablesPositions;

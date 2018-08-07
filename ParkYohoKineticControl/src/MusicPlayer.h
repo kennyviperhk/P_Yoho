@@ -20,8 +20,10 @@ class
             long getDuration();
             float getCurrentPos();
         
+            void setPos(float pos);
+        
             string play();
-            float pause();
+            float pause(bool t);
 			//-----------------------     MP3 Player      -------------------
 
 			ofDirectory dir;

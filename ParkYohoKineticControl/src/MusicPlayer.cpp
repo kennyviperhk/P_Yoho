@@ -3,16 +3,23 @@
 
 
 string MusicPlayer::play() {
-    computeSoundDuration();
+    //computeSoundDuration();
     //resetGraph();
     //reloadTimelineFromSave();
+    mp3.setPaused(false);
+    mp3.stop();
     mp3.play();
+    trackFileName.setup("Now Playing >> ", dir.getName(currentTrack));
+    ofLog() << "dir.getName(currentTrack)); " << dir.getName(currentTrack);
+
     return dir.getName(currentTrack);
-    //trackFileName.setup("Now Playing", dir.getName(currentTrack));
+
 }
 
-float MusicPlayer::pause() {
-    mp3.setPaused(true);
+float MusicPlayer::pause(bool t) {
+    mp3.setPaused(t);
+    //mp3.stop();
+    ofLog() << "pause : mp3.getIsPlaying() " << mp3.getIsPlaying();
     return mp3.getPosition();
 }
 
@@ -28,6 +35,10 @@ float MusicPlayer::getCurrentPos() {
     return mp3.getPosition();
 }
 
+void MusicPlayer::setPos(float pos) {
+    mp3.setPosition(pos);
+}
+
 
 void MusicPlayer::computeSoundDuration() {
     //set to half position and get the millisecond there
@@ -36,8 +47,7 @@ void MusicPlayer::computeSoundDuration() {
     duration = mp3.getPositionMS()*2 -1;
     mp3.setPosition(0);
     mp3.stop();
-    ofLog() << "Sound Duration : " << duration;
-    printf("SOUND LENGTH: %i\n\n", duration);
+    ofLog() << "compute Sound Duration : " << duration;
 }
 
 

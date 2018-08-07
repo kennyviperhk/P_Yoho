@@ -28,39 +28,43 @@ public:
     int max_y_pos;
     
     int numOfCables;
-    
-    
+
     MovementController(){
-        
         
     }
     
     void setup(int cableNum, int x1, int y1,int w, int h, int x_range, int y_range){
-    
+        
         max_x_pos = x_range;
         max_y_pos = y_range;
         
         curveControls.setup("CurveReadWrite", "settings.xml", x1+w+10, y1);
-        for(int i=0; i< 8; i++){
-
-                ofParameter<int> a;
-                        if(i==0){
-                            a.set("C" + ofToString(i),10,0,400); //lx,ly,rx,ry
-                        }
-                        else if(i==1){
-                                a.set("C" + ofToString(i),40,0,100); //lx,ly,rx,ry
-                        }
-                        else if(i==2){
-                            a.set("D" + ofToString(i),max_x_pos/2,0,max_x_pos); //lx,ly,rx,ry
-                        }
-                        else{
-            a.set("C" + ofToString(i),100,0,1000);//lx,ly,rx,ry
+        for(int i=0; i< 10; i++){
+            
+            ofParameter<int> a;
+            if(i==0 || i==5){
+                a.set("Option",1,0,10); //lx,ly,rx,ry
+            }
+            else if(i==1 || i==6){
+                a.set("Width",10,0,400); //lx,ly,rx,ry
+            }
+            else if(i==2 || i==7){
+                a.set("HeightA",40,0,100); //lx,ly,rx,ry
+            }
+            else if(i==3 || i==8){
+                a.set("HeightB",max_x_pos/2,0,max_x_pos); //lx,ly,rx,ry
+            }
+            else if(i==4 || i==9){
+                a.set("Offest",100,0,1000);//lx,ly,rx,ry
+            }
+            else{
+                a.set("--",100,0,1000);//lx,ly,rx,ry
             }
             curves.push_back(a);
             curveControls.add(curves[i]);
             
         }
-        int eW = 80;
+        int eW = 120;
         curveControls.setSize(eW, 100);
         curveControls.setWidthElements(eW);
         
@@ -68,7 +72,6 @@ public:
         curveW = w;
         curveH = h;
         numOfCables = cableNum;
-     
 
     }
     
@@ -77,19 +80,33 @@ public:
         p.clear();
         for(int i=0; i< numOfCables; i++){
             p.push_back(trail.getPointAtPercent((float)i /numOfCables));
-            p[i].y = p[i].y * curves[1] + (curves[2]-max_x_pos/2)*4;
+            p[i].y = p[i].y * curves[2] + (curves[3]-max_x_pos/2)*4;
             p[i].x = p[i].x;
         }
-        
         return p;
-        
     }
     
     void setPoints(int a, int b, int c,int d){
-        curves[0] = a;
-        curves[1] = b;
-        curves[2] = c;
-        curves[3] = d;
+        curves[1] = a;
+        curves[2] = b;
+        curves[3] = c;
+        curves[4] = d;
+    }
+    
+    int getOption(int op){
+        if(op == 0){
+           return curves[0];
+        }
+        return curves[5];
+    }
+    
+    void setOption(int op, int val){
+        if(op == 0){
+        curves[0] = val;
+        } else{
+        curves[5] = val;
+        }
+        
     }
     
     void update(){
@@ -97,14 +114,14 @@ public:
         
         trail.clear();
         angle = 0;
-        increment = (float)curves[0]/1000/TWO_PI;
+        increment = (float)curves[1]/1000/TWO_PI;
         for(int i=0; i< curveW;i++){
             x++;
             angle+=increment;
             if (angle>=TWO_PI) { //if the angle is more than or equal to two PI (a full rotation measured in Radians) then make it zero.
                 angle=0;
             }
-            y=(curveH/2)+ (curveH/2)*sin(angle+ curves[3]);
+            y=(curveH/2)+ (curveH/2)*sin(angle+ curves[4]);
             trail.addVertex(ofPoint(curveCoord.x+ x,curveCoord.y+ y));
         }
     };
@@ -131,3 +148,4 @@ public:
 
 
 #endif
+
