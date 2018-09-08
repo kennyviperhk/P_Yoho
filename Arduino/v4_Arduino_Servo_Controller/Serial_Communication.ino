@@ -14,6 +14,14 @@
     'R' - EMERGENCY Stop
     'Q' - Reset Arduino
     //EMERGENCY Start r
+
+
+    val to save
+    EEPROM
+    Press
+    197-1-1-1-1-1-1-1-1-0-0-0-0-0
+    then
+    S
 */
 
 String inString = "";    // string to hold input char

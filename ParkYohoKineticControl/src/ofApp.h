@@ -3,7 +3,7 @@
 //DEFINITION
 
 //#define USEOSC
-#define RECEIVER_IS_WINDOWS
+//#define RECEIVER_IS_WINDOWS
 
 //INCLUDES
 

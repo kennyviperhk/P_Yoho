@@ -35,6 +35,7 @@ void runTestStyle(int whichMotor, int XSpeedAccel, int YSpeedAccel, int maxXPos,
       Serial.print("-");
       if (steppers[stepperNumber]->distanceToGo() == 0) {
 
+
         if (stepperNumber == 0 || stepperNumber == 2) { //x
           Serial.print("Xmdone");
           Serial.print(stepperNumber);

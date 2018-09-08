@@ -10,39 +10,39 @@ void DmxLight::setup() {
     panel1.setName("dmx0");
     panel1.add(save.set("save", false));
     panel1.add(load.set("load", false));
-
+    
     panel2.setup();
     panel2.setPosition(ofGetWidth() - 100, 4);
     panel2.setName("dmx1");
     panel2.add(save.set("save", false));
     panel2.add(load.set("load", false));
     
-
-    for(int module = 1; module <= modules; module++) {
+    
+    for(int module = 0; module < modules; module++) {
         string label = "mod" + ofToString(module);
-            if(module<11){
-
-                panel1.add(red[module].set("r " +ofToString(module), 1, 0, 1));
-                panel1.add(green[module].set("g "+ofToString(module), 1, 0, 1));
-                panel1.add(blue[module].set("b "+ofToString(module), 1, 0, 1));
-                panel1.add(white[module].set("w "+ofToString(module), 1, 0, 1));
+        if(module<11){
+            
+            panel1.add(red[module].set("r " +ofToString(module), 1, 0, 1));
+            panel1.add(green[module].set("g "+ofToString(module), 1, 0, 1));
+            panel1.add(blue[module].set("b "+ofToString(module), 1, 0, 1));
+            panel1.add(white[module].set("w "+ofToString(module), 1, 0, 1));
         }
         else{
-
+            
             panel2.add(red[module].set("r " +ofToString(module), 1, 0, 1));
             panel2.add(green[module].set("g "+ofToString(module), 1, 0, 1));
             panel2.add(blue[module].set("b "+ofToString(module), 1, 0, 1));
             panel2.add(white[module].set("w "+ofToString(module), 1, 0, 1));
         }
     }
-
+    
     int guiW = 100;
     int guiH = 500;
     panel1.setSize(guiW, guiH);
     panel1.setWidthElements(guiW);
     panel2.setSize(guiW, guiH);
     panel2.setWidthElements(guiW);
-
+    
     
     
     load = true;
@@ -67,9 +67,9 @@ void DmxLight::update() {
         }
         load = false;
     }
-
+    
     int channel = 1;
-    for(int module = 1; module <= modules; module++) {
+    for(int module = 0; module < modules; module++) {
         dmx.setLevel(channel++, red[module]*255);
         dmx.setLevel(channel++, green[module]*255);
         dmx.setLevel(channel++, blue[module]*255);
@@ -81,9 +81,9 @@ void DmxLight::update() {
         ofSetColor(255);
         ofDrawBitmapString("Could not connect to port " + ofToString(port), 250,20);
     }
-  //  for(int i = 1; i <= modules; i++) {
-  //      ofLog() << ofLerp(red[i], pred[i], 0.1);
-  //  }
+    //  for(int i = 1; i <= modules; i++) {
+    //      ofLog() << ofLerp(red[i], pred[i], 0.1);
+    //  }
 }
 
 void DmxLight::set(int id, int r, int g, int b, int w) {
@@ -107,7 +107,7 @@ void DmxLight::setAll(int r, int g, int b, int w) {
 
 void DmxLight::draw() {
     ofPushMatrix();
-
+    
     ofTranslate(ofGetWidth() - 800, 0); // Position of the Text
     int channel = 1;
     for(int module = 1; module <= modules; module++) {
@@ -133,9 +133,9 @@ void DmxLight::draw() {
         string text = label + " (" + rs + ", " + gs + ", " + bs + ", " + ws + ")";
         ofDrawBitmapString(text, 24, ofGetHeight()/2 + module * 16 + 16);
     }
-
+    
     ofPopMatrix();
-
+    
     panel1.draw();
     panel2.draw();
 }
