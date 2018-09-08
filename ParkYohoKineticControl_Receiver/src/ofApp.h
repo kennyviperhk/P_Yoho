@@ -16,6 +16,7 @@
 #define NUM_OF_CABLES 32 //Todo Transfer definition /
 #define BAUD 57600 //Todo Transfer definition /variables to xml
 
+
 class SerialMessage
 {
 public:
@@ -103,5 +104,7 @@ class ofApp : public ofBaseApp{
     vector<string> receivedString;
     vector<int> updateColor;
     vector<string> displayText;
+    
+    bool debugMode;
 
 };
