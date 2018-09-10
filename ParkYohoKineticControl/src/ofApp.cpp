@@ -83,7 +83,6 @@ void ofApp::update(){
     receivedString = readOSC();
 #else
     
-    
     //================== Serial ==================
     for(int i=0; i < arduino.size(); i++){
         receivedStringBuffer[i] += ofTrim(serialRead(i));
@@ -131,7 +130,6 @@ void ofApp::update(){
                 ofLog() << "device : " << i << " online";
                 isArduinoConnectedBySerial[i] = true;
             }
-            
         }
     }
     
@@ -185,8 +183,6 @@ void ofApp::update(){
     setTrackisLoop(timelinePlayer.getLoopButtonStatus());
     timelinePlayer.update();
     
-    
-    
     //================== Dmx Light ==================
     DmxLight.update();
     //================== Movement Controls ==================
@@ -218,12 +214,11 @@ void ofApp::draw(){
         ss_info << "EMERGENCY STOP - 'r' to relase: " << endl;
         ss_info << "EMERGENCY STOP - 'q' to reset all arduino: " << endl;
         
-        
     } else if(debugMode){
         //================== Debug Mode ==================
         ofBackground(100, 0, 0);
         ss_info << "MODE : DEBUG MODE" << endl;
-        
+        ss_info << "Press '1' for Single Cable Testing Mode :" << endl;
         ofSetColor(255);
         
         //================== Debug Gui ==================
@@ -542,7 +537,6 @@ void ofApp::keyReleased(int key){
             if(debugMode){
                 page = 6;
             }
-            
             break;
             
         case 'e':
@@ -570,6 +564,7 @@ void ofApp::keyReleased(int key){
             }
             break;
         case '7': //Reset and Home
+            serialWrite(-1, "Q");
             movementMode = 2;
             break;
         case '8': //Mode Selection
@@ -626,7 +621,6 @@ void ofApp::sendOSC(int ar, string s){
     if(debugMode){
         ofLog() << "sending OSC : " << ar << " : " << s;
     }
-    
 }
 
 vector<string> ofApp::readOSC(){
@@ -1160,7 +1154,6 @@ void ofApp::guiDraw(){
         musicPlayer.draw();
         timelinePlayer.draw(ofGetScreenHeight()/2);
     }
-    
 }
 
 //--------------------------------------------------------------
@@ -1369,7 +1362,7 @@ void ofApp::movement(int s){
                 songStage++;
             }
             else if(songStage == 1){
-                //rest Here do nth.
+                //reset Here do nth.
             }
         }
     }
@@ -1384,6 +1377,16 @@ void ofApp::movement(int s){
         drawKineticVisualizationFbo = true;
         drawMovementController = false;
         drawMusicPlayer = false;
+        showOffset = false;
+        drawSpeedAccelGui = false;
+        
+        
+        drawDebugGui = {false,false,false};
+
+ 
+
+       
+
         
         DmxLight.setAll((float)1.0, (float)1.0, (float)1.0, (float)1.0);
         
@@ -1411,6 +1414,7 @@ void ofApp::movement(int s){
     }else if(s == 2){ // Light ON With One Shape
         //----- INFO -----
         ofBackground(0, 0, 100);
+        currentStyle = 11;
         ss_info << "MODE : LIGHT ONLY (With Static Shape)" << endl;
         
         drawPosGui = false;
@@ -1468,6 +1472,7 @@ void ofApp::movement(int s){
     }else if(s == 3){ // Light ON and 3 Shapes In LOOP
         //----- INFO -----
         ofBackground(0, 0, 110);
+        currentStyle = 11;
         ss_info << "MODE : LIGHT and 3 SHAPES : " << songStage << endl;
         
         drawPosGui = true;
@@ -1603,6 +1608,8 @@ void ofApp::movement(int s){
         
         //----- INFO -----
         ofBackground(120, 0, 120);
+        currentStyle = 12;
+        
         ss_info << "MODE : MP3 : " << endl;
         
         DmxLight.setAll((float)1.0, (float)1.0, (float)1.0, (float)1.0);
@@ -2247,8 +2254,8 @@ void ofApp::onKeyframe(Keyframe &kf){
         MovementController.setPoints(a[1], a[2], a[3], a[4]);
         
     }
+
     writeStyle(2);
-    //  writeStyle(2);
     /*
      if(kf.timelineId < NUM_OF_CABLES *2  && kf.timelineId%2==0){ //LY
      ofLog() << "LY HAS KEYFRAME : " << kf.timelineId << " " << kf.val << " " << kf.x;
@@ -2328,12 +2335,10 @@ void ofApp::exit()
     serialWrite(-1, "V");
 #ifdef USEOSC
 #else
-    
     for(int i=0; i< arduino.size(); i++){
         arduino[i].unregisterAllEvents(this);
     }
 #endif
-    
     DmxLight.exit();
 }
 
