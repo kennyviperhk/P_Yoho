@@ -2,7 +2,7 @@
 
 //DEFINITION
 
-//#define USEOSC
+#define USEOSC
 //#define RECEIVER_IS_WINDOWS
 
 //INCLUDES
@@ -29,7 +29,8 @@
 #include "ofxOsc.h"
 #define R_PORT 12346
 
-#define S_HOST "192.168.0.101"
+//#define S_HOST "192.168.0.101"
+#define S_HOST "10.0.1.124"
 //#define S_HOST "localhost"
 #define S_PORT 12345
 
@@ -324,6 +325,7 @@ public:
     ofParameter<int> prevCableID;
     ofParameter<int> currentStyle;
     void writeStyle(int s);
+    void moveCommandMethod(int method, int c, int whichCurrentCable);
     
     bool serialTrigger; //TO avoid ofxButton cause multiple click and send mutiple serial command;
     long prevSerialTriggerMillis; //TO avoid ofxButton cause multiple click and send mutiple serial command;
