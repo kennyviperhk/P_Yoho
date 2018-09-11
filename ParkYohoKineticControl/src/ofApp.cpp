@@ -227,92 +227,7 @@ void ofApp::draw(){
         ss_info << "Page : "<< page << endl;
         
         ss_info << "Num of Arduino: " << arduino.size() << " / " << NUM_OF_CABLES << endl;
-        
-        
-        if(page == 0){
-            drawDebugGui = {true,true,false};
-            drawPosGui = true;
-            drawSpeedAccelGui = true;
-            drawKineticVisualizationFbo = true;
-            drawMusicPlayer = false;
-            drawMovementController = false;
-            showOffset = false;
-            drawDmx = false;
-        }else if(page == 1){
-            drawDebugGui = {true,true,false};
-            drawPosGui = true;
-            drawSpeedAccelGui = true;
-            drawKineticVisualizationFbo = true;
-            drawMusicPlayer = false;
-            drawMovementController = false;
-            showOffset = true;
-            drawDmx = false;
-        }else if(page == 2){
-            drawDebugGui = {false,false,false};
-            drawPosGui = true;
-            drawSpeedAccelGui = true;
-            drawKineticVisualizationFbo = true;
-            drawMusicPlayer = true;
-            drawMovementController = false;
-            showOffset = false;
-            drawDmx = false;
-        }else if(page == 3){
-            drawDebugGui = {true,true,false};
-            drawPosGui = true;
-            drawSpeedAccelGui = true;
-            drawKineticVisualizationFbo = true;
-            drawMusicPlayer = false;
-            drawMovementController = true;
-            showOffset = false;
-            drawDmx = false;
-            
-            
-            
-        }else if(page == 4){
-            drawDebugGui = {true,true,false};
-            drawPosGui = true;
-            drawSpeedAccelGui = true;
-            drawKineticVisualizationFbo = true;
-            drawMusicPlayer = false;
-            drawMovementController = true;
-            showOffset = false;
-            drawDmx = false;
-            
-            guiCablePosLx2.draw();
-            guiCablePosLy2.draw();
-            guiCablePosRx2.draw();
-            guiCablePosRy2.draw();
-            guiCableSpeedAccelAll.draw();
-            
-        }else if(page == 5){
-            //================== Dmx Light ==================
-            drawDebugGui = {false,false,false};
-            drawSpeedAccelGui = true;
-            drawDmx = true;
-            
-        }else if(page == 6){ //Page = 6 // ricci mode
-            drawDebugGui = {false,false,true};
-            drawPosGui = true;
-            drawSpeedAccelGui = false;
-            drawKineticVisualizationFbo = true;
-            drawMusicPlayer = false;
-            drawMovementController = false;
-            showOffset = false;
-            drawDmx = false;
-            drawTimeGui = false;
-        }
-        else{ //Page = 7 // mp3
-            movementMode = 4;
-            drawDebugGui = {false,false,true};
-            drawPosGui = true;
-            drawSpeedAccelGui = false;
-            drawKineticVisualizationFbo = true;
-            drawMusicPlayer = false;
-            drawMovementController = false;
-            showOffset = false;
-            drawDmx = false;
-        }
-        
+
         if(serialTrigger){
             if(EEPROM_saveBtn){
                 
@@ -1089,11 +1004,11 @@ void ofApp::displayLog(string s=""){
 
 void ofApp::guiDraw(){
     
-    //================== Gui ==================
+    //================== General Gui ==================
     if(drawDebugGui[0]){
         guiDebug.draw();
     }
-    if(drawDebugGui[1]){
+    if(drawDebugGui[1]){ //working cable
         guiDebug2.draw();
     }
     if(drawDebugGui[2]){
@@ -1154,6 +1069,108 @@ void ofApp::guiDraw(){
         musicPlayer.draw();
         timelinePlayer.draw(ofGetScreenHeight()/2);
     }
+    if(debugMode){
+        
+        if(page == 0){ //MoveTo Mode (style 11)
+            drawDebugGui = {true,true,false};
+            drawSpeedAccelGui = true;
+            drawPosGui = true;
+            drawTimeGui = false;
+            drawDmx = false;
+            drawMovementController = false;
+            showOffset = false;
+            drawKineticVisualizationFbo = true;
+            drawMusicPlayer = false;
+        }
+        else if(page == 1){ //2 pos (style 2)
+            drawDebugGui = {true,true,false};
+            drawSpeedAccelGui = true;
+            drawPosGui = true;
+            drawTimeGui = false;
+            drawDmx = false;
+            drawMovementController = true;
+            showOffset = false;
+            drawKineticVisualizationFbo = true;
+            drawMusicPlayer = false;
+            
+            guiCablePosLx2.draw();
+            guiCablePosLy2.draw();
+            guiCablePosRx2.draw();
+            guiCablePosRy2.draw();
+            guiCableSpeedAccelAll.draw();
+        }
+        else if(page == 2){ //time ctrl mode
+            drawDebugGui = {true,true,false};
+            drawSpeedAccelGui = false;
+            drawPosGui = true;
+            drawTimeGui = true;
+            drawDmx = false;
+            drawMovementController = false;
+            showOffset = false;
+            drawKineticVisualizationFbo = true;
+            drawMusicPlayer = false;
+        }
+        else if(page == 3){ //pos by wave curve
+            drawDebugGui = {true,true,false};
+            drawSpeedAccelGui = true;
+            drawPosGui = true;
+            drawTimeGui = false;
+            drawDmx = false;
+            drawMovementController = true;
+            showOffset = false;
+            drawKineticVisualizationFbo = true;
+            drawMusicPlayer = false;
+        }
+        else if(page == 4){ //pos offset
+            drawDebugGui = {true,true,false};
+            drawSpeedAccelGui = true;
+            drawPosGui = true;
+            drawTimeGui = false;
+            drawDmx = false;
+            drawMovementController = false;
+            showOffset = true;
+            drawKineticVisualizationFbo = true;
+            drawMusicPlayer = false;
+        }
+        else if(page == 5){//================== Dmx Light ==================
+            drawDebugGui = {false,false,false};
+            drawSpeedAccelGui = false;
+            drawPosGui = false;
+            drawTimeGui = false;
+            drawDmx = true;
+            drawMovementController = true;
+            showOffset = false;
+            drawKineticVisualizationFbo = true;
+            drawMusicPlayer = false;
+        }
+        else if(page == 6){ //Page = 6 // ricci mode
+            drawDebugGui = {false,false,true};
+            drawSpeedAccelGui = false;
+            drawPosGui = true;
+            drawTimeGui = false;
+            drawDmx = false;
+            drawMovementController = false;
+            showOffset = false;
+            drawKineticVisualizationFbo = true;
+            drawMusicPlayer = false;
+        }
+        else{ //Page = 7 // mp3
+            movementMode = 4;
+            drawDebugGui = {false,false,true};
+            drawSpeedAccelGui = false;
+            drawPosGui = true;
+            drawTimeGui = true;
+            drawDmx = false;
+            drawMovementController = false;
+            showOffset = false;
+            drawKineticVisualizationFbo = true;
+            drawMusicPlayer = false;
+        }
+    } //debug mode end
+    else{ //exhibition mode
+        
+    }
+   
 }
 
 //--------------------------------------------------------------
@@ -1380,14 +1397,8 @@ void ofApp::movement(int s){
         showOffset = false;
         drawSpeedAccelGui = false;
         
-        
         drawDebugGui = {false,false,false};
 
- 
-
-       
-
-        
         DmxLight.setAll((float)1.0, (float)1.0, (float)1.0, (float)1.0);
         
         //---- BEGIN -----
