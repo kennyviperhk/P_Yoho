@@ -338,6 +338,8 @@ void ofApp::draw(){
                             }
                         }
                         ofLog() << "Actived : " << i  << " cm " << currMillis << " pm " << prevSingleCableLoopMillis;
+                    }else{
+                        singleCablePos[i] = 0;
                     }
                     
                 }
@@ -453,7 +455,25 @@ void ofApp::keyReleased(int key){
                 page = 6;
             }
             break;
-            
+        case '=': //Ricci Mode - Single Cable Control
+            if(debugMode && page == 6){
+                if(currCableID<NUM_OF_CABLES-1){
+                currCableID++;
+                }else{
+                    currCableID = NUM_OF_CABLES-1;
+                }
+            }
+            break;
+        case '-': //Ricci Mode - Single Cable Control
+            if(debugMode && page == 6){
+                if(currCableID>0){
+                    currCableID--;
+                }else{
+                    currCableID=0;
+                }
+            }
+            break;
+        
         case 'e':
             movementMode++;
             if(movementMode > 4){
