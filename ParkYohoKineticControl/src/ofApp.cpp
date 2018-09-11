@@ -227,7 +227,7 @@ void ofApp::draw(){
         ss_info << "Page : "<< page << endl;
         
         ss_info << "Num of Arduino: " << arduino.size() << " / " << NUM_OF_CABLES << endl;
-
+        
         if(serialTrigger){
             if(EEPROM_saveBtn){
                 
@@ -339,7 +339,7 @@ void ofApp::draw(){
                         }
                         ofLog() << "Actived : " << i  << " cm " << currMillis << " pm " << prevSingleCableLoopMillis;
                     }
-
+                    
                 }
                 if(triggerAnyCable){
                     prevSingleCableLoopMillis = currMillis;
@@ -1170,7 +1170,7 @@ void ofApp::guiDraw(){
     else{ //exhibition mode
         
     }
-   
+    
 }
 
 //--------------------------------------------------------------
@@ -1398,7 +1398,7 @@ void ofApp::movement(int s){
         drawSpeedAccelGui = false;
         
         drawDebugGui = {false,false,false};
-
+        
         DmxLight.setAll((float)1.0, (float)1.0, (float)1.0, (float)1.0);
         
         //---- BEGIN -----
@@ -1836,9 +1836,9 @@ void ofApp::moveCommandMethod(int method, int c, int whichCurrentCable){
         toWrite+= "-";
         toWrite+= ofToString((int)cablePosRy2[c]);
         
-
+        
     }
-
+    
     writeInTotal=toWrite;
     currentdisplayLog = writeInTotal;
     
@@ -1853,7 +1853,7 @@ void ofApp::writeStyle(int s){ //all same = 0, all diff = 1, specific = 2
     ofLog() << "write Style " << s  << " current arduino ID : " << currCableID;
     
     if (s==0){
-         moveCommandMethod(currentStyle, currCableID, -1);
+        moveCommandMethod(currentStyle, currCableID, -1);
     }
     else if (s ==1){
         for(int i=0; i< NUM_OF_CABLES; i++){
@@ -1862,7 +1862,7 @@ void ofApp::writeStyle(int s){ //all same = 0, all diff = 1, specific = 2
         
     }else if (s ==2){
         if(currCableID <= NUM_OF_CABLES-1 && currCableID >= 0){
-                 moveCommandMethod(currentStyle, currCableID, currCableID);
+            moveCommandMethod(currentStyle, currCableID, currCableID);
         }
     }
 }
@@ -1906,6 +1906,50 @@ vector<bool> ofApp::serialSetup(){ //int give the connection status of each cabl
         connectionStatus.push_back(0);
     }
 #ifdef USEOSC
+    
+    
+#ifdef RECEIVER_IS_LINUX
+    //USING 32 port and Windows, To connect arduino in sequence, we have to do it one by one
+    
+    vector<int> allComPort;
+    
+    for(int i=0; i<NUM_OF_SERIAL_TO_INIT; i++){
+        allComPort.push_back(i);
+    }
+    arduino.push_back(allComPort[0]); //1
+    arduino.push_back(allComPort[1]); //2
+    arduino.push_back(allComPort[2]); //3
+    arduino.push_back(allComPort[3]); //4
+    arduino.push_back(allComPort[4]); //5
+    arduino.push_back(allComPort[5]); //6
+    arduino.push_back(allComPort[6]); //7
+    arduino.push_back(allComPort[7]); //8
+    arduino.push_back(allComPort[8]); //9
+    arduino.push_back(allComPort[9]); //10
+    arduino.push_back(allComPort[10]); //11
+    arduino.push_back(allComPort[11]); //12
+    arduino.push_back(allComPort[12]); //13
+    arduino.push_back(allComPort[13]); //14
+    arduino.push_back(allComPort[14]); //15
+    arduino.push_back(allComPort[15]); //16
+    arduino.push_back(allComPort[16]); //17
+    arduino.push_back(allComPort[19]); //18
+    arduino.push_back(allComPort[17]); //19
+    arduino.push_back(allComPort[18]); //20
+    
+    for(int i = 20; i < NUM_OF_SERIAL_TO_INIT; i++){
+        arduino.push_back(300+i);
+    }
+    
+    
+    for(int i=0; i< NUM_OF_CABLES; i++){
+        ofLog() <<arduino[i];
+        isArduinoConnected.push_back(true);
+    }
+#else
+    
+#endif
+    
     
 #ifdef RECEIVER_IS_WINDOWS
     //USING 32 port and Windows, To connect arduino in sequence, we have to do it one by one
@@ -2043,7 +2087,7 @@ void ofApp::serialWrite(int arduinoID, string sw){
                 try
                 {
                     std::string text = sw;
-
+                    
                     ofx::IO::ByteBuffer textBuffer(text);
                     
                     arduino[i].writeBytes(textBuffer);
@@ -2265,7 +2309,7 @@ void ofApp::onKeyframe(Keyframe &kf){
         MovementController.setPoints(a[1], a[2], a[3], a[4]);
         
     }
-
+    
     writeStyle(2);
     /*
      if(kf.timelineId < NUM_OF_CABLES *2  && kf.timelineId%2==0){ //LY

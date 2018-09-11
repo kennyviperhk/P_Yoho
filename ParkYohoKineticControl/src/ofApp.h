@@ -4,7 +4,7 @@
 
 #define USEOSC
 //#define RECEIVER_IS_WINDOWS
-
+#define RECEIVER_IS_LINUX
 //INCLUDES
 
 #include "ofMain.h"

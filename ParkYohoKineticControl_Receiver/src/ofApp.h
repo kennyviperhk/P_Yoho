@@ -7,7 +7,7 @@
 
 #define R_PORT 12345
 
-#define S_HOST "localhost"
+#define S_HOST "192.168.0.100"
 #define S_PORT 12346
 
 #define NUM_MSG_STRINGS 20
@@ -41,30 +41,30 @@ public:
 
 
 class ofApp : public ofBaseApp{
-
-	public:
-		void setup();
-		void update();
-		void draw();
-        void exit();
     
-		void keyPressed(int key);
-		void keyReleased(int key);
-		void mouseMoved(int x, int y );
-		void mouseDragged(int x, int y, int button);
-		void mousePressed(int x, int y, int button);
-		void mouseReleased(int x, int y, int button);
-		void mouseEntered(int x, int y);
-		void mouseExited(int x, int y);
-		void windowResized(int w, int h);
-		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);
-
+public:
+    void setup();
+    void update();
+    void draw();
+    void exit();
     
-		ofxOscReceiver receiver;
+    void keyPressed(int key);
+    void keyReleased(int key);
+    void mouseMoved(int x, int y );
+    void mouseDragged(int x, int y, int button);
+    void mousePressed(int x, int y, int button);
+    void mouseReleased(int x, int y, int button);
+    void mouseEntered(int x, int y);
+    void mouseExited(int x, int y);
+    void windowResized(int w, int h);
+    void dragEvent(ofDragInfo dragInfo);
+    void gotMessage(ofMessage msg);
     
-        string msg_strings[NUM_MSG_STRINGS];
-		
+    
+    ofxOscReceiver receiver;
+    
+    string msg_strings[NUM_MSG_STRINGS];
+    
     vector<string> receivedOSCString;
     int currentArduinoID;
     
@@ -88,9 +88,10 @@ class ofApp : public ofBaseApp{
     long checkArduinoMillis; //todo
     
     vector<ofx::IO::BufferedSerialDevice> arduino;
+    vector<ofx::IO::BufferedSerialDevice> arduinoArranged;
     
-        vector<ofParameter<bool>> working_cable;
-
+    vector<ofParameter<bool>> working_cable;
+    
     
     
     void onSerialBuffer(const ofx::IO::SerialBufferEventArgs& args);
@@ -106,5 +107,5 @@ class ofApp : public ofBaseApp{
     vector<string> displayText;
     
     bool debugMode;
-
+    
 };
