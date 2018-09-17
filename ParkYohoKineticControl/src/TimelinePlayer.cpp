@@ -49,12 +49,14 @@ void TimelinePlayer::setup(int numOfTimeline) {
     keyframeSlider.addListener(this, &TimelinePlayer::keyframeSliderChanged);
     saveButton.addListener(this, &TimelinePlayer::saveButtonPressed);
     loadButton.addListener(this, &TimelinePlayer::loadButtonPressed);
+    volumeSlider.addListener(this, &TimelinePlayer::volumeChanged);
     
     gui.setup("panel" ,"settings.xml", ofGetWidth()/2, 0);
     gui.setDefaultWidth(300);
     gui.add(playButton.setup("Play From Start"));
     gui.add(pauseButton.setup("Pause/Resume"));
     gui.add(repeatThisToggle.setup("Loop", false));
+    gui.add(volumeSlider.setup("Volume", 1.0f, 0.0f, 1));
     gui.add(layerSlide.setup("Layer to Draw", 0, 0, NUM_TIMELINE-1));
     gui.add(multiSlide.setup("Velocity Multiplier", 1, 0, 10));
     gui.add(graphSlide.setup("Graph ScrollX", 0, 0, 1));
@@ -90,7 +92,7 @@ void TimelinePlayer::setup(int numOfTimeline) {
     gui.add(keyframeTimeSlider.set("Time Value", 0, 0, 0));//the slider is disabled at start, enabled when a keyframe is selected
     
     playheadSlider.addListener(this, &TimelinePlayer::playheadSliderChanged);
-    gui.add(playheadSlider.set("slider", 0, duration, currentTime));
+    gui.add(playheadSlider.set("Timeline", 0, duration, currentTime));
     
     playheadSlider.setMax(duration);
     playheadSlider.setMin(0);
@@ -650,7 +652,10 @@ void TimelinePlayer::saveButtonPressed() {
      track.saveFile("TimelineData" + ofToString(".xml"));
      */
 }
-
+void TimelinePlayer::volumeChanged(float &setVol) {
+    float v = setVol;
+    ofNotifyEvent(onVolumeChange, v, this);
+}
 void TimelinePlayer::loadButtonPressed() {
     reloadTimelineFromSave();
 }

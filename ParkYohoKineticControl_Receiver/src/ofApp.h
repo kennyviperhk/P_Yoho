@@ -7,7 +7,8 @@
 
 #define R_PORT 12345
 
-#define S_HOST "192.168.0.100"
+//#define S_HOST "192.168.0.100"
+#define S_HOST "localhost"
 #define S_PORT 12346
 
 #define NUM_MSG_STRINGS 20

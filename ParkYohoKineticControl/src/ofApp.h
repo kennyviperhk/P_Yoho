@@ -30,8 +30,8 @@
 #define R_PORT 12346
 
 //#define S_HOST "192.168.0.101"
-#define S_HOST "10.0.1.124"
-//#define S_HOST "localhost"
+
+#define S_HOST "localhost"
 #define S_PORT 12345
 
 #else
@@ -150,12 +150,12 @@ public:
     void setTrackisLoop(bool t);
     
     void changeTrackPos(float & pos);
-    
+    void changeVolume(float & vol);
     void musicAndTimelineSetup();
     //========== Movement Controller ===========
     
     //vector<MovementController> MovementControllers;
-    MovementController MovementController;
+    vector<MovementController> movementController;
     bool drawMovementController;
     
     

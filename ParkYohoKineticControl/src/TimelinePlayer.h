@@ -69,6 +69,7 @@ class
         
         ofxIntSlider layerSlide;
         
+        ofxFloatSlider volumeSlider;
         ofxFloatSlider multiSlide;
         ofxFloatSlider graphSlide;
         ofxFloatSlider graphVScaleSlide;
@@ -80,9 +81,10 @@ class
         
         ofxPanel gui;
         
-        
+
         void playButtonPressed();
         void nextButtonPressed();
+        void volumeChanged(float &setVol);
         void saveGUIButtonPressed();
         void loadGUIButtonPressed();
         void pauseButtonPressed();
@@ -127,7 +129,7 @@ class
         ofEvent<bool> onPauseStatus;
         
         ofEvent<float> onSliderChange;
-        
+        ofEvent<float> onVolumeChange;
     private:
         void resetGraph(); //reset the fft sum graph and the timelines when playing a new sound
         Keyframe *selectedKeyframe; //selected keyframe for editing its value

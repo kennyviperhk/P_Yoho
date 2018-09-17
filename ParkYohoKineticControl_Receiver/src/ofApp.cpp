@@ -429,40 +429,41 @@ vector<bool> ofApp::serialSetup(){ //int give the connection status of each cabl
             // for(int i=0; i<devicesInfo.size(); i++){
             // arduinoArranged.push_back(i);
             // }
-            arduinoArranged.push_back(arduino[0]); //1
-            arduinoArranged.push_back(arduino[1]); //2
-            arduinoArranged.push_back(arduino[12]); //3
-            arduinoArranged.push_back(arduino[23]); //4
-            arduinoArranged.push_back(arduino[26]); //5
-            arduinoArranged.push_back(arduino[27]); //6
-            arduinoArranged.push_back(arduino[28]); //7
-            arduinoArranged.push_back(arduino[29]); //8
-            arduinoArranged.push_back(arduino[30]); //9
-            arduinoArranged.push_back(arduino[31]); //10
-            arduinoArranged.push_back(arduino[2]); //11
-            arduinoArranged.push_back(arduino[3]); //12
-            arduinoArranged.push_back(arduino[4]); //13
-            arduinoArranged.push_back(arduino[5]); //14
-            arduinoArranged.push_back(arduino[6]); //15
-            arduinoArranged.push_back(arduino[7]); //16
-            arduinoArranged.push_back(arduino[13]); //17
-            arduinoArranged.push_back(arduino[14]); //18
-            arduinoArranged.push_back(arduino[15]); //19
-            arduinoArranged.push_back(arduino[16]); //20
-            
-            arduinoArranged.push_back(arduino[7]); //21
-            arduinoArranged.push_back(arduino[8]); //22
-            arduinoArranged.push_back(arduino[9]); //23
-            arduinoArranged.push_back(arduino[10]); //24
-            arduinoArranged.push_back(arduino[17]); //25
-            arduinoArranged.push_back(arduino[18]); //26
-            arduinoArranged.push_back(arduino[19]); //27
-            arduinoArranged.push_back(arduino[20]); //28
-            arduinoArranged.push_back(arduino[21]); //29
-            arduinoArranged.push_back(arduino[22]); //30
-            arduinoArranged.push_back(arduino[24]); //31
-            arduinoArranged.push_back(arduino[25]); //32
-            
+            if(arduino.size() >= NUM_OF_CABLES){
+                arduinoArranged.push_back(arduino[0]); //1
+                arduinoArranged.push_back(arduino[1]); //2
+                arduinoArranged.push_back(arduino[12]); //3
+                arduinoArranged.push_back(arduino[23]); //4
+                arduinoArranged.push_back(arduino[26]); //5
+                arduinoArranged.push_back(arduino[27]); //6
+                arduinoArranged.push_back(arduino[28]); //7
+                arduinoArranged.push_back(arduino[29]); //8
+                arduinoArranged.push_back(arduino[30]); //9
+                arduinoArranged.push_back(arduino[31]); //10
+                arduinoArranged.push_back(arduino[2]); //11
+                arduinoArranged.push_back(arduino[3]); //12
+                arduinoArranged.push_back(arduino[4]); //13
+                arduinoArranged.push_back(arduino[5]); //14
+                arduinoArranged.push_back(arduino[6]); //15
+                arduinoArranged.push_back(arduino[7]); //16
+                arduinoArranged.push_back(arduino[13]); //17
+                arduinoArranged.push_back(arduino[14]); //18
+                arduinoArranged.push_back(arduino[15]); //19
+                arduinoArranged.push_back(arduino[16]); //20
+                
+                arduinoArranged.push_back(arduino[7]); //21
+                arduinoArranged.push_back(arduino[8]); //22
+                arduinoArranged.push_back(arduino[9]); //23
+                arduinoArranged.push_back(arduino[10]); //24
+                arduinoArranged.push_back(arduino[17]); //25
+                arduinoArranged.push_back(arduino[18]); //26
+                arduinoArranged.push_back(arduino[19]); //27
+                arduinoArranged.push_back(arduino[20]); //28
+                arduinoArranged.push_back(arduino[21]); //29
+                arduinoArranged.push_back(arduino[22]); //30
+                arduinoArranged.push_back(arduino[24]); //31
+                arduinoArranged.push_back(arduino[25]); //32
+            }
             /*for(int i = 20; i < NUM_OF_SERIAL_TO_INIT; i++){
              arduinoArranged.push_back(300+i);
              }*/
@@ -714,3 +715,4 @@ vector<bool> ofApp::serialSetup(){ //int give the connection status of each cabl
         void ofApp::dragEvent(ofDragInfo dragInfo){
             
         }
+

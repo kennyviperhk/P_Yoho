@@ -39,6 +39,10 @@ void MusicPlayer::setPos(float pos) {
     mp3.setPosition(pos);
 }
 
+void MusicPlayer::setVol(float vol) {
+    mp3.setVolume(vol);
+}
+
 
 void MusicPlayer::computeSoundDuration() {
     //set to half position and get the millisecond there

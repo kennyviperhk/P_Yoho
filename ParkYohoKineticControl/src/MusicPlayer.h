@@ -21,6 +21,7 @@ class
             float getCurrentPos();
         
             void setPos(float pos);
+            void setVol(float vol);
         
             string play();
             float pause(bool t);

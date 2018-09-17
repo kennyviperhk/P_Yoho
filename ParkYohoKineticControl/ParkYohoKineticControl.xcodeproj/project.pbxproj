@@ -897,17 +897,17 @@
 				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
 				189E3E9B89AAC666E067E42D /* KineticController.h */,
-				F01FDDAFC42F9CD0F639BF81 /* DmxLight.h */,
 				A7497F3C89F6AE38D9B609D8 /* KineticController.cpp */,
+				F01FDDAFC42F9CD0F639BF81 /* DmxLight.h */,
 				CDA5A0E593F610799CFD784C /* DmxLight.cpp */,
 				C828A642AAD260B446A6D979 /* Keyframe.h */,
 				583CCF43C38F8EC39293BE7F /* Keyframe.cpp */,
 				74D8EE7EA48D3877B6B4D822 /* MovementController.h */,
+				80C807326629BE7587C3A3B3 /* MovementController.cpp */,
 				1E47175AC9BE4515F197CE9D /* TimelinePlayer.h */,
 				C2DCA8BF0DA3C2BA3D7DD9E9 /* TimelinePlayer.cpp */,
 				9B8F196757CB9ABD91A5F87A /* Timeline.cpp */,
 				B455B9D5B83C6AA48FBD963F /* Timeline.h */,
-				80C807326629BE7587C3A3B3 /* MovementController.cpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
