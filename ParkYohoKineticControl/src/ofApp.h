@@ -154,8 +154,8 @@ public:
     void musicAndTimelineSetup();
     //========== Movement Controller ===========
     
-    //vector<MovementController> MovementControllers;
-    vector<MovementController> movementController;
+    MovementController movementController;
+    //vector<MovementController> movementController;
     bool drawMovementController;
     
     

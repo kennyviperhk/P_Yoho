@@ -1,36 +1,45 @@
 #include "MovementController.h"
 
-void MovementController::setup(int cableNum, int x1, int y1, int w, int h, int x_range, int y_range){
+void MovementController::setup(int cableNum, int x1, int y1, int w, int h, int x_range, int y_range, int numCtrl){
     
     max_x_pos = x_range;
     max_y_pos = y_range;
     
+    numOfControllers = numCtrl;
+    
     curveControls.setup("CurveReadWrite", "settings.xml", x1+w+10, y1);
-    for(int i=0; i< 10; i++){
-        
-        ofParameter<int> a;
-        if(i==0 || i==5){
-            a.set("Option",1,0,10); //lx,ly,rx,ry
+    for(int j=0; j< numOfControllers; j++){
+        for(int i=0; i< 5; i++){
+            
+            ofParameter<int> a;
+            if(i==0){
+                a.set("Option",1,0,10); //lx,ly,rx,ry
+            }
+            else if(i==1){
+                a.set("Width",10,0,400); //lx,ly,rx,ry
+            }
+            else if(i==2){
+                a.set("HeightA",40,0,100); //lx,ly,rx,ry
+            }
+            else if(i==3){
+                a.set("HeightB",max_x_pos/2,0,max_x_pos); //lx,ly,rx,ry
+            }
+            else if(i==4){
+                a.set("Offest",100,0,1000);//lx,ly,rx,ry
+            }
+            
+            else{
+                a.set("--",100,0,1000);//lx,ly,rx,ry
+            }
+            curves.push_back(a);
+
+            
         }
-        else if(i==1 || i==6){
-            a.set("Width",10,0,400); //lx,ly,rx,ry
-        }
-        else if(i==2 || i==7){
-            a.set("HeightA",40,0,100); //lx,ly,rx,ry
-        }
-        else if(i==3 || i==8){
-            a.set("HeightB",max_x_pos/2,0,max_x_pos); //lx,ly,rx,ry
-        }
-        else if(i==4 || i==9){
-            a.set("Offest",100,0,1000);//lx,ly,rx,ry
-        }
-        else{
-            a.set("--",100,0,1000);//lx,ly,rx,ry
-        }
-        curves.push_back(a);
-        curveControls.add(curves[i]);
-        
     }
+      for(int j=0; j< numOfControllers*5; j++){
+                          curveControls.add(curves[j]);
+      }
+
     int eW = 120;
     curveControls.setSize(eW, 100);
     curveControls.setWidthElements(eW);

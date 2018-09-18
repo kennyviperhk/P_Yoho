@@ -10,10 +10,11 @@ MovementController {
 public:
 
     
-    void setup(int cableNum, int x1, int y1,int w, int h, int x_range, int y_range);
+    void setup(int cableNum, int x1, int y1,int w, int h, int x_range, int y_range, int numCtrl);
     void update();
     void draw();
     void setPoints(int a, int b, int c,int d);
+    
     vector<ofPoint> getPoints();
     int getOption(int op);
     int option;
@@ -38,6 +39,9 @@ public:
     int max_y_pos;
     
     int numOfCables;
+    int numOfControllers;
+    
+    int options;
     
 };
 
