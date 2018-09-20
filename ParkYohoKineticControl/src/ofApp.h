@@ -151,7 +151,7 @@ public:
 
     void changeTrackPos(float & pos);
     void changeVolume(float & vol);
-    void musicAndTimelineSetup();
+    void setupMusicPlayerAndTimeline();
     //========== Movement Controller ===========
 
     MovementController movementController;
@@ -390,7 +390,6 @@ public:
 #endif
 
     std::stringstream ss_info;
-
 
     //================ Show Control ==============
     void isShowBegin(bool sb);
