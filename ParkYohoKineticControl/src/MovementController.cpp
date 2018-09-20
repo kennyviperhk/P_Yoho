@@ -88,7 +88,12 @@ vector<ofPoint> MovementController::getPoints(){
                 p[i].x = p[i].x;
             }
             
-        }else{
+        }else if(curves[5] == 1){
+            p.push_back(trail[1].getPointAtPercent((float)i / numOfCables));
+            p[i].y = p[i].y * curves[2+5] + (curves[3+5] - max_x_pos/2)*4;
+            p[i].x = p[i].x;
+        }
+        else{
             p.push_back(ofVec2f(0,0));
         }
     }
