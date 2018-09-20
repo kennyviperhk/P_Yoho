@@ -65,7 +65,7 @@
 		B7E0003B826CBA379A3F66E5 /* PathFilterCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5114D2AF276E4E6E9A67B342 /* PathFilterCollection.cpp */; };
 		BC0058681371B449EBCD285C /* ofxInputField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C9A879BA9671BF2E5A96DE5A /* ofxInputField.cpp */; };
 		BE177617474F11F05E9260FC /* DirectoryWatcherManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B6179498D0110BD2E161373 /* DirectoryWatcherManager.cpp */; };
-		BF8631372111CA5E0054289E /* MusicPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF8631362111CA5E0054289E /* MusicPlayer.cpp */; };
+		BF2A06B321517849001F9341 /* PYMusicPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF2A06B121517849001F9341 /* PYMusicPlayer.cpp */; };
 		C4782ECC372420ACE0615B74 /* OscPrintReceivedElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8881B3C8C0A1C45F042E7A /* OscPrintReceivedElements.cpp */; };
 		CDB5B1D2D12F42502906F30F /* DeviceFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00F3330A5DEBD082CEE0C12C /* DeviceFilter.cpp */; };
 		CEFD3CCAB8B3251DFCAAA0EE /* DirectoryUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A967D1FAFA98A7CBBFA4F55 /* DirectoryUtils.cpp */; };
@@ -240,8 +240,8 @@
 		BC8881B3C8C0A1C45F042E7A /* OscPrintReceivedElements.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = OscPrintReceivedElements.cpp; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscPrintReceivedElements.cpp; sourceTree = SOURCE_ROOT; };
 		BEFFAA5B8275E0AE066FC2E3 /* DirectoryWatcherManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = DirectoryWatcherManager.h; path = ../../../addons/ofxIO/libs/ofxIO/include/ofx/IO/DirectoryWatcherManager.h; sourceTree = SOURCE_ROOT; };
 		BF0BB2F28A4522316B1563A5 /* COBSEncoding.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = COBSEncoding.h; path = ../../../addons/ofxIO/libs/ofxIO/include/ofx/IO/COBSEncoding.h; sourceTree = SOURCE_ROOT; };
-		BF8631352111CA5E0054289E /* MusicPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MusicPlayer.h; sourceTree = "<group>"; };
-		BF8631362111CA5E0054289E /* MusicPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MusicPlayer.cpp; sourceTree = "<group>"; };
+		BF2A06B121517849001F9341 /* PYMusicPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PYMusicPlayer.cpp; sourceTree = "<group>"; };
+		BF2A06B221517849001F9341 /* PYMusicPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PYMusicPlayer.h; sourceTree = "<group>"; };
 		C2DCA8BF0DA3C2BA3D7DD9E9 /* TimelinePlayer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = TimelinePlayer.cpp; path = src/TimelinePlayer.cpp; sourceTree = SOURCE_ROOT; };
 		C2FAC65C491D4231379F3298 /* ofxOscReceiver.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxOscReceiver.cpp; path = ../../../addons/ofxOsc/src/ofxOscReceiver.cpp; sourceTree = SOURCE_ROOT; };
 		C58862C6D212C8E8A83810F4 /* ofxOscMessage.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxOscMessage.h; path = ../../../addons/ofxOsc/src/ofxOscMessage.h; sourceTree = SOURCE_ROOT; };
@@ -891,23 +891,23 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				BF8631362111CA5E0054289E /* MusicPlayer.cpp */,
-				BF8631352111CA5E0054289E /* MusicPlayer.h */,
+				BF2A06B121517849001F9341 /* PYMusicPlayer.cpp */,
+				BF2A06B221517849001F9341 /* PYMusicPlayer.h */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
-				189E3E9B89AAC666E067E42D /* KineticController.h */,
-				A7497F3C89F6AE38D9B609D8 /* KineticController.cpp */,
-				F01FDDAFC42F9CD0F639BF81 /* DmxLight.h */,
-				CDA5A0E593F610799CFD784C /* DmxLight.cpp */,
 				C828A642AAD260B446A6D979 /* Keyframe.h */,
+				189E3E9B89AAC666E067E42D /* KineticController.h */,
+				F01FDDAFC42F9CD0F639BF81 /* DmxLight.h */,
+				A7497F3C89F6AE38D9B609D8 /* KineticController.cpp */,
+				9B8F196757CB9ABD91A5F87A /* Timeline.cpp */,
+				1E47175AC9BE4515F197CE9D /* TimelinePlayer.h */,
+				CDA5A0E593F610799CFD784C /* DmxLight.cpp */,
 				583CCF43C38F8EC39293BE7F /* Keyframe.cpp */,
 				74D8EE7EA48D3877B6B4D822 /* MovementController.h */,
-				80C807326629BE7587C3A3B3 /* MovementController.cpp */,
-				1E47175AC9BE4515F197CE9D /* TimelinePlayer.h */,
 				C2DCA8BF0DA3C2BA3D7DD9E9 /* TimelinePlayer.cpp */,
-				9B8F196757CB9ABD91A5F87A /* Timeline.cpp */,
 				B455B9D5B83C6AA48FBD963F /* Timeline.h */,
+				80C807326629BE7587C3A3B3 /* MovementController.cpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -1126,12 +1126,12 @@
 				347D67CCF4C7C7725118DD59 /* ByteBufferStream.cpp in Sources */,
 				62509F39EA6197BEA0194276 /* ByteBufferReader.cpp in Sources */,
 				EB4F14C4AE3B3EFD04520383 /* DirectoryWatcher.cpp in Sources */,
+				BF2A06B321517849001F9341 /* PYMusicPlayer.cpp in Sources */,
 				B1BF03D79762719793CC9F1A /* SLIPEncoding.cpp in Sources */,
 				CDB5B1D2D12F42502906F30F /* DeviceFilter.cpp in Sources */,
 				3BFC7CF50BEB0307821B90A6 /* lz4.c in Sources */,
 				1298066D39CE7EC3DA60256A /* snappy-stubs-internal.cc in Sources */,
 				D81A435CE7FDF51B41956210 /* snappy-sinksource.cc in Sources */,
-				BF8631372111CA5E0054289E /* MusicPlayer.cpp in Sources */,
 				868BEDC19B53FD512D7E3100 /* snappy.cc in Sources */,
 				BC0058681371B449EBCD285C /* ofxInputField.cpp in Sources */,
 				4ADB88E2FB52E76A471065DE /* ofxOscParameterSync.cpp in Sources */,

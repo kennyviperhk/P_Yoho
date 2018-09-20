@@ -12,7 +12,7 @@
 
 #include "KineticController.h"
 #include "MovementController.h"
-#include "MusicPlayer.h"
+#include "PYMusicPlayer.h"
 #include "DmxLight.h"
 #include "TimelinePlayer.h"
 
@@ -79,16 +79,16 @@
 
 /*
  notes:
- 
+
  //command: send motor index [0-4] - position [0-10000] - interpolation style [0-4?] - 3 style parameters ... (example: time to position [0 - 100000ms])
- 
+
  todo:
  //DETECT HOME
  //controllable single module:
  accel, speed, pos (send to arduino), flip dir,
- 
+
  //call for assure connection
- 
+
 */
 
 class SerialMessage
@@ -97,7 +97,7 @@ public:
     SerialMessage(): fade(0)
     {
     }
-    
+
     SerialMessage(const std::string& _message,
                   const std::string& _exception,
                   int _fade):
@@ -106,21 +106,21 @@ public:
     fade(_fade)
     {
     }
-    
+
     std::string message;
     std::string exception;
     int fade;
 };
 
 class ofApp : public ofBaseApp{
-    
+
 public:
     void setup();
     void update();
     void draw();
     void exit();
     void keyReleased(int key);
-    
+
     void keyPressed(int key){};
     void mouseMoved(int x, int y ){};
     void mouseDragged(int x, int y, int button);
@@ -131,38 +131,39 @@ public:
     void windowResized(int w, int h){};
     void dragEvent(ofDragInfo dragInfo){};
     void gotMessage(ofMessage msg){};
-    
+
     //========== kinecticVisualisation ===========
     KinecticVisualisation kinecticVisualisation;
 
     //================== MusicPlayer / Timeline player ==================
     TimelinePlayer timelinePlayer;
     void onKeyframe(Keyframe &kf);
-    
+
     bool isExhibitionMode;
     bool drawMusicPlayer;
-    
-    MusicPlayer musicPlayer;
+
+    PYMusicPlayer musicPlayer;
 
     long currMusicDuration;
     void playTrack(bool & t);
     void pauseTrack(bool & t);
     void setTrackisLoop(bool t);
-    
+
     void changeTrackPos(float & pos);
     void changeVolume(float & vol);
     void musicAndTimelineSetup();
     //========== Movement Controller ===========
-    
+
     MovementController movementController;
     //vector<MovementController> movementController;
     bool drawMovementController;
-    
-    
+
+
     //========== Movement ===========
-    void cableOption(int cb);
+    void cableOption();
+    ofParameter<int> cableOp;
     //================== Serial ==================
-    
+
     vector<bool> serialSetup();
     string serialRead(int a);
     vector<int> stringDecode(string s);
@@ -173,8 +174,8 @@ public:
     void checkArduinoIsConnected();
     bool initOnUpdate;
     long checkArduinoMillis; //todo
-    
-    
+
+
 #ifdef USEOSC
     vector<bool> isArduioPort;
     vector<int> arduino;
@@ -182,36 +183,37 @@ public:
     vector<ofx::IO::BufferedSerialDevice> comPort;
     vector<ofx::IO::BufferedSerialDevice> arduino;
 #endif
-    
-    
+
+
     //unused
     //void sendChar();
     void onSerialBuffer(const ofx::IO::SerialBufferEventArgs& args);
     void onSerialError(const ofx::IO::SerialBufferErrorEventArgs& args);
-    
+
     vector<SerialMessage> serialMessages;
-    
+
     string receivedMsg;
     vector<string> prevReceivedString;
     vector<string> receivedStringBuffer;
     vector<string> receivedString;
     vector<int> updateColor;
-    
+
     //function
     void removeSubstrs(string& s, string& p);
-    
+
     vector<string> SERIAL_PARAMETERES;
-    
+
     //================== debugMode ==================
-    
+
     int page;
     int numOfPages;
-    void guiSetup();
-    void guiDraw();
-    
+    void setupGui();
+    void drawGui();
+
     bool debugMode;
     ofxPanel guiDebug;
     ofxPanel guiDebug2;
+    ofxPanel guiDebugCableOption;
     ofxPanel guiDebugSingleCableCtrl;
 
     ofParameterGroup parametersDebug;
@@ -220,7 +222,7 @@ public:
     void loadSettings();
     vector<ofParameter<int>> EEPROM;
     vector<ofxButton> EEPROM_btn;
-    
+
     ofxButton EEPROM_saveBtn;
     ofxButton EEPROM_loadBtn;
     ofxButton sendStyleBtn;
@@ -232,16 +234,16 @@ public:
     vector<ofParameter<bool>> working_cable;
     vector<ofParameter<bool>> input_pts;
     vector<ofParameter<bool>> output_pts;
-    
+
     vector<ofParameter<int>> singleCablePos;
     vector<ofParameter<bool>> singleCablePosLoop;
     ofxButton singleCableResetBtn;
     ofxButton singleCableResetAllBtn;
     ofxButton singleCableHomeAllBtn;
     ofxButton singleCableSendStyleBtn;
-    
+
     ofxTextField textField;
-    
+
     //Cable Pos
     ofxPanel guiCablePosLx;
     ofxPanel guiCablePosLy;
@@ -252,7 +254,7 @@ public:
     vector<ofParameter<int>> cablePosLy; //lx,ly,rx,ry
     vector<ofParameter<int>> cablePosRx; //lx,ly,rx,ry
     vector<ofParameter<int>> cablePosRy; //lx,ly,rx,ry
-    
+
     //Cable Time
     ofxPanel guiCableTimeLx;
     ofxPanel guiCableTimeLy;
@@ -263,7 +265,7 @@ public:
     vector<ofParameter<int>> cableTimeLy; //lx,ly,rx,ry
     vector<ofParameter<int>> cableTimeRx; //lx,ly,rx,ry
     vector<ofParameter<int>> cableTimeRy; //lx,ly,rx,ry
-    
+
     //Cable Pos Offset
     ofxPanel guiCablePosLxOffset;
     ofxPanel guiCablePosLyOffset;
@@ -274,28 +276,28 @@ public:
     vector<ofParameter<int>> cablePosLyOffset; //lx,ly,rx,ry
     vector<ofParameter<int>> cablePosRxOffset; //lx,ly,rx,ry
     vector<ofParameter<int>> cablePosRyOffset; //lx,ly,rx,ry
-    
+
     bool showOffset;
-    
+
     //Style 2
-    
+
     ofxPanel guiCablePosLx2;
     ofxPanel guiCablePosLy2;
     ofxPanel guiCablePosRx2;
     ofxPanel guiCablePosRy2;
     ofxPanel guiCableSpeedAccelAll;
-    
+
     vector<ofParameter<int>> cablePosLx2; //lx,ly,rx,ry
     vector<ofParameter<int>> cablePosLy2; //lx,ly,rx,ry
     vector<ofParameter<int>> cablePosRx2; //lx,ly,rx,ry
     vector<ofParameter<int>> cablePosRy2; //lx,ly,rx,ry
-    
+
     ofParameter<int> cableSpeedX;
     ofParameter<int> cableAccelX;
     ofParameter<int> cableSpeedY;
     ofParameter<int> cableAccelY;
-    
-    
+
+
     //Cable Accel
     ofxPanel guiCableAccelLx;
     ofxPanel guiCableAccelLy;
@@ -307,74 +309,74 @@ public:
     vector<ofParameter<int>> cableAccelLy; //lx,ly,rx,ry
     vector<ofParameter<int>> cableAccelRx; //lx,ly,rx,ry
     vector<ofParameter<int>> cableAccelRy; //lx,ly,rx,ry
-    
+
     //Cable Speed
     ofxPanel guiCableSpeedLx;
     ofxPanel guiCableSpeedLy;
     ofxPanel guiCableSpeedRx;
     ofxPanel guiCableSpeedRy;
-    
+
     //ofxPanel guiCableAccel;
     ofParameterGroup parametersCableSpeed;
     vector<ofParameter<int>> cableSpeedLx; //lx,ly,rx,ry
     vector<ofParameter<int>> cableSpeedLy; //lx,ly,rx,ry
     vector<ofParameter<int>> cableSpeedRx; //lx,ly,rx,ry
     vector<ofParameter<int>> cableSpeedRy; //lx,ly,rx,ry
-    
+
     ofParameter<int> currCableID;
     ofParameter<int> prevCableID;
     ofParameter<int> currentStyle;
     void writeStyle(int s);
     void moveCommandMethod(int method, int c, int whichCurrentCable);
-    
+
     bool serialTrigger; //TO avoid ofxButton cause multiple click and send mutiple serial command;
     long prevSerialTriggerMillis; //TO avoid ofxButton cause multiple click and send mutiple serial command;
     long prevSingleCableLoopMillis;
     long currMillis;
-    
+
     void displayLog(string s);
     string currentdisplayLog;
     void commandPrompt();
-    
+
     bool isEmergencyStop;
-    
+
     void loadButtonPressed();
-    
+
     ofFbo kineticVisualizationFbo;
     bool drawKineticVisualizationFbo;
     vector<bool> drawDebugGui;
     bool drawPosGui;
     bool drawSpeedAccelGui;
     bool drawTimeGui;
-    
+
     bool drawDmx;
     int num_of_online;
     long prevOnlineCheckingMillis;
-    
+
     //================== Config ==================
-    
+
     //int numOfCables;
-    
-    
+
+
     //================== Song 1 ==================
-    
+
     void movement(int s);
     int songStage;
     ofParameter<int> movementMode;
     int prevSong;
-    
+
     long currTime;
     long prevTime;
     bool setPattern;
     int timeDiff;
-    
+
     void setPoints();
-    
-    
+
+
     //========== DMX Light ===========
     DmxLight DmxLight;
-    
-    
+
+
 #ifdef USEOSC
     //================== OSC ==================
     //send
@@ -384,17 +386,15 @@ public:
     vector<string> readOSC();
     ofxOscReceiver receiver;
 #else
-    
+
 #endif
-    
+
     std::stringstream ss_info;
-    
-    
+
+
     //================ Show Control ==============
     void isShowBegin(bool sb);
     bool showBeginTrigger;
     long prevShowBeginMillis;
 
 };
-
-

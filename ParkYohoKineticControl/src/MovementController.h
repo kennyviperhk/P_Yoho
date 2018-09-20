@@ -13,8 +13,13 @@ public:
     void setup(int cableNum, int x1, int y1,int w, int h, int x_range, int y_range, int numCtrl);
     void update();
     void draw();
-    void setPoints(int a, int b, int c,int d);
-    
+    void setPoints(int whichCtrl, int op, int a, int b, int c,int d);
+    /*
+     op:0 disabled
+     op:1 all
+     op:2 even
+     op:3 odd
+    */
     vector<ofPoint> getPoints();
     int getOption(int op);
     int option;
@@ -26,12 +31,12 @@ public:
     
     vector<ofParameter<int>> curves;
     
-    ofPolyline trail;
+    vector<ofPolyline> trail;
     float x,y;
     float increment;
     float angle;
     
-    ofPoint curveCoord;
+    vector<ofPoint> curveCoord;
     int curveW;
     int curveH;
     
@@ -40,8 +45,6 @@ public:
     
     int numOfCables;
     int numOfControllers;
-    
-    int options;
     
 };
 
