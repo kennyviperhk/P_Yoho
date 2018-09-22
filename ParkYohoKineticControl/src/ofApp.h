@@ -325,7 +325,10 @@ public:
 
     ofParameter<int> currCableID;
     ofParameter<int> prevCableID;
-    ofParameter<int> currentStyle;
+    ofParameter<int> currStyle;
+    int prevStyle;
+    long waitForStyleChangeMillis;
+    bool isShowReady;
     void writeStyle(int s);
     void moveCommandMethod(int method, int c, int whichCurrentCable);
 
@@ -334,13 +337,15 @@ public:
     long prevSingleCableLoopMillis;
     long currMillis;
 
-    void displayLog(string s);
-    string currentdisplayLog;
-    void commandPrompt();
+    void displayLog(vector<string> s);
+    vector<string> currDisplayLog;
+    vector<string> prevDisplayLog;
+    vector<int> displayLogColor;
+    void serialCommander();
 
     bool isEmergencyStop;
 
-    void loadButtonPressed();
+    void loadEEPROMButtonPressed();
 
     ofFbo kineticVisualizationFbo;
     bool drawKineticVisualizationFbo;

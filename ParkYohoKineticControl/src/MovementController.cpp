@@ -32,7 +32,7 @@ void MovementController::setup(int cableNum, int x1, int y1, int w, int h, int x
                 a.set("--",100,0,1000);//lx,ly,rx,ry
             }
             curves.push_back(a);
-
+            
             
         }
         ofPolyline p;
@@ -44,18 +44,18 @@ void MovementController::setup(int cableNum, int x1, int y1, int w, int h, int x
         curveControls.add(curves[j]);
     }
     
-
+    
     int eW = 120;
     
     curveControls.setSize(eW, 100);
     curveControls.setWidthElements(eW);
     
- 
+    
     curveW = w;
     curveH = h;
     
     numOfCables = cableNum;
-
+    
 }
 
 vector<ofPoint> MovementController::getPoints(){
@@ -132,45 +132,47 @@ void MovementController::update(){
     }else if (curves[0] == 3){
         curves[5] = 2;
     }
-
+    
     for(int j=0; j< numOfControllers; j++){
         
-    x=0;
-    trail[j].clear();
-    
-    
-    angle = 0;
-    increment = (float)curves[1+(j*5)]/1000/TWO_PI;
-    for(int i=0; i< curveW;i++){
-        x++;
-        angle+=increment;
-        if (angle>=TWO_PI) { //if the angle is more than or equal to two PI (a full rotation measured in Radians) then make it zero.
-            angle=0;
+        x=0;
+        trail[j].clear();
+        
+        
+        angle = 0;
+        increment = (float)curves[1+(j*5)]/1000/TWO_PI;
+        for(int i=0; i< curveW;i++){
+            x++;
+            angle+=increment;
+            if (angle>=TWO_PI) { //if the angle is more than or equal to two PI (a full rotation measured in Radians) then make it zero.
+                angle=0;
+            }
+            y=(curveH/2)+ (curveH/2)*sin(angle+ curves[4+(j*5)]);
+            trail[j].addVertex(ofPoint(curveCoord[j].x+ x,curveCoord[j].y+ y));
         }
-        y=(curveH/2)+ (curveH/2)*sin(angle+ curves[4+(j*5)]);
-        trail[j].addVertex(ofPoint(curveCoord[j].x+ x,curveCoord[j].y+ y));
     }
-          }
 };
 
 void MovementController::draw(){
     // ofEnableSmoothing();
     
     ofSetColor(255,0,0);
-        for(int j=0; j< numOfControllers; j++){
-    ofDrawRectangle(curveCoord[j].x, curveCoord[j].y, curveW, curveH);
-    ofSetColor(20);
-    trail[j].draw();
-    for(int i=0; i< numOfCables; i++){
-        ofSetColor(0, 140, 255);
-        ofPoint p = trail[j].getPointAtPercent((float)i/numOfCables);
-        ofDrawCircle(p,5);
-        ofDrawCircle(ofGetMouseX(),ofGetMouseY(),5);
+    for(int j=0; j< numOfControllers; j++){
+        ofNoFill();
+        ofDrawRectangle(curveCoord[j].x, curveCoord[j].y, curveW, curveH);
+        ofSetColor(20);
+        trail[j].draw();
+        for(int i=0; i< numOfCables; i++){
+            ofSetColor(0, 140, 255);
+            ofPoint p = trail[j].getPointAtPercent((float)i/numOfCables);
+            ofDrawCircle(p,5);
+            ofDrawCircle(ofGetMouseX(),ofGetMouseY(),5);
+        }
     }
-                   }
     // ofDisableSmoothing();
     curveControls.draw();
- 
+    
 };
+
 
 

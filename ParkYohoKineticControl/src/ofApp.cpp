@@ -1,11 +1,14 @@
 #include "ofApp.h"
 
 //--------------------------------------------------------------
+//------------------------------ Setup -------------------------
+//--------------------------------------------------------------
 void ofApp::setup(){
     
     ofSetFrameRate(25);
     
-    //================== Serial ==================
+    //================== Communication ==================
+    //------------------- Serial -------------------
     
     isArduinoConnected = serialSetup();
     
@@ -17,6 +20,17 @@ void ofApp::setup(){
         isArduinoConnectedBySerial.push_back(false);
     }
     initOnUpdate = true;
+    
+#ifdef USEOSC
+    //------------------- OSC -------------------
+    // listen on the given port
+    cout << "listening for osc messages on port " << R_PORT << "\n";
+    receiver.setup(R_PORT);
+    // open an outgoing connection to HOST:PORT
+    sender.setup(S_HOST, S_PORT);
+#else
+    
+#endif
     
     //================== debugMode ==================
     
@@ -31,7 +45,12 @@ void ofApp::setup(){
         updateColor.push_back(255);
     }
     
-    currentdisplayLog = "Park Yoho Control Software V1";
+    for(int i=0; i < NUM_OF_CABLES; i++){
+        currDisplayLog.push_back("");
+        prevDisplayLog.push_back("old");
+        displayLogColor.push_back(255);
+    }
+    currDisplayLog.push_back("Park Yoho Control Software V0.4");
     
     loadSettings();
     setupGui();
@@ -44,30 +63,23 @@ void ofApp::setup(){
     
     //================== Movement Controls ==================
     
-    int mcX = 0;
+    int mcX = 20;
     int mcY = 0;
     int mcW = 300;
     int mcH = 150;
     int mcHg = 20;
-
+    
     movementController.setup(NUM_OF_CABLES, mcX, mcY, mcW , mcH, MAX_X_POS, MAX_Y_POS,2);
     
     //================== Song 1 ==================
     songStage = 0;
     
-#ifdef USEOSC
-    //================== OSC ==================
-    // listen on the given port
-    cout << "listening for osc messages on port " << R_PORT << "\n";
-    receiver.setup(R_PORT);
-    // open an outgoing connection to HOST:PORT
-    sender.setup(S_HOST, S_PORT);
-#else
     
-#endif
 }
 
 
+//--------------------------------------------------------------
+//------------------------------ Update ------------------------
 //--------------------------------------------------------------
 void ofApp::update(){
     
@@ -75,14 +87,13 @@ void ofApp::update(){
     
     ofSetWindowTitle(ofToString(ofGetFrameRate()));
     
-    currMillis = ofGetElapsedTimeMillis();
-    
-    //OSC
+    //================== Communication ==================
+    //------------------- OSC -------------------
 #ifdef USEOSC
     receivedString = readOSC();
 #else
     
-    //================== Serial ==================
+    //------------------- Serial -------------------
     for(int i=0; i < arduino.size(); i++){
         receivedStringBuffer[i] += ofTrim(serialRead(i));
         
@@ -133,7 +144,7 @@ void ofApp::update(){
     }
     
     //Online Cable Checking - TODO
-    if(currMillis - prevOnlineCheckingMillis < 5000){
+    if(currTime - prevOnlineCheckingMillis < 5000){
         num_of_online = 0;
         for (int i=0; i< NUM_OF_CABLES; i++){
             if(isArduinoConnectedBySerial[i]){
@@ -159,7 +170,7 @@ void ofApp::update(){
     //================== Kinectic Visualisation ==================
     
     for(int i=0; i< NUM_OF_CABLES; i++){
-        kinecticVisualisation.set(NUM_OF_CABLES ,i, currentStyle ,ofMap(cablePosLx[i],0,MAX_X_POS,0,2) ,ofMap(cablePosLy[i],0,MAX_Y_POS,0,1),ofMap(cablePosRx[i],0,MAX_X_POS,0,2), ofMap(cablePosRy[i],0,MAX_Y_POS,0,1));
+        kinecticVisualisation.set(NUM_OF_CABLES ,i, currStyle ,ofMap(cablePosLx[i],0,MAX_X_POS,0,2) ,ofMap(cablePosLy[i],0,MAX_Y_POS,0,1),ofMap(cablePosRx[i],0,MAX_X_POS,0,2), ofMap(cablePosRy[i],0,MAX_Y_POS,0,1));
     }
     
     kineticVisualizationFbo.begin();
@@ -169,14 +180,16 @@ void ofApp::update(){
     
     //================== Music/Timeline Player ==================
     musicPlayer.update();
-    timelinePlayer.update();
-    
-    if(currMillis - prevShowBeginMillis > SHOW_DELAY_TIME && showBeginTrigger){
-        timelinePlayer.loadButtonPressed();
-        timelinePlayer.playButtonPressed();
-        showBeginTrigger =false;
-    }
-    
+    /*
+     if(!showBeginTrigger && isShowReady){
+     //timelinePlayer.loadButtonPressed();
+     //timelinePlayer.playButtonPressed();
+     showBeginTrigger = true;
+     ofLog() << " Play Button Triggered ";
+     bool t = true;
+     playTrack(t);
+     }
+     */
     //get button status from Timeline player
     setTrackisLoop(timelinePlayer.getLoopButtonStatus());
     timelinePlayer.update();
@@ -188,9 +201,25 @@ void ofApp::update(){
     movementController.update();
     cableOption();
     setPoints();
-
+    
+    //Safety Check for style if pre style != currstyle //TODO
+    if(prevStyle != currStyle){
+        serialWrite(-1, "Q");
+        waitForStyleChangeMillis = currTime;
+        isShowReady = false;
+        prevStyle = currStyle;
+        
+    }
+    
+    if(currTime - waitForStyleChangeMillis > SHOW_DELAY_TIME){
+        isShowReady = true;
+    }else{
+        currDisplayLog[NUM_OF_CABLES] = "Please wait for " + ofToString((SHOW_DELAY_TIME - (currTime - waitForStyleChangeMillis))/1000) + "s to begin show";
+    }
 }
 
+//--------------------------------------------------------------
+//------------------------------ Draw --------------------------
 //--------------------------------------------------------------
 void ofApp::draw(){
     
@@ -245,9 +274,9 @@ void ofApp::draw(){
                 serialWrite(currCableID, toWrite);
                 serialWrite(currCableID, "S");
                 
-                currentdisplayLog = ofToString(currCableID) +" EEPROM SAVED";
+                currDisplayLog[NUM_OF_CABLES] = ofToString(currCableID) +" EEPROM SAVED";
                 serialTrigger = false;
-                prevSerialTriggerMillis =currMillis;
+                prevSerialTriggerMillis =currTime;
                 
                 
             }
@@ -286,7 +315,7 @@ void ofApp::draw(){
             }
             
         }
-        if(currMillis -  prevSerialTriggerMillis > 200){
+        if(currTime -  prevSerialTriggerMillis > 200){
             serialTrigger = true;
         }
         
@@ -295,7 +324,7 @@ void ofApp::draw(){
         {
             t.erase(std::remove(t.begin(), t.end(), '='), t.end());
             t.erase(std::remove(t.begin(), t.end(), '+'), t.end());
-            currentdisplayLog = t;
+            currDisplayLog[currCableID] = t;
             serialWrite(currCableID, t);
             textField = "";
         }
@@ -320,7 +349,7 @@ void ofApp::draw(){
                 currCableID = 0;
             }
             
-            if(currMillis - prevSingleCableLoopMillis > 10000){
+            if(currTime - prevSingleCableLoopMillis > 10000){
                 bool triggerAnyCable = false;
                 for(int i=0; i<4; i++){
                     if(singleCablePosLoop[i]){
@@ -339,14 +368,14 @@ void ofApp::draw(){
                                 singleCablePos[i] = 0;
                             }
                         }
-                        ofLog() << "Actived : " << i  << " cm " << currMillis << " pm " << prevSingleCableLoopMillis;
+                        ofLog() << "Actived : " << i  << " cm " << currTime << " pm " << prevSingleCableLoopMillis;
                     }else{
                         singleCablePos[i] = 0;
                     }
                     
                 }
                 if(triggerAnyCable){
-                    prevSingleCableLoopMillis = currMillis;
+                    prevSingleCableLoopMillis = currTime;
                     writeStyle(2);
                 }
             }
@@ -358,8 +387,9 @@ void ofApp::draw(){
     }
     
     drawGui();
-
+    
     //================== Communication - Serial or OSC ==================
+    
     for(int i=0; i < NUM_OF_CABLES; i++){
         std::stringstream ss2;
         // if(isArduinoConnected[i]){
@@ -374,20 +404,20 @@ void ofApp::draw(){
             ofSetColor(200,200,200);
             ss2 << "Arduino (" << i+1 << ") : " << "OFFLINE" << endl;
         }
-        ofDrawBitmapString(ss2.str(), ofVec2f(20, 20*i + 250));
+        ofDrawBitmapString(ss2.str(), ofVec2f(20, 30*i + 240));
         
     }
     
     ofSetColor(255);
     ofDrawBitmapString(ss_info.str(), ofVec2f(20, 20));
     
-    displayLog(currentdisplayLog);
+    displayLog(currDisplayLog);
 }
 
 //--------------------------------------------------------------
 //------------------- Keyboard Command -------------------------
 //--------------------------------------------------------------
-//--------------------------------------------------------------
+
 void ofApp::keyReleased(int key){
     switch (key){
         case 'a':
@@ -398,9 +428,9 @@ void ofApp::keyReleased(int key){
 #endif
             break;
         case 's':
-            currentStyle++;
-            if(currentStyle >NUM_OF_CABLES){ //todo
-                currentStyle=0;
+            currStyle++;
+            if(currStyle >NUM_OF_CABLES){ //todo
+                currStyle=0;
             }
             break;
             
@@ -413,7 +443,7 @@ void ofApp::keyReleased(int key){
             break;
             
         case 'p': //dialog for serial writing
-            commandPrompt();
+            serialCommander();
             break;
             
         case ' ': //emergency Stop
@@ -525,18 +555,20 @@ void ofApp::keyReleased(int key){
 }
 
 
-//--------------------Mouse Command / Timeline Player-------------------
+
 //--------------------------------------------------------------
+//----------------------- Mouse Command-------------------------
+//--------------------------------------------------------------
+
+//-------------------------Timeline Player----------------------
 void ofApp::mouseDragged(int x, int y, int button){
     timelinePlayer.mouseDragged(x, y, button);
 }
 
-//--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
     timelinePlayer.mousePressed(x, y, button);
 }
 
-//--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
     timelinePlayer.mouseReleased(x, y, button);
 }
@@ -628,7 +660,7 @@ vector<string> ofApp::readOSC(){
 
 
 //--------------------------------------------------------------
-//-------------------------- Functions -------------------------
+//-------------------------- Utils -----------------------------
 //--------------------------------------------------------------
 
 bool ofApp::is_number(const std::string& s)
@@ -638,16 +670,16 @@ bool ofApp::is_number(const std::string& s)
     return !s.empty() && it == s.end();
 }
 
-void ofApp::commandPrompt(){
+void ofApp::serialCommander(){
     string txt = ofSystemTextBoxDialog("Serial Command", txt);
     serialWrite(currCableID, txt);
     
 }
+
 //--------------------------------------------------------------
 //-------------------------- GUI -------------------------------
 //--------------------------------------------------------------
-//--------------------------------------------------------------
-//--------------------------------------------------------------
+
 void ofApp::setupGui(){
     drawDebugGui = {false,false,false};
     
@@ -692,9 +724,9 @@ void ofApp::setupGui(){
      */
     guiDebug.add(EEPROM_saveBtn.setup(EEPROM_saveLoad_names[0]));
     guiDebug.add(EEPROM_loadBtn.setup(EEPROM_saveLoad_names[1]));
-    EEPROM_loadBtn.addListener(this, &ofApp::loadButtonPressed);
+    EEPROM_loadBtn.addListener(this, &ofApp::loadEEPROMButtonPressed);
     guiDebug.add(textField.setup("Serial:", "0-0-0-0-0"));
-    guiDebug.add(currentStyle.set("Style",11,0,NUM_OF_CABLES)); //TODO
+    guiDebug.add(currStyle.set("Style",12,0,NUM_OF_CABLES)); //TODO
     guiDebug.add(sendStyleBtn.setup("Set Pos:"));
     guiDebug.add(sendStyleBtn_all_same.setup("Set Pos ALL SAME:"));
     guiDebug.add(sendStyleBtn_all.setup("Set Pos ALL:"));
@@ -736,7 +768,7 @@ void ofApp::setupGui(){
         }
         
         b.set(c,false);
-
+        
         input_pts.push_back(a);
         output_pts.push_back(b);
         //guiDebug.add(input_pts[i]);
@@ -845,13 +877,13 @@ void ofApp::setupGui(){
     guiCableTimeRy.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 300, 400);
     for(int i=0; i< NUM_OF_CABLES; i++){
         ofParameter<int> a;
-        a.set("T" + ofToString(i+1),20000,10000,MAX_X_TIME); //lx,ly,rx,ry
+        a.set("T" + ofToString(i+1),45000,10000,MAX_X_TIME); //lx,ly,rx,ry
         ofParameter<int> b;
-        b.set("T" + ofToString(i+1),20000,10000,MAX_Y_TIME);
+        b.set("T" + ofToString(i+1),45000,10000,MAX_Y_TIME);
         ofParameter<int> c;
-        c.set("T" + ofToString(i+1),20000,10000,MAX_X_TIME);
+        c.set("T" + ofToString(i+1),45000,10000,MAX_X_TIME);
         ofParameter<int> d;
-        d.set("T" + ofToString(i+1),20000,10000,MAX_Y_TIME);
+        d.set("T" + ofToString(i+1),45000,10000,MAX_Y_TIME);
         cableTimeLx.push_back(a);
         cableTimeLy.push_back(b);
         cableTimeRx.push_back(c);
@@ -1016,16 +1048,26 @@ void ofApp::setupGui(){
     guiCableSpeedAccelAll.setSize(guiPosCableW, guiCableH);
     guiCableSpeedAccelAll.setWidthElements(guiPosCableW);
     
-
+    
 }
 
 
-void ofApp::displayLog(string s=""){
-    if(s.size() >0){
-        currentdisplayLog = s ;
+void ofApp::displayLog(vector<string> s){
+    
+    
+    
+    for(int i=0; i<currDisplayLog.size(); i++){
+        if(prevDisplayLog[i] != currDisplayLog[i]){
+            displayLogColor[i] = 255;
+            prevDisplayLog[i] = currDisplayLog[i];
+        }
+        if(displayLogColor[i] >255/3){
+            displayLogColor[i]--;
+        }
+        ofSetColor(displayLogColor[i], displayLogColor[i],displayLogColor[i]);
+        ofDrawBitmapString("        (" + ofToString(i+1) + ") : " + currDisplayLog[i], 20, 30*i + 255);
     }
-    ofSetColor(255, 255, 255);
-    ofDrawBitmapString("Status: " + currentdisplayLog, 10, ofGetHeight()-10);
+    
 }
 
 
@@ -1232,7 +1274,7 @@ void ofApp::drawGui(){
             showOffset = false;
             drawKineticVisualizationFbo = true;
             drawMusicPlayer = false;
-
+            
         }else if(movementMode == 3){
             
             drawDebugGui = {false,false,false};
@@ -1340,8 +1382,12 @@ void ofApp::setPoints(){
     }
 }
 
+
+//--------------------------------------------------------------
+//--------------------- Cable Control Commands -----------------
 //--------------------------------------------------------------
 
+//============================ Cable Option ====================
 void ofApp::cableOption(){
     /*
      0: LX
@@ -1425,7 +1471,7 @@ void ofApp::cableOption(){
     
 }
 
-//--------------------------------------------------------------
+//============================ movement ============================
 void ofApp::movement(int s){
     
     if(prevSong != s){
@@ -1466,7 +1512,7 @@ void ofApp::movement(int s){
         //----- INFO -----
         ofBackground(0, 0, 100);
         ss_info << "MODE : LIGHT ONLY (No Shape)" << endl;
-
+        
         DmxLight.setAll((float)1.0, (float)1.0, (float)1.0, (float)1.0);
         
         //---- BEGIN -----
@@ -1493,9 +1539,9 @@ void ofApp::movement(int s){
     }else if(s == 2){ // Light ON With One Shape
         //----- INFO -----
         ofBackground(0, 0, 100);
-        currentStyle = 11;
-        ss_info << "MODE : LIGHT ONLY (With Static Shape), " << " Stage 3 of "<< songStage <<endl;
-
+        currStyle = 11;
+        ss_info << "MODE : LIGHT ONLY (With Static Shape), " << " Stage 4 of "<< songStage <<endl;
+        
         
         DmxLight.setAll((float)1.0, (float)1.0, (float)1.0, (float)1.0);
         
@@ -1504,35 +1550,34 @@ void ofApp::movement(int s){
             
             prevTime = currTime;
             setPattern = true;
-
+            
             timeDiff = 6000;
-
+            
         }
         if(setPattern){
             if(songStage == 0){
-                ofLog() << "LIGHTS ON with One Static Shape : " << songStage;
                 DmxLight.setAll((float)1.0, (float)1.0, (float)1.0, (float)1.0);
                 
                 setPattern = false;
                 songStage++;
-                ofLog() << "stage 0";
+                
             }
             if(songStage == 1){
                 
                 cableOp = 5;
                 movementController.setOption(0, 0);
                 movementController.setPoints(1,1,133,31,1333,250);
-
+                
                 setPattern = false;
                 songStage++;
-
+                
                 
             }
             else if(songStage == 2){
                 
                 cableOp = 4;
                 movementController.setOption(1, 0);
-                movementController.setPoints(0,1,43,33,2625,250);
+                movementController.setPoints(0,1,43,15,2625,250);
                 
                 ofLog() << "stage 2";
                 setPattern = false;
@@ -1549,7 +1594,7 @@ void ofApp::movement(int s){
     }else if(s == 3){ // Light ON and 3 Shapes In LOOP
         //----- INFO -----
         ofBackground(0, 0, 110);
-        currentStyle = 11;
+        currStyle = 11;
         ss_info << "MODE : LIGHT and 3 SHAPES : " << " Stage 6 of "<< songStage << endl;
         
         //---- BEGIN -----
@@ -1560,10 +1605,9 @@ void ofApp::movement(int s){
             setPattern = true;
             
             if(currCableID >= NUM_OF_CABLES ){
-                //timeDiff = ofRandom(60000,90000);
                 
                 ofLog() << "reach cable 19";
-                currCableID = -1;
+                currCableID = 0;
                 
             }else{
                 timeDiff = 600;
@@ -1579,11 +1623,11 @@ void ofApp::movement(int s){
                 
                 cableOp = 4;
                 movementController.setPoints(0, 1, 53, 28, 2625, 250);
-
+                
                 if(currCableID == NUM_OF_CABLES ){
                     songStage++;
                 }else{
-                 //   writeStyle(2);
+                    writeStyle(2);
                 }
                 
                 setPattern = false;
@@ -1591,12 +1635,12 @@ void ofApp::movement(int s){
             }else if(songStage == 1){
                 
                 cableOp = 5;
-                movementController.setPoints(0,1,36, 23, 1750, 100);
+                movementController.setPoints(0,1,95, 54, 1750, 100);
                 
                 if(currCableID == NUM_OF_CABLES ){
                     
                     songStage++;
-                    timeDiff = ofRandom(25000,40000);
+                    timeDiff = 45000;
                 }else{
                     writeStyle(2);
                 }
@@ -1604,21 +1648,21 @@ void ofApp::movement(int s){
                 setPattern = false;
                 
             }else if(songStage == 2){
-
-               cableOp = 4;
+                
+                cableOp = 4;
                 
                 movementController.setPoints(0,1,96,51,2125,100);
                 
                 if(currCableID == NUM_OF_CABLES ){
                     songStage++;
                 }else{
-                   // writeStyle(2);
+                     writeStyle(2);
                 }
                 
                 setPattern = false;
                 
             }else if(songStage == 3){
-
+                
                 cableOp = 5;
                 
                 movementController.setPoints(0,1,96,25,2541,166);
@@ -1626,7 +1670,7 @@ void ofApp::movement(int s){
                 if(currCableID == NUM_OF_CABLES ){
                     
                     songStage++;
-                    timeDiff = ofRandom(25000,40000);
+                    timeDiff = 45000;
                 }else{
                     writeStyle(2);
                 }
@@ -1641,13 +1685,13 @@ void ofApp::movement(int s){
                 if(currCableID == NUM_OF_CABLES ){
                     songStage++;
                 }else{
-                //    writeStyle(2);
+                        writeStyle(2);
                 }
                 
                 setPattern = false;
                 
             }else if(songStage == 5){
-
+                
                 cableOp = 5;
                 
                 movementController.setPoints(0,1,103, 16,2875,391);
@@ -1655,7 +1699,7 @@ void ofApp::movement(int s){
                 if(currCableID == NUM_OF_CABLES ){
                     
                     songStage++;
-                    timeDiff = ofRandom(25000,40000);
+                    timeDiff = 45000;
                 }else{
                     writeStyle(2);
                 }
@@ -1671,7 +1715,7 @@ void ofApp::movement(int s){
         
         //----- INFO -----
         ofBackground(120, 0, 120);
-        currentStyle = 12;
+        currStyle = 12;
         
         ss_info << "MODE : MP3 : " << endl;
         
@@ -1681,7 +1725,7 @@ void ofApp::movement(int s){
             
             //int option = 0;
             cableOp = 5;
-
+            
             movementController.setPoints(0,1,(int)ofRandom(30,90), ofRandom(35,37),(int)ofRandom(0,187),(int)ofRandom(0,1000));
             
             songStage++;
@@ -1703,15 +1747,15 @@ void ofApp::movement(int s){
                 ofLog() << "timeDiff ; "<< timeDiff;
                 prevTime = currTime;
                 setPattern = true;
-
+                
                 //DmxLight.setAll((float)1.0, (float)1.0, (float)1.0, (float)1.0);
-    
+                
             }
             if(setPattern){
                 
                 int option = (int)ofRandom(4);
                 cableOp = option;
-
+                
                 movementController.setPoints(0,1,(int)ofRandom(30,90), ofRandom(35,37),(int)ofRandom(0,187),(int)ofRandom(0,1000));
                 
                 setPattern = false;
@@ -1726,7 +1770,7 @@ void ofApp::movement(int s){
         
     }else if(s == 6){ //ricci mode, debug one by one
         
-        currentStyle = 11;
+        currStyle = 11;
         
         if(songStage == 0){
             output_pts[0] = true;
@@ -1833,7 +1877,7 @@ void ofApp::moveCommandMethod(int method, int c, int whichCurrentCable){
         toWrite+= ofToString((int)cablePosRy[c]);
         toWrite+= "-";
         toWrite+= ofToString((int)cableTimeRy[c]);
-        toWrite+= "-";
+        
     }
     else if (method == 2)//moveTo within 2 position with speed and accel control
     {
@@ -1884,7 +1928,7 @@ void ofApp::moveCommandMethod(int method, int c, int whichCurrentCable){
     }
     
     writeInTotal=toWrite;
-    currentdisplayLog = writeInTotal;
+    
     
     if(whichCurrentCable == -1){
         serialWrite(-1, toWrite);
@@ -1895,53 +1939,27 @@ void ofApp::moveCommandMethod(int method, int c, int whichCurrentCable){
 
 void ofApp::writeStyle(int s){ //all same = 0, all diff = 1, specific = 2
     ofLog() << "write Style " << s  << " current arduino ID : " << currCableID;
-    
+    currDisplayLog[NUM_OF_CABLES] = "write Style : " + ofToString(s) + " currCableID : " + ofToString(currCableID);
     if (s==0){
-        moveCommandMethod(currentStyle, currCableID, -1);
+        moveCommandMethod(currStyle, currCableID, -1);
     }
     else if (s ==1){
         for(int i=0; i< NUM_OF_CABLES; i++){
-            moveCommandMethod(currentStyle, i, i);
+            moveCommandMethod(currStyle, i, i);
         }
         
     }else if (s ==2){
         if(currCableID <= NUM_OF_CABLES-1 && currCableID >= 0){
-            moveCommandMethod(currentStyle, currCableID, currCableID);
+            moveCommandMethod(currStyle, currCableID, currCableID);
         }
     }
 }
 
-
-
-//--------------------------------------------------------------
-//--------------------------GUI EVENT -----------------------------
-//--------------------------------------------------------------
-void ofApp::loadButtonPressed(){
-    serialWrite(currCableID, "L");
-    serialTrigger = false;
-}
 
 //--------------------------------------------------------------
 //-----------------SERIAL COMMUNICATION ------------------------
 //--------------------------------------------------------------
-//--------------------------------------------------------------
-//--------------------------------------------------------------
-void ofApp::checkArduinoIsConnected(){
-    
-    if(ofGetFrameNum() < 200){
-        
-        if(ofGetFrameNum() %30 == 0){
-            // for(int i=0; i< arduino.size(); i++){
-            // serialWrite(i, "C");
-            //      ofSleepMillis(100);
-            //  }
-            serialWrite(-1, "C");
-            ofLog() << "hello";
-        }
-    }
-}
 
-//--------------------------------------------------------------
 vector<bool> ofApp::serialSetup(){ //int give the connection status of each cables
     
     vector<bool> connectionStatus;
@@ -2101,19 +2119,17 @@ vector<bool> ofApp::serialSetup(){ //int give the connection status of each cabl
 
 void ofApp::serialWrite(int arduinoID, string sw){
     
-    
-    
 #ifdef USEOSC
     if(arduinoID == -1){
         
         for(int i=0; i< NUM_OF_CABLES; i++){
             sendOSC(arduino[i], sw);
+            currDisplayLog[i] = sw;
         }
     }else if (arduinoID >= 0 && working_cable[arduinoID] && arduinoID<arduino.size()){
         sendOSC(arduino[arduinoID], sw);
+        currDisplayLog[arduinoID] = sw;
     }
-    
-    
 #else
     
     if(arduinoID == -1){
@@ -2220,6 +2236,27 @@ string ofApp::serialRead(int a){
     return combinedStr;
 }
 
+void ofApp::loadEEPROMButtonPressed(){
+    serialWrite(currCableID, "L");
+    serialTrigger = false;
+}
+
+void ofApp::checkArduinoIsConnected(){
+    
+    if(ofGetFrameNum() < 200){
+        
+        if(ofGetFrameNum() %30 == 0){
+            // for(int i=0; i< arduino.size(); i++){
+            // serialWrite(i, "C");
+            //      ofSleepMillis(100);
+            //  }
+            serialWrite(-1, "C");
+            ofLog() << "hello";
+        }
+    }
+}
+
+
 //--------------------------------------------------------------
 
 void ofApp::onSerialBuffer(const ofx::IO::SerialBufferEventArgs& args)
@@ -2284,7 +2321,7 @@ vector<int> ofApp::stringDecode(string s){
         ofLog() << "sToIntArray " << i << " : " << sToIntArray[i];
     }
     if(sToIntArray.size() == EEPROM.size()+1){
-        currentdisplayLog = ofToString(currCableID) +" EEPROM LOADED";
+        currDisplayLog[NUM_OF_CABLES] = ofToString(currCableID) +" EEPROM LOADED";
         return sToIntArray;
     }
     else{
@@ -2297,10 +2334,8 @@ vector<int> ofApp::stringDecode(string s){
 //--------------------------------------------------------------
 //---------------------- Music Timeline Player------------------
 //--------------------------------------------------------------
-//--------------------------------------------------------------
-//====================== Show Control ==========================
-//--------------------------------------------------------------
 
+//====================== Show Control ==========================
 void ofApp::setupMusicPlayerAndTimeline(){
     drawMusicPlayer = false;
     musicPlayer.setup();
@@ -2325,10 +2360,10 @@ void ofApp::setupMusicPlayerAndTimeline(){
 
 void ofApp::isShowBegin(bool sb){
     if(sb){ //begin
-        prevShowBeginMillis = currMillis;
+        prevShowBeginMillis = currTime;
         showBeginTrigger = true;
         page = 7;
-        currentStyle = 12;
+        currStyle = 12;
     }
     else{ //reset
         timelinePlayer.stopButtonPressed();
@@ -2344,20 +2379,26 @@ void ofApp::onKeyframe(Keyframe &kf){
     //3: D2
     //4: C3
     
-    ofLog() << "Keyframe ID: " << kf.timelineId;
+    
     if(kf.timelineId  == 0 || kf.timelineId == 7){
-        writeStyle(1);
-        ofLog() << "write here" << "kf.timelineId : " << kf.timelineId  ;
+        currDisplayLog[NUM_OF_CABLES] = "KeyFrame At " + ofToString(kf.timelineId);
         vector<float> a;
         a = timelinePlayer.getTimelineTweenValues();
-        if(a.size() >5){
-            cableOp = a[0];
-            movementController.setPoints(0, 1, a[1], a[2], a[3], a[4]);
-        }
         
+        if(kf.timelineId  == 0){
+            cableOp = a[0];
+            movementController.setOption(1,0);
+            movementController.setPoints(0, 1, a[1], a[2], a[3], a[4]);
+        }else if(kf.timelineId  == 7){
+            cableOp = a[7];
+            movementController.setOption(0,0);
+            movementController.setPoints(1, 1, a[8], a[9], a[10], a[11]);
+        }
+        setPoints();
+        writeStyle(1);
     }
-
- 
+    
+    
     /*
      if(kf.timelineId < NUM_OF_CABLES *2  && kf.timelineId%2==0){ //LY
      ofLog() << "LY HAS KEYFRAME : " << kf.timelineId << " " << kf.val << " " << kf.x;
@@ -2397,12 +2438,14 @@ void ofApp::changeVolume(float & vol){
     musicPlayer.setVol(vol);
 }
 
-
 void ofApp::playTrack(bool & t){
     currMusicDuration = musicPlayer.getDuration();
+    timelinePlayer.loadButtonPressed();
+    // timelinePlayer.playButtonPressed();
     timelinePlayer.setDuration(currMusicDuration);
     musicPlayer.play();
-    ofLog() << "is Playing : " ;
+    
+    currDisplayLog[NUM_OF_CABLES] = "Playing Timeline";
 }
 
 void ofApp::pauseTrack(bool & t){
@@ -2415,7 +2458,7 @@ void ofApp::setTrackisLoop(bool t){
 }
 
 //--------------------------------------------------------------
-//---------------------- SETTINGS / XML--------------------------
+//---------------------- SETTINGS / XML-------------------------
 //--------------------------------------------------------------
 //--------------------------------------------------------------
 void ofApp::saveSettings()

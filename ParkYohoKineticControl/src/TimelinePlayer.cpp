@@ -306,7 +306,7 @@ void TimelinePlayer::draw(int offsetY) {
 
 //Sample event function to handle the keyframe enter
 void TimelinePlayer::OnKeyFrameEnteredEvent(Keyframe &kf) {
-    //ofLog() << "onEnterKeyFrame : " << kf.timelineId <<","<<kf.val <<", " << kf.x;
+    ofLog() << "onEnterKeyFrame : " << kf.timelineId <<","<<kf.val <<", " << kf.x;
 }
 
 
@@ -425,16 +425,18 @@ void TimelinePlayer::keyFrameSelected(Keyframe &kf) {
     selectedKeyframe = &kf;
     
     //ofLog() << keyframeSlider.getParameter().toString();// .setup("Keyframe Value", kf.val, 0, 20);
-    
+    //TODO
+    /*
     if(kf.timelineId%2 == 0){
         keyframeSlider.setMax(KEYFRAME_MAX_VALUE);
         keyframeSlider.setMin(KEYFRAME_MIN_VALUE);
         ofLog() << " Here" ;
     }else{
-        keyframeSlider.setMax(KEYFRAME_MAX_VALUE); //TODO
+        keyframeSlider.setMax(KEYFRAME_MAX_VALUE);
         keyframeSlider.setMin(KEYFRAME_MIN_VALUE);
         ofLog() << " There"  << (int)kf.timelineId;
     }
+     */
     keyframeSlider.set(kf.val);
     
     keyframeTimeSlider.setMax(kf.x + 10000);
@@ -450,6 +452,8 @@ void TimelinePlayer::keyFrameSelected(Keyframe &kf) {
 }
 
 void TimelinePlayer::keyFrameAdded(Keyframe &kf) {
+    //todo
+    /*
     int ind = kf.timelineId+1;
     
     //search if there is already a keyframe at the same time
@@ -466,7 +470,7 @@ void TimelinePlayer::keyFrameAdded(Keyframe &kf) {
     if (!keyframeExist) {
         timelines[ind].addKeyframeByVal(kf.val, kf.x);
     }
-    
+    */
 }
 
 void TimelinePlayer::keyFrameDeselected(int &i) {
