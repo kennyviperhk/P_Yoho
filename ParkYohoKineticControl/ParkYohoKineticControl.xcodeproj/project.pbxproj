@@ -66,6 +66,7 @@
 		BC0058681371B449EBCD285C /* ofxInputField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C9A879BA9671BF2E5A96DE5A /* ofxInputField.cpp */; };
 		BE177617474F11F05E9260FC /* DirectoryWatcherManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B6179498D0110BD2E161373 /* DirectoryWatcherManager.cpp */; };
 		BF2A06B321517849001F9341 /* PYMusicPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF2A06B121517849001F9341 /* PYMusicPlayer.cpp */; };
+		BF7E12FD2156059000E78041 /* Scheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BF7E12FC2156059000E78041 /* Scheduler.cpp */; };
 		C4782ECC372420ACE0615B74 /* OscPrintReceivedElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8881B3C8C0A1C45F042E7A /* OscPrintReceivedElements.cpp */; };
 		CDB5B1D2D12F42502906F30F /* DeviceFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00F3330A5DEBD082CEE0C12C /* DeviceFilter.cpp */; };
 		CEFD3CCAB8B3251DFCAAA0EE /* DirectoryUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A967D1FAFA98A7CBBFA4F55 /* DirectoryUtils.cpp */; };
@@ -242,6 +243,8 @@
 		BF0BB2F28A4522316B1563A5 /* COBSEncoding.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = COBSEncoding.h; path = ../../../addons/ofxIO/libs/ofxIO/include/ofx/IO/COBSEncoding.h; sourceTree = SOURCE_ROOT; };
 		BF2A06B121517849001F9341 /* PYMusicPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PYMusicPlayer.cpp; sourceTree = "<group>"; };
 		BF2A06B221517849001F9341 /* PYMusicPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PYMusicPlayer.h; sourceTree = "<group>"; };
+		BF7E12FB2156059000E78041 /* Scheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scheduler.h; sourceTree = "<group>"; };
+		BF7E12FC2156059000E78041 /* Scheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scheduler.cpp; sourceTree = "<group>"; };
 		C2DCA8BF0DA3C2BA3D7DD9E9 /* TimelinePlayer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = TimelinePlayer.cpp; path = src/TimelinePlayer.cpp; sourceTree = SOURCE_ROOT; };
 		C2FAC65C491D4231379F3298 /* ofxOscReceiver.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxOscReceiver.cpp; path = ../../../addons/ofxOsc/src/ofxOscReceiver.cpp; sourceTree = SOURCE_ROOT; };
 		C58862C6D212C8E8A83810F4 /* ofxOscMessage.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxOscMessage.h; path = ../../../addons/ofxOsc/src/ofxOscMessage.h; sourceTree = SOURCE_ROOT; };
@@ -891,6 +894,8 @@
 		E4B69E1C0A3A1BDC003C02F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				BF7E12FC2156059000E78041 /* Scheduler.cpp */,
+				BF7E12FB2156059000E78041 /* Scheduler.h */,
 				BF2A06B121517849001F9341 /* PYMusicPlayer.cpp */,
 				BF2A06B221517849001F9341 /* PYMusicPlayer.h */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
@@ -899,9 +904,9 @@
 				C828A642AAD260B446A6D979 /* Keyframe.h */,
 				189E3E9B89AAC666E067E42D /* KineticController.h */,
 				F01FDDAFC42F9CD0F639BF81 /* DmxLight.h */,
+				CDA5A0E593F610799CFD784C /* DmxLight.cpp */,
 				A7497F3C89F6AE38D9B609D8 /* KineticController.cpp */,
 				1E47175AC9BE4515F197CE9D /* TimelinePlayer.h */,
-				CDA5A0E593F610799CFD784C /* DmxLight.cpp */,
 				583CCF43C38F8EC39293BE7F /* Keyframe.cpp */,
 				74D8EE7EA48D3877B6B4D822 /* MovementController.h */,
 				C2DCA8BF0DA3C2BA3D7DD9E9 /* TimelinePlayer.cpp */,
@@ -1125,6 +1130,7 @@
 				899BAF53175868463FE1B029 /* RecursiveDirectoryIteratorStategies.cpp in Sources */,
 				347D67CCF4C7C7725118DD59 /* ByteBufferStream.cpp in Sources */,
 				62509F39EA6197BEA0194276 /* ByteBufferReader.cpp in Sources */,
+				BF7E12FD2156059000E78041 /* Scheduler.cpp in Sources */,
 				EB4F14C4AE3B3EFD04520383 /* DirectoryWatcher.cpp in Sources */,
 				BF2A06B321517849001F9341 /* PYMusicPlayer.cpp in Sources */,
 				B1BF03D79762719793CC9F1A /* SLIPEncoding.cpp in Sources */,

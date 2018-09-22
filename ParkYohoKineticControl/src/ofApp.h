@@ -15,7 +15,7 @@
 #include "PYMusicPlayer.h"
 #include "DmxLight.h"
 #include "TimelinePlayer.h"
-
+#include "Scheduler.h"
 
 #include "ofxSerial.h"
 #include "ofxGui.h"
@@ -400,5 +400,10 @@ public:
     void isShowBegin(bool sb);
     bool showBeginTrigger;
     long prevShowBeginMillis;
+    
+    //================ Scheduler ==============
+    Scheduler scheduler;
+    void onSchedulerLightsToggle(bool & t);
+    bool drawScheduler;
 
 };

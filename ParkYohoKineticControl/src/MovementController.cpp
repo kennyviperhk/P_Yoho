@@ -94,7 +94,9 @@ vector<ofPoint> MovementController::getPoints(){
             p[i].x = p[i].x;
         }
         else{
-            p.push_back(ofVec2f(0,0));
+            p.push_back(trail[0].getPointAtPercent((float)i / numOfCables));
+            p[i].y = p[i].y * curves[2+5] + (curves[3+5] - max_x_pos/2)*4;
+            p[i].x = p[i].x;
         }
     }
     return p;
@@ -117,11 +119,11 @@ int MovementController::getOption(int op){
     return curves[5];
 }
 
-void MovementController::setOption(int op, int val){
-    if(op == 0){
-        curves[0] = val;
-    } else{
-        curves[5] = val;
+void MovementController::setOption(int whichCtrl, int op){
+    if(whichCtrl == 0){
+        curves[0] = op;
+    } else if (whichCtrl == 1){
+        curves[5] = op;
     }
     
 }
