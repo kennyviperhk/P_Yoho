@@ -66,9 +66,8 @@ void ofApp::setup(){
     }
     currDisplayLog.push_back("Park Yoho Control Software V0.4");
     
-    loadSettings();
     setupGui();
-    
+
     //================== Timeline/Music Player ==================
     setupMusicPlayerAndTimeline();
     
@@ -88,7 +87,9 @@ void ofApp::setup(){
     //================== Song 1 ==================
     songStage = 0;
     
-    
+    //================= Settings ==================
+
+    loadSettings();
 }
 
 
@@ -186,7 +187,7 @@ void ofApp::update(){
     //================== Kinectic Visualisation ==================
     
     for(int i=0; i< NUM_OF_CABLES; i++){
-        kinecticVisualisation.set(NUM_OF_CABLES ,i, currStyle ,ofMap(cablePosLx[i],0,MAX_X_POS,0,2) ,ofMap(cablePosLy[i],0,MAX_Y_POS,0,1),ofMap(cablePosRx[i],0,MAX_X_POS,0,2), ofMap(cablePosRy[i],0,MAX_Y_POS,0,1));
+        kinecticVisualisation.set(NUM_OF_CABLES ,i, currStyle ,ofMap(cablePosLx[i],0,MAX_X_POS,0,1) ,ofMap(cablePosLy[i],0,MAX_Y_POS,0,1),ofMap(cablePosRx[i],0,MAX_X_POS,0,1), ofMap(cablePosRy[i],0,MAX_Y_POS,0,1));
     }
     
     kineticVisualizationFbo.begin();
@@ -446,10 +447,7 @@ void ofApp::keyReleased(int key){
 #endif
             break;
         case 's':
-            currStyle++;
-            if(currStyle >NUM_OF_CABLES){ //todo
-                currStyle=0;
-            }
+            saveSettings();
             break;
             
         case 'd':
@@ -481,10 +479,6 @@ void ofApp::keyReleased(int key){
             }
             break;
             
-        case 'm': //drawMusicPlayer
-            drawMusicPlayer = !drawMusicPlayer;
-            break;
-            
         case 358: //leftArrow;
             page++;
             if(page >= numOfPages ){
@@ -504,6 +498,7 @@ void ofApp::keyReleased(int key){
                 page = 6;
             }
             break;
+            
         case '=': //Ricci Mode - Single Cable Control
             if(debugMode && page == 6){
                 if(currCableID<NUM_OF_CABLES-1){
@@ -513,6 +508,7 @@ void ofApp::keyReleased(int key){
                 }
             }
             break;
+            
         case '-': //Ricci Mode - Single Cable Control
             if(debugMode && page == 6){
                 if(currCableID>0){
@@ -564,6 +560,19 @@ void ofApp::keyReleased(int key){
             
         case '9': //Reserved
             break;
+            
+        case 'h': //to zero points
+            cableOp = 5;
+            movementController.setPoints(0, 1, 0, 0, 0, 0);
+            setPoints();
+            
+            cableOp = 4;
+            movementController.setPoints(0, 1, 0, 0, 0, 0);
+            setPoints();
+            
+            writeStyle(1);
+            break;
+            
             
         default:
             break;
@@ -744,13 +753,15 @@ void ofApp::setupGui(){
     guiDebug.add(EEPROM_loadBtn.setup(EEPROM_saveLoad_names[1]));
     EEPROM_loadBtn.addListener(this, &ofApp::loadEEPROMButtonPressed);
     guiDebug.add(textField.setup("Serial:", "0-0-0-0-0"));
-    guiDebug.add(currStyle.set("Style",12,0,NUM_OF_CABLES)); //TODO
+    guiDebug.add(currStyle.set("Style",11,0,NUM_OF_CABLES)); //TODO
     guiDebug.add(sendStyleBtn.setup("Set Pos:"));
     guiDebug.add(sendStyleBtn_all_same.setup("Set Pos ALL SAME:"));
     guiDebug.add(sendStyleBtn_all.setup("Set Pos ALL:"));
     guiDebug.add(reset_Btn.setup("Reset:"));
     guiDebug.add(home_Btn.setup("Home: "));
     guiDebug.add(all_Tog.setup("ALL TOGGLE:",false));
+    
+    prevStyle = currStyle;
     
     all_Tog = false;
     int numOfWaveForm = 4;
@@ -861,7 +872,7 @@ void ofApp::setupGui(){
     }
     
     //--- Cable Position Offset Control ---
-    showOffset = false;
+    drawPosOffset = false;
     
     parametersCablePosOffset.setName("cablePositionOffset");
     guiCablePosLxOffset.setup("EEPROMReadWrite", "settings.xml",  100, 0);
@@ -870,7 +881,7 @@ void ofApp::setupGui(){
     guiCablePosRyOffset.setup("EEPROMReadWrite", "settings.xml",  200, 400);
     for(int i=0; i< NUM_OF_CABLES; i++){
         ofParameter<int> a;
-        a.set("OffS Lx" + ofToString(i+1),0,0,MAX_X_POS*0.1); //lx,ly,rx,ry
+        a.set("OffS Lx" + ofToString(i+1),0,0,MAX_X_POS*0.1);
         ofParameter<int> b;
         b.set("OffS Ly" + ofToString(i+1),0,0,MAX_Y_POS*0.1);
         ofParameter<int> c;
@@ -1143,7 +1154,7 @@ void ofApp::drawGui(){
         guiDebugCableOption.draw();
     }
     
-    if(showOffset){
+    if(drawPosOffset){
         guiCablePosLxOffset.draw();
         guiCablePosLyOffset.draw();
         guiCablePosRxOffset.draw();
@@ -1172,7 +1183,7 @@ void ofApp::drawGui(){
             drawTimeGui = false;
             drawDmx = false;
             drawMovementController = false;
-            showOffset = false;
+            drawPosOffset = false;
             drawKineticVisualizationFbo = true;
             drawMusicPlayer = false;
             drawScheduler = false;
@@ -1184,7 +1195,7 @@ void ofApp::drawGui(){
             drawTimeGui = false;
             drawDmx = false;
             drawMovementController = true;
-            showOffset = false;
+            drawPosOffset = false;
             drawKineticVisualizationFbo = true;
             drawMusicPlayer = false;
             drawScheduler = false;
@@ -1202,7 +1213,7 @@ void ofApp::drawGui(){
             drawTimeGui = true;
             drawDmx = false;
             drawMovementController = false;
-            showOffset = false;
+            drawPosOffset = false;
             drawKineticVisualizationFbo = true;
             drawMusicPlayer = false;
             drawScheduler = false;
@@ -1214,7 +1225,7 @@ void ofApp::drawGui(){
             drawTimeGui = false;
             drawDmx = false;
             drawMovementController = true;
-            showOffset = false;
+            drawPosOffset = false;
             drawKineticVisualizationFbo = true;
             drawMusicPlayer = false;
             drawScheduler = false;
@@ -1226,7 +1237,7 @@ void ofApp::drawGui(){
             drawTimeGui = false;
             drawDmx = false;
             drawMovementController = false;
-            showOffset = true;
+            drawPosOffset = true;
             drawKineticVisualizationFbo = true;
             drawMusicPlayer = false;
             drawScheduler = false;
@@ -1238,7 +1249,7 @@ void ofApp::drawGui(){
             drawTimeGui = false;
             drawDmx = true;
             drawMovementController = true;
-            showOffset = false;
+            drawPosOffset = false;
             drawKineticVisualizationFbo = true;
             drawMusicPlayer = false;
             drawScheduler = false;
@@ -1250,7 +1261,7 @@ void ofApp::drawGui(){
             drawTimeGui = false;
             drawDmx = false;
             drawMovementController = false;
-            showOffset = false;
+            drawPosOffset = false;
             drawKineticVisualizationFbo = true;
             drawMusicPlayer = false;
             drawScheduler = false;
@@ -1263,7 +1274,7 @@ void ofApp::drawGui(){
             drawTimeGui = true;
             drawDmx = false;
             drawMovementController = false;
-            showOffset = false;
+            drawPosOffset = false;
             drawKineticVisualizationFbo = true;
             drawMusicPlayer = false;
             drawScheduler = false;
@@ -1278,7 +1289,7 @@ void ofApp::drawGui(){
             drawTimeGui = false;
             drawDmx = false;
             drawMovementController = false;
-            showOffset = false;
+            drawPosOffset = false;
             drawKineticVisualizationFbo = true;
             drawMusicPlayer = false;
             drawScheduler = true;
@@ -1291,7 +1302,7 @@ void ofApp::drawGui(){
             drawTimeGui = false;
             drawDmx = true;
             drawMovementController = false;
-            showOffset = false;
+            drawPosOffset = false;
             drawKineticVisualizationFbo = true;
             drawMusicPlayer = false;
             drawScheduler = true;
@@ -1304,7 +1315,7 @@ void ofApp::drawGui(){
             drawTimeGui = false;
             drawDmx = false;
             drawMovementController = true;
-            showOffset = false;
+            drawPosOffset = false;
             drawKineticVisualizationFbo = true;
             drawMusicPlayer = false;
             drawScheduler = true;
@@ -1317,7 +1328,7 @@ void ofApp::drawGui(){
             drawTimeGui = false;
             drawDmx = false;
             drawMovementController = true;
-            showOffset = false;
+            drawPosOffset = false;
             drawKineticVisualizationFbo = true;
             drawMusicPlayer = false;
             drawScheduler = false;
@@ -1329,7 +1340,7 @@ void ofApp::drawGui(){
             drawTimeGui = true;
             drawDmx = false;
             drawMovementController = true;
-            showOffset = false;
+            drawPosOffset = false;
             drawKineticVisualizationFbo = true;
             drawMusicPlayer = true;
             drawScheduler = false;
@@ -1339,80 +1350,93 @@ void ofApp::drawGui(){
     
 }
 
+
 //--------------------------------------------------------------
-//--------------------------STYLE -----------------------------
+//--------------------- Cable Control Commands -----------------
 //--------------------------------------------------------------
 
+//============================ Set Position ====================
 void ofApp::setPoints(){
     cableOption();
     vector<ofPoint> mcPoints;
     mcPoints = movementController.getPoints();
+
     
     for(int i=0; i < NUM_OF_CABLES; i++){
         for(int j=0; j < 8; j++){
             if(output_pts[j]){
                 if(j==0){
                     cablePosLx[i] = mcPoints[i].y;
+                    if (cablePosLx[i]<= 0){
+                        cablePosLx[i] = 0;
+                    }
+                    cablePosLx[i]+= cablePosLxOffset[i];
                     if(cablePosLx[i] >= MAX_X_POS){
                         cablePosLx[i] = MAX_X_POS;
-                    }else if (cablePosLx[i]<= 0){
-                        cablePosLx[i] = 0;
                     }
                 }else if(j==1){
                     cablePosLy[i] = mcPoints[i].y*(MAX_Y_POS/MAX_X_POS);
-                    
+                    if (cablePosLy[i]<= 0){
+                        cablePosLy[i] = 0 ;
+                    }
+                    cablePosLy[i] += cablePosLyOffset[i];
                     if(cablePosLy[i] >= MAX_Y_POS){
                         cablePosLy[i] = MAX_Y_POS;
-                    }else if (cablePosLy[i]<= 0){
-                        cablePosLy[i] = 0;
                     }
                 }else if(j==2){
-                    cablePosRx[i] = mcPoints[i].y;
-                    
+                    cablePosRx[i] = mcPoints[i].y ;
+                    if (cablePosRx[i]<= 0){
+                        cablePosRx[i] = 0;
+                    }
+                    cablePosRx[i] += cablePosRxOffset[i];
                     if(cablePosRx[i] >= MAX_X_POS){
                         cablePosRx[i] = MAX_X_POS;
-                    }else if (cablePosRx[i]<= 0){
-                        cablePosRx[i] = 0;
                     }
                 }else if(j==3){
                     cablePosRy[i] = mcPoints[i].y*(MAX_Y_POS/MAX_X_POS);
-                    
+                    if (cablePosRy[i]<= 0){
+                        cablePosRy[i] = 0;
+                    }
+                    cablePosRy[i] += cablePosRyOffset[i];
                     if(cablePosRy[i] >= MAX_Y_POS){
                         cablePosRy[i] = MAX_Y_POS;
-                    }else if (cablePosRy[i]<= 0){
-                        cablePosRy[i] = 0;
                     }
                 }
                 else  if(j==4){
                     cablePosLx2[i] = mcPoints[i].y;
+                    if (cablePosLx2[i]<= 0){
+                        cablePosLx2[i] = 0;
+                    }
+                     cablePosLx2[i]+= cablePosLxOffset[i];
                     if(cablePosLx2[i] >= MAX_X_POS){
                         cablePosLx2[i] = MAX_X_POS;
-                    }else if (cablePosLx2[i]<= 0){
-                        cablePosLx2[i] = 0;
                     }
                 }else if(j==5){
                     cablePosLy2[i] = mcPoints[i].y*(MAX_Y_POS/MAX_X_POS);
-                    
+                    if (cablePosLy2[i]<= 0){
+                        cablePosLy2[i] = 0;
+                    }
+                     cablePosLy2[i] += cablePosLyOffset[i];
                     if(cablePosLy2[i] >= MAX_Y_POS){
                         cablePosLy2[i] = MAX_Y_POS;
-                    }else if (cablePosLy2[i]<= 0){
-                        cablePosLy2[i] = 0;
                     }
                 }else if(j==6){
                     cablePosRx2[i] = mcPoints[i].y;
-                    
-                    if(cablePosRx2[i] >= MAX_X_POS){
-                        cablePosRx2[i] = MAX_X_POS;
-                    }else if (cablePosRx2[i]<= 0){
+                    if (cablePosRx2[i]<= 0){
                         cablePosRx2[i] = 0;
                     }
+                    cablePosRx2[i] += cablePosRxOffset[i];
+                    if(cablePosRx2[i] >= MAX_X_POS){
+                        cablePosRx2[i] = MAX_X_POS;
+                    }
                 }else if(j==7){
-                    cablePosRy2[i] = mcPoints[i].y*(MAX_Y_POS/MAX_X_POS);
-                    
+                    cablePosRy2[i] = mcPoints[i].y*(MAX_Y_POS/MAX_X_POS) + cablePosRyOffset[i];
+                    if (cablePosRy2[i]<= 0){
+                        cablePosRy2[i] = 0;
+                    }
+                    cablePosRy2[i] += cablePosRyOffset[i];
                     if(cablePosRy2[i] >= MAX_Y_POS){
                         cablePosRy2[i] = MAX_Y_POS;
-                    }else if (cablePosRy2[i]<= 0){
-                        cablePosRy2[i] = 0;
                     }
                 }
             }
@@ -1421,9 +1445,6 @@ void ofApp::setPoints(){
 }
 
 
-//--------------------------------------------------------------
-//--------------------- Cable Control Commands -----------------
-//--------------------------------------------------------------
 
 //============================ Cable Option ====================
 void ofApp::cableOption(){
@@ -1652,7 +1673,7 @@ void ofApp::movement(int s){
                 
             ofLog() << "reach cable 19";
             }else{
-                timeDiff = 600;
+                timeDiff = 500;
                 currCableID++;
             }
 
@@ -1664,19 +1685,19 @@ void ofApp::movement(int s){
             if(songStage == 0){
                 DmxLight.setAll((float)1.0, (float)1.0, (float)1.0, (float)1.0);
                 
-                cableOp = 4;
-                movementController.setOption(1, 0);
-                movementController.setPoints(0, 1, 53, 28, 2625, 250);
-                setPoints();
-                cableOp = 5;
-                movementController.setOption(0, 0);
-                movementController.setPoints(1,1,95, 26, 1750, 100);
-                setPoints();
-                
                 if(currCableID == NUM_OF_CABLES ){
+                    cableOp = 4;
+                    movementController.setOption(1, 0);
+                    movementController.setPoints(0, 1, 53, 28, 2625, 250);
+                    setPoints();
+                    cableOp = 5;
+                    movementController.setOption(0, 0);
+                    movementController.setPoints(1,1,95, 26, 1750, 100);
+                    setPoints();
+                    writeStyle(1);
                     songStage++;
                 }else{
-                    writeStyle(2);
+
                 }
                 
                 setPattern = false;
@@ -1690,20 +1711,21 @@ void ofApp::movement(int s){
                 
             }else if(songStage == 2){
                 
-                cableOp = 4;
-                movementController.setOption(1, 0);
-                movementController.setPoints(0,1,96,51,2125,100);
-                setPoints();
-                
-                cableOp = 5;
-                movementController.setOption(0, 0);
-                movementController.setPoints(1,1,96,25,2041,166);
-                setPoints();
-                
                 if(currCableID == NUM_OF_CABLES ){
+                    cableOp = 4;
+                    movementController.setOption(1, 0);
+                    movementController.setPoints(0,1,96,51,2125,100);
+                    setPoints();
+                    
+                    cableOp = 5;
+                    movementController.setOption(0, 0);
+                    movementController.setPoints(1,1,96,25,2041,166);
+                    setPoints();
+                    
                     songStage++;
+                    writeStyle(1);
                 }else{
-                     writeStyle(2);
+
                 }
                 
                 setPattern = false;
@@ -1716,22 +1738,23 @@ void ofApp::movement(int s){
                 setPattern = false;
                 
             }else if(songStage == 4){
-                
-                cableOp = 4;
-                movementController.setOption(1, 0);
-                movementController.setPoints(0,1,0, 7, 3250, 191);
-                setPoints();
-                
-                cableOp = 5;
-                movementController.setOption(0, 0);
-                movementController.setPoints(1,1,103, 16,2208,391);
-                setPoints();
+
                 
                 if(currCableID == NUM_OF_CABLES ){
-                    currCableID = 0;
+                    
+                    cableOp = 4;
+                    movementController.setOption(1, 0);
+                    movementController.setPoints(0,1,0, 7, 3250, 191);
+                    setPoints();
+                    
+                    cableOp = 5;
+                    movementController.setOption(0, 0);
+                    movementController.setPoints(1,1,103, 16,2208,391);
+                    setPoints();
                     songStage++;
+                    writeStyle(1);
                 }else{
-                    writeStyle(2);
+
                 }
                 
                 setPattern = false;
@@ -2081,8 +2104,7 @@ vector<bool> ofApp::serialSetup(){ //int give the connection status of each cabl
     for(int i = 20; i < NUM_OF_SERIAL_TO_INIT; i++){
         arduino.push_back(300+i);
     }
-    
-    
+
     for(int i=0; i< NUM_OF_CABLES; i++){
         ofLog() <<arduino[i];
         isArduinoConnected.push_back(true);
@@ -2500,13 +2522,27 @@ void ofApp::setTrackisLoop(bool t){
 //--------------------------------------------------------------
 void ofApp::saveSettings()
 {
-
+    for(int i=0; i < NUM_OF_CABLES; i++){
+        cableXML.setValue("LX"+ ofToString(i),ofToString(cablePosLxOffset[i]));
+        cableXML.setValue("LY"+ ofToString(i),ofToString(cablePosLyOffset[i]));
+        cableXML.setValue("RX"+ ofToString(i),ofToString(cablePosRxOffset[i]));
+        cableXML.setValue("RY"+ ofToString(i),ofToString(cablePosRyOffset[i]));
+    }
+    cableXML.save("cableSettings.xml");
+    
     XML.save("XMLSettings.xml");
     
     ofLog() << "XML Setting Saved";
 }
 void ofApp::loadSettings()
 {
+    cableXML.load("cableSettings.xml");
+     for(int i=0; i < NUM_OF_CABLES; i++){
+         cablePosLxOffset[i] = cableXML.getValue("LX"+ ofToString(i),0);
+         cablePosLyOffset[i] = cableXML.getValue("LY"+ ofToString(i),0);
+         cablePosRxOffset[i] = cableXML.getValue("RX"+ ofToString(i),0);
+         cablePosRyOffset[i] = cableXML.getValue("RY"+ ofToString(i),0);
+     }
     XML.load("XMLSettings.xml");
     movementMode = XML.getValue<int>("MODE");
     ofLog() << "MODE VAL : " << movementMode;

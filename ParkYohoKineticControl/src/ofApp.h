@@ -218,6 +218,7 @@ public:
 
     ofParameterGroup parametersDebug;
     ofXml XML;
+    ofxXmlSettings cableXML;
     void saveSettings();
     void loadSettings();
     vector<ofParameter<int>> EEPROM;
@@ -254,7 +255,17 @@ public:
     vector<ofParameter<int>> cablePosLy; //lx,ly,rx,ry
     vector<ofParameter<int>> cablePosRx; //lx,ly,rx,ry
     vector<ofParameter<int>> cablePosRy; //lx,ly,rx,ry
+    
+    vector<int> prevCablePosLx;
+    vector<int> prevCablePosLy;
+    vector<int> prevCablePosRx;
+    vector<int> prevCablePosRy;
 
+    vector<int> cableLxDist;
+    vector<int> cableLyDist;
+    vector<int> cableRxDist;
+    vector<int> cableRyDist;
+    
     //Cable Time
     ofxPanel guiCableTimeLx;
     ofxPanel guiCableTimeLy;
@@ -277,7 +288,7 @@ public:
     vector<ofParameter<int>> cablePosRxOffset; //lx,ly,rx,ry
     vector<ofParameter<int>> cablePosRyOffset; //lx,ly,rx,ry
 
-    bool showOffset;
+    bool drawPosOffset;
 
     //Style 2
 
