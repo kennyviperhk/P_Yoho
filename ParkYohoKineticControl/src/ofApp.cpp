@@ -332,7 +332,7 @@ void ofApp::draw(){
             textField = "";
         }
         
-        //Ricci Mode - Single Cable Control
+        //Ricci Degbug Mode - Single Cable Control
         if(page == 6){
             movementController.setPoints(0,0,36, 23, 1750, 100);
             if(currCableID >= 0 ){
@@ -383,6 +383,7 @@ void ofApp::draw(){
                 }
             }
         }
+        
         //END Ricci Mode - Single Cable Control
     }
     else { //Exhibition Mode
@@ -2175,10 +2176,7 @@ void ofApp::writeStyle(int s){ //all same = 0, all diff = 1, specific = 2
             cableSpeedRy[i] = MIN_Y_SPEED;
         }
     }
-    
-    
-    
-    
+
     if (s==0){
         moveCommandMethod(currStyle, currCableID, -1);
     }
