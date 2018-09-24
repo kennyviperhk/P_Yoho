@@ -1,16 +1,5 @@
 #include "ofApp.h"
 
-
-void ofApp::onSchedulerLightsToggle(bool & t){
-    if(t){
-        currDisplayLog[NUM_OF_CABLES] = "Lights On";
-        movementMode = 1;
-    }else{
-        currDisplayLog[NUM_OF_CABLES] = "Lights Off, Static Mode";
-        movementMode = 0;
-    }
-    ofLog() << currDisplayLog[NUM_OF_CABLES];
-}
 //--------------------------------------------------------------
 //------------------------------ Setup -------------------------
 //--------------------------------------------------------------
@@ -21,6 +10,7 @@ void ofApp::setup(){
     scheduler.setup();
     
     ofAddListener(scheduler.lightToggleEvent, this, &ofApp::onSchedulerLightsToggle);
+    ofAddListener(scheduler.homeResetEvent, this, &ofApp::onSchedulerHomeResetToggle);
     //================== Communication ==================
     //------------------- Serial -------------------
     
@@ -67,7 +57,7 @@ void ofApp::setup(){
     currDisplayLog.push_back("Park Yoho Control Software V0.4");
     
     setupGui();
-
+    
     //================== Timeline/Music Player ==================
     setupMusicPlayerAndTimeline();
     
@@ -75,7 +65,6 @@ void ofApp::setup(){
     DmxLight.setup();
     
     //================== Movement Controls ==================
-    
     int mcX = 20;
     int mcY = 0;
     int mcW = 300;
@@ -88,7 +77,6 @@ void ofApp::setup(){
     songStage = 0;
     
     //================= Settings ==================
-
     loadSettings();
 }
 
@@ -264,17 +252,17 @@ void ofApp::draw(){
     } else if(debugMode){
         //================== Debug Mode ==================
         ofBackground(100, 0, 0);
-        ss_info << "MODE : DEBUG MODE" << endl;
-        ss_info << "Press '1' for Single Cable Testing Mode :" << endl;
         ofSetColor(255);
         
-        //================== Debug Gui ==================
+        ss_info << "MODE : DEBUG MODE" << endl;
+        ss_info << "Press '1' for Single Cable Testing Mode :" << endl;
         
         ss_info << "FrameRate : "<< ofGetFrameRate() << endl;
         ss_info << "Page : "<< page << endl;
         
         ss_info << "Num of Arduino: " << arduino.size() << " / " << NUM_OF_CABLES << endl;
-        
+        //================== Debug Gui ==================
+
         if(serialTrigger){
             if(EEPROM_saveBtn){
                 
@@ -312,9 +300,7 @@ void ofApp::draw(){
                 }else{
                     serialWrite(currCableID, "H");
                 }
-                //manual home "G"
-                //serialWrite(currCableID, 1-1-1-1);
-                //serialWrite(currCableID, "G");
+
             }
             if(EEPROM_loadBtn){
                 
@@ -424,8 +410,6 @@ void ofApp::draw(){
         ofDrawBitmapString(ss2.str(), ofVec2f(20, 30*i + 240));
         
     }
-    
-    
     
     ofSetColor(255);
     ofDrawBitmapString(ss_info.str(), ofVec2f(20, 20));
@@ -562,15 +546,7 @@ void ofApp::keyReleased(int key){
             break;
             
         case 'h': //to zero points
-            cableOp = 5;
-            movementController.setPoints(0, 1, 0, 0, 0, 0);
-            setPoints();
-            
-            cableOp = 4;
-            movementController.setPoints(0, 1, 0, 0, 0, 0);
-            setPoints();
-            
-            writeStyle(1);
+            offsetHome();
             break;
             
             
@@ -898,6 +874,19 @@ void ofApp::setupGui(){
         guiCablePosRyOffset.add(cablePosRyOffset[i]);
     }
     
+    //--- Cable Distance Calculation ---
+    for(int i=0; i< NUM_OF_CABLES; i++){
+        prevCablePosLx.push_back(0);
+        prevCablePosLy.push_back(0);
+        prevCablePosRx.push_back(0);
+        prevCablePosRy.push_back(0);
+        cableLxDist.push_back(0);
+        cableLyDist.push_back(0);
+        cableRxDist.push_back(0);
+        cableRyDist.push_back(0);
+    }
+    
+    
     //--- Cable Time Control ---
     parametersCableTime.setName("cableTime");
     guiCableTimeLx.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 410, 0);
@@ -932,13 +921,13 @@ void ofApp::setupGui(){
     guiCableAccelRy.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 260, 400);
     for(int i=0; i< NUM_OF_CABLES; i++){
         ofParameter<int> a;
-        a.set("A" + ofToString(i+1),200,0,MAX_X_SPEED); //lx,ly,rx,ry
+        a.set("A" + ofToString(i+1),DEFAULT_X_SPEED,MIN_X_SPEED,MAX_X_SPEED); //lx,ly,rx,ry
         ofParameter<int> b;
-        b.set("A" + ofToString(i+1),500,0,MAX_Y_SPEED);
+        b.set("A" + ofToString(i+1),DEFAULT_Y_SPEED,MIN_Y_SPEED,MAX_Y_SPEED);
         ofParameter<int> c;
-        c.set("A" + ofToString(i+1),200,0,MAX_X_SPEED);
+        c.set("A" + ofToString(i+1),DEFAULT_X_SPEED,MIN_X_SPEED,MAX_X_SPEED);
         ofParameter<int> d;
-        d.set("A" + ofToString(i+1),500,0,MAX_Y_SPEED);
+        d.set("A" + ofToString(i+1),DEFAULT_Y_SPEED,MIN_Y_SPEED,MAX_Y_SPEED);
         cableAccelLx.push_back(a);
         cableAccelLy.push_back(b);
         cableAccelRx.push_back(c);
@@ -957,13 +946,13 @@ void ofApp::setupGui(){
     guiCableSpeedRy.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 370, 400);
     for(int i=0; i< NUM_OF_CABLES; i++){
         ofParameter<int> a;
-        a.set("S" + ofToString(i+1),200,0,MAX_X_ACCEL); //lx,ly,rx,ry
+        a.set("S" + ofToString(i+1),DEFAULT_X_ACCEL,0,MAX_X_ACCEL); //lx,ly,rx,ry
         ofParameter<int> b;
-        b.set("S" + ofToString(i+1),400,0,MAX_Y_ACCEL);
+        b.set("S" + ofToString(i+1),DEFAULT_Y_ACCEL,0,MAX_Y_ACCEL);
         ofParameter<int> c;
-        c.set("S" + ofToString(i+1),200,0,MAX_X_ACCEL);
+        c.set("S" + ofToString(i+1),DEFAULT_X_ACCEL,0,MAX_X_ACCEL);
         ofParameter<int> d;
-        d.set("S" + ofToString(i+1),400,0,MAX_Y_ACCEL);
+        d.set("S" + ofToString(i+1),DEFAULT_Y_ACCEL,0,MAX_Y_ACCEL);
         cableSpeedLx.push_back(a);
         cableSpeedLy.push_back(b);
         cableSpeedRx.push_back(c);
@@ -1346,7 +1335,7 @@ void ofApp::drawGui(){
             drawScheduler = false;
         }
     }
-
+    
     
 }
 
@@ -1360,7 +1349,7 @@ void ofApp::setPoints(){
     cableOption();
     vector<ofPoint> mcPoints;
     mcPoints = movementController.getPoints();
-
+    
     
     for(int i=0; i < NUM_OF_CABLES; i++){
         for(int j=0; j < 8; j++){
@@ -1407,7 +1396,7 @@ void ofApp::setPoints(){
                     if (cablePosLx2[i]<= 0){
                         cablePosLx2[i] = 0;
                     }
-                     cablePosLx2[i]+= cablePosLxOffset[i];
+                    cablePosLx2[i]+= cablePosLxOffset[i];
                     if(cablePosLx2[i] >= MAX_X_POS){
                         cablePosLx2[i] = MAX_X_POS;
                     }
@@ -1416,7 +1405,7 @@ void ofApp::setPoints(){
                     if (cablePosLy2[i]<= 0){
                         cablePosLy2[i] = 0;
                     }
-                     cablePosLy2[i] += cablePosLyOffset[i];
+                    cablePosLy2[i] += cablePosLyOffset[i];
                     if(cablePosLy2[i] >= MAX_Y_POS){
                         cablePosLy2[i] = MAX_Y_POS;
                     }
@@ -1535,7 +1524,7 @@ void ofApp::movement(int s){
     
     if(prevSong != s){
         currCableID =-1;
-        songStage = 0;
+        songStage = 8;
         prevSong = s;
         timeDiff = 0;
         prevTime = currTime;
@@ -1622,9 +1611,10 @@ void ofApp::movement(int s){
             }
             if(songStage == 1){
                 
-                cableOp = 5;
+                cableOp = 4;
                 movementController.setOption(0, 0);
-                movementController.setPoints(1,1,133,31,1333,250);
+                movementController.setPoints(1,1,0,0,1333,250);
+                setPoints();
                 
                 setPattern = false;
                 songStage++;
@@ -1633,9 +1623,10 @@ void ofApp::movement(int s){
             }
             else if(songStage == 2){
                 
-                cableOp = 4;
+                cableOp = 5;
                 movementController.setOption(1, 0);
-                movementController.setPoints(0,1,43,15,2625,250);
+                movementController.setPoints(0,1,116,25,2666,100);
+                setPoints();
                 
                 ofLog() << "stage 2";
                 setPattern = false;
@@ -1653,10 +1644,10 @@ void ofApp::movement(int s){
         //----- INFO -----
         ofBackground(0, 0, 110);
         currStyle = 11;
-        ss_info << "MODE : LIGHT and 3 SHAPES : " << " Stage 6 of "<< songStage << endl;
+        ss_info << "MODE : LIGHT and 3 SHAPES : " << " Stage 10 of "<< songStage << endl;
         
         //---- BEGIN -----
-        long timeGap = 30000;
+        long timeGap = 65000;
         
         if(currTime - prevTime >timeDiff){
             
@@ -1666,38 +1657,40 @@ void ofApp::movement(int s){
             if(timeDiff == timeGap){
                 currCableID = -1;
             }
-
+            
             ofLog() << "songStage : " << songStage;
             
             if(currCableID >= NUM_OF_CABLES ){
                 
-            ofLog() << "reach cable 19";
+                ofLog() << "reach cable 19";
             }else{
-                timeDiff = 500;
+                timeDiff = 50;
                 currCableID++;
             }
-
         }
         
         if(setPattern){
-
             
             if(songStage == 0){
                 DmxLight.setAll((float)1.0, (float)1.0, (float)1.0, (float)1.0);
                 
                 if(currCableID == NUM_OF_CABLES ){
+                    
                     cableOp = 4;
                     movementController.setOption(1, 0);
-                    movementController.setPoints(0, 1, 53, 28, 2625, 250);
+                    movementController.setPoints(0, 1, 0, 0, 0, 0);
                     setPoints();
                     cableOp = 5;
-                    movementController.setOption(0, 0);
-                    movementController.setPoints(1,1,95, 26, 1750, 100);
+                    movementController.setOption(0, 2);
+                    movementController.setPoints(0,2,96, 18, 2666, 175);
+                    movementController.setPoints(1,3,40,30,1375,252);
+                    
                     setPoints();
                     writeStyle(1);
+                    
                     songStage++;
                 }else{
-
+                    
                 }
                 
                 setPattern = false;
@@ -1709,23 +1702,25 @@ void ofApp::movement(int s){
                 
                 setPattern = false;
                 
+                
             }else if(songStage == 2){
                 
                 if(currCableID == NUM_OF_CABLES ){
+                    
                     cableOp = 4;
                     movementController.setOption(1, 0);
-                    movementController.setPoints(0,1,96,51,2125,100);
+                    movementController.setPoints(0, 1, 0, 0, 0, 0);
                     setPoints();
-                    
                     cableOp = 5;
-                    movementController.setOption(0, 0);
-                    movementController.setPoints(1,1,96,25,2041,166);
+                    movementController.setOption(0, 2);
+                    movementController.setPoints(0,2,133,30,2500,250);
+                    movementController.setPoints(1,3,0,0, 0, 0);
                     setPoints();
+                    writeStyle(1);
                     
                     songStage++;
-                    writeStyle(1);
                 }else{
-
+                    
                 }
                 
                 setPattern = false;
@@ -1737,24 +1732,23 @@ void ofApp::movement(int s){
                 
                 setPattern = false;
                 
-            }else if(songStage == 4){
-
+            }
+            else if(songStage == 4){
                 
                 if(currCableID == NUM_OF_CABLES ){
-                    
                     cableOp = 4;
                     movementController.setOption(1, 0);
-                    movementController.setPoints(0,1,0, 7, 3250, 191);
+                    movementController.setPoints(0, 1, 0, 0, 2500, 50);
                     setPoints();
-                    
                     cableOp = 5;
                     movementController.setOption(0, 0);
-                    movementController.setPoints(1,1,103, 16,2208,391);
+                    movementController.setPoints(1,1,113, 26, 1541, 75);
                     setPoints();
-                    songStage++;
                     writeStyle(1);
+                    
+                    songStage++;
                 }else{
-
+                    
                 }
                 
                 setPattern = false;
@@ -1765,10 +1759,156 @@ void ofApp::movement(int s){
                 timeDiff = timeGap;
                 
                 setPattern = false;
-
-            }else if (songStage == 6){
+                
+            }else if(songStage == 6){
+                
+                
+                if(currCableID == NUM_OF_CABLES ){
+                    
+                    cableOp = 4;
+                    movementController.setOption(1, 0);
+                    movementController.setPoints(0, 1, 0, 0, 2500, 50);
+                    setPoints();
+                    cableOp = 5;
+                    movementController.setOption(0, 0);
+                    movementController.setPoints(1,1,113, 26, 1541, 133);
+                    setPoints();
+                    writeStyle(1);
+                    
+                    songStage++;
+                }else{
+                    
+                }
+                
                 setPattern = false;
-                songStage=0;
+                
+            }else if(songStage == 7){
+                //take time gap
+                songStage++;
+                timeDiff = timeGap;
+                
+                setPattern = false;
+                
+            }
+            else if(songStage == 8){
+                
+                
+                if(currCableID == NUM_OF_CABLES ){
+                    
+                    cableOp = 1;
+                    movementController.setOption(1, 0);
+                    movementController.setPoints(0, 1, 0, 11, 3200, 250);
+                    setPoints();
+                    cableOp = 3;
+                    movementController.setOption(0, 0);
+                    movementController.setPoints(1,1,0, 11, 0, 250);
+                    setPoints();
+                    writeStyle(1);
+                    
+                    songStage++;
+                }else{
+                    
+                }
+                
+                setPattern = false;
+                
+            }else if(songStage == 9){
+                //take time gap
+                songStage++;
+                timeDiff = timeGap;
+                
+                setPattern = false;
+                
+            }
+            else if(songStage == 10){
+                
+                
+                if(currCableID == NUM_OF_CABLES ){
+                    
+                    cableOp = 3;
+                    movementController.setOption(1, 0);
+                    movementController.setPoints(0, 1, 0, 11, 3200, 250);
+                    setPoints();
+                    cableOp = 1;
+                    movementController.setOption(0, 0);
+                    movementController.setPoints(1,1,0, 11, 0, 250);
+                    setPoints();
+                    writeStyle(1);
+                    
+                    songStage++;
+                }else{
+                    
+                }
+                
+                setPattern = false;
+                
+            }else if(songStage == 11){
+                //take time gap
+                songStage++;
+                timeDiff = timeGap;
+                
+                setPattern = false;
+                
+            }
+            else if(songStage == 12){
+                
+                
+                if(currCableID == NUM_OF_CABLES ){
+                    cableOp = 4;
+                    movementController.setOption(1, 0);
+                    movementController.setPoints(0, 1, 0, 0, 2500, 50);
+                    setPoints();
+                    cableOp = 5;
+                    movementController.setOption(0, 0);
+                    movementController.setPoints(1,1,113, 26, 1541, 66);
+                    setPoints();
+                    writeStyle(1);
+                    
+                    songStage++;
+                }else{
+                    
+                }
+                setPattern = false;
+                
+            }else if(songStage == 13){
+                //take time gap
+                songStage++;
+                timeDiff = timeGap;
+                
+                setPattern = false;
+                
+            }
+            else if(songStage == 14){
+                
+                
+                if(currCableID == NUM_OF_CABLES ){
+                    cableOp = 4;
+                    movementController.setOption(1, 0);
+                    movementController.setPoints(0, 1, 0, 0, 2500, 50);
+                    setPoints();
+                    cableOp = 5;
+                    movementController.setOption(0, 0);
+                    movementController.setPoints(1,1,70, 58, 291, 66);
+                    setPoints();
+                    writeStyle(1);
+                    
+                    songStage++;
+                }else{
+                    
+                }
+                setPattern = false;
+                
+            }
+            else if(songStage == 15){
+                //take time gap
+                songStage++;
+                timeDiff = timeGap;
+                
+                setPattern = false;
+                
+            }else if (songStage == 16){
+                setPattern = false;
+                songStage = 0;
             }
         }
     }else if(s == 4){ //MP3
@@ -1822,12 +1962,8 @@ void ofApp::movement(int s){
                 ofLog() << "Set Pattern";
                 
                 writeStyle(1);
-                
             }
-            
         }
-        
-        
     }else if(s == 6){ //ricci mode, debug one by one
         
         currStyle = 11;
@@ -2000,6 +2136,49 @@ void ofApp::moveCommandMethod(int method, int c, int whichCurrentCable){
 void ofApp::writeStyle(int s){ //all same = 0, all diff = 1, specific = 2
     ofLog() << "write Style " << s  << " current arduino ID : " << currCableID;
     currDisplayLog[NUM_OF_CABLES] = "write Style : " + ofToString(s) + " currCableID : " + ofToString(currCableID);
+    for(int i=0; i< NUM_OF_CABLES; i++){
+        if(prevCablePosLx[i] != cablePosLx[i]){
+            cableLxDist[i] = abs(prevCablePosLx[i] - cablePosLx[i]);
+            prevCablePosLx[i] = cablePosLx[i];
+        }
+        if(prevCablePosLy[i] != cablePosLy[i]){
+            cableLyDist[i] = abs(prevCablePosLy[i] - cablePosLy[i]);
+            prevCablePosLy[i] = cablePosLy[i];
+        }
+        if(prevCablePosRx[i] != cablePosRx[i]){
+            cableRxDist[i] = abs(prevCablePosRx[i] - cablePosRx[i]);
+            prevCablePosRx[i] = cablePosRx[i];
+        }
+        if(prevCablePosRy[i] != cablePosRy[i]){
+            cableRyDist[i] = abs(prevCablePosRy[i] - cablePosRy[i]);
+            prevCablePosRy[i] = cablePosRy[i];
+        }
+    }
+    
+    for(int i=0; i< NUM_OF_CABLES; i++){
+        int xFactor = 1;
+        int yFactor = 1;
+        cableSpeedLx[i] = ofMap(prevCablePosLx[i],0,MAX_X_POS,MIN_X_SPEED,MAX_X_SPEED);
+        if (cableSpeedLx[i]< MIN_X_SPEED){
+            cableSpeedLx[i] = MIN_X_SPEED;
+        }
+        cableSpeedLy[i] = ofMap(prevCablePosLy[i],0,MAX_Y_POS,MIN_Y_SPEED,MAX_Y_SPEED);
+        if (cableSpeedLy[i]< MIN_Y_SPEED){
+            cableSpeedLy[i] = MIN_Y_SPEED;
+        }
+        cableSpeedRx[i] = ofMap(prevCablePosRx[i],0,MAX_X_POS,MIN_X_SPEED,MAX_X_SPEED);
+        if (cableSpeedRx[i]< MIN_X_SPEED){
+            cableSpeedRx[i] = MIN_X_SPEED;
+        }
+        cableSpeedRy[i] = ofMap(prevCablePosRy[i],0,MAX_Y_POS,MIN_Y_SPEED,MAX_Y_SPEED);
+        if (cableSpeedRy[i]< MIN_Y_SPEED){
+            cableSpeedRy[i] = MIN_Y_SPEED;
+        }
+    }
+    
+    
+    
+    
     if (s==0){
         moveCommandMethod(currStyle, currCableID, -1);
     }
@@ -2015,6 +2194,18 @@ void ofApp::writeStyle(int s){ //all same = 0, all diff = 1, specific = 2
     }
 }
 
+
+void ofApp::offsetHome(){
+    cableOp = 5;
+    movementController.setPoints(0, 1, 0, 0, 0, 0);
+    setPoints();
+    
+    cableOp = 4;
+    movementController.setPoints(0, 1, 0, 0, 0, 0);
+    setPoints();
+    
+    writeStyle(1);
+}
 
 //--------------------------------------------------------------
 //-----------------SERIAL COMMUNICATION ------------------------
@@ -2104,7 +2295,7 @@ vector<bool> ofApp::serialSetup(){ //int give the connection status of each cabl
     for(int i = 20; i < NUM_OF_SERIAL_TO_INIT; i++){
         arduino.push_back(300+i);
     }
-
+    
     for(int i=0; i< NUM_OF_CABLES; i++){
         ofLog() <<arduino[i];
         isArduinoConnected.push_back(true);
@@ -2516,10 +2707,38 @@ void ofApp::setTrackisLoop(bool t){
     timelinePlayer.setLoop(t);
 }
 
+
+//--------------------------------------------------------------
+//------------------------- Scheduler --------------------------
+//--------------------------------------------------------------
+void ofApp::onSchedulerLightsToggle(bool & t){
+    if(t){
+        currDisplayLog[NUM_OF_CABLES] = "Lights On";
+        movementMode = 2;
+    }else{
+        currDisplayLog[NUM_OF_CABLES] = "Lights Off, Static Mode";
+        movementMode = 0;
+    }
+    ofLog() << currDisplayLog[NUM_OF_CABLES];
+}
+
+void ofApp::onSchedulerHomeResetToggle(int & t){
+    if(t == 0 ){
+        currDisplayLog[NUM_OF_CABLES] = "Reset Home";
+        serialWrite(-1, "Q");
+    }else{
+        currDisplayLog[NUM_OF_CABLES] = "Offset Home";
+        offsetHome();
+    }
+    ofLog() << currDisplayLog[NUM_OF_CABLES];
+}
+
+
+
 //--------------------------------------------------------------
 //---------------------- SETTINGS / XML-------------------------
 //--------------------------------------------------------------
-//--------------------------------------------------------------
+
 void ofApp::saveSettings()
 {
     for(int i=0; i < NUM_OF_CABLES; i++){
@@ -2537,12 +2756,12 @@ void ofApp::saveSettings()
 void ofApp::loadSettings()
 {
     cableXML.load("cableSettings.xml");
-     for(int i=0; i < NUM_OF_CABLES; i++){
-         cablePosLxOffset[i] = cableXML.getValue("LX"+ ofToString(i),0);
-         cablePosLyOffset[i] = cableXML.getValue("LY"+ ofToString(i),0);
-         cablePosRxOffset[i] = cableXML.getValue("RX"+ ofToString(i),0);
-         cablePosRyOffset[i] = cableXML.getValue("RY"+ ofToString(i),0);
-     }
+    for(int i=0; i < NUM_OF_CABLES; i++){
+        cablePosLxOffset[i] = cableXML.getValue("LX"+ ofToString(i),0);
+        cablePosLyOffset[i] = cableXML.getValue("LY"+ ofToString(i),0);
+        cablePosRxOffset[i] = cableXML.getValue("RX"+ ofToString(i),0);
+        cablePosRyOffset[i] = cableXML.getValue("RY"+ ofToString(i),0);
+    }
     XML.load("XMLSettings.xml");
     movementMode = XML.getValue<int>("MODE");
     ofLog() << "MODE VAL : " << movementMode;
@@ -2552,7 +2771,6 @@ void ofApp::loadSettings()
 
 //--------------------------------------------------------------
 //---------------------- OTHER EVENTS --------------------------
-//--------------------------------------------------------------
 //--------------------------------------------------------------
 void ofApp::exit()
 {

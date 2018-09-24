@@ -21,10 +21,9 @@ void Scheduler::setup() {
     int guiH = 500;
     panel1.setSize(guiW, guiH);
     panel1.setWidthElements(guiW);
-    
-
 
     eventIsTriggered = false;
+
 }
 
 void Scheduler::exit() {
@@ -47,7 +46,18 @@ void Scheduler::update() {
             ofNotifyEvent(lightToggleEvent, t);
             eventIsTriggered = true;
         }
-        
+    }else if(beginHour == ofGetHours() && (beginMin-4) == ofGetMinutes() && ofGetSeconds() == 0){ //0 reset Home 1 offest Home
+        if(!eventIsTriggered){
+            int t = 0;
+            ofNotifyEvent(homeResetEvent, t);
+            eventIsTriggered = true;
+        }
+    }else if(beginHour == ofGetHours() && (beginMin-2) == ofGetMinutes() && ofGetSeconds() == 0){//0 reset Home 1 offest Home
+        if(!eventIsTriggered){
+            int t = 1;
+            ofNotifyEvent(homeResetEvent, t);
+            eventIsTriggered = true;
+        }
     }
 }
 
@@ -78,15 +88,10 @@ void Scheduler::okBtnPressed(){
 //--------------------------------------------------------------
 //---------------------- SETTINGS / XML-------------------------
 //--------------------------------------------------------------
-//--------------------------------------------------------------
-//--------------------------------------------------------------
-//---------------------- SETTINGS / XML-------------------------
-//--------------------------------------------------------------
-//--------------------------------------------------------------
+
 void Scheduler::saveSettings()
 {
-    
-    
+
     XML.setValue("BEGIN_HOUR", ofToString(displayBeginHour));
     XML.setValue("BEGIN_MINUTE", ofToString(displayBeginMin));
     XML.setValue("END_HOUR", ofToString(displayEndHour));

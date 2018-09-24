@@ -27,6 +27,7 @@ public:
     void okBtnPressed();
     
     ofEvent<bool> lightToggleEvent;
+    ofEvent<int> homeResetEvent;
     
     bool eventIsTriggered ;
     
