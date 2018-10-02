@@ -44,17 +44,17 @@ public:
     void update();
     void draw();
     
-    void keyPressed(int key);
+    void keyPressed(int key){};
     void keyReleased(int key);
-    void mouseMoved(int x, int y );
-    void mouseDragged(int x, int y, int button);
-    void mousePressed(int x, int y, int button);
-    void mouseReleased(int x, int y, int button);
-    void mouseEntered(int x, int y);
-    void mouseExited(int x, int y);
-    void windowResized(int w, int h);
-    void dragEvent(ofDragInfo dragInfo);
-    void gotMessage(ofMessage msg);
+    void mouseMoved(int x, int y){};
+    void mouseDragged(int x, int y, int button){};
+    void mousePressed(int x, int y, int button){};
+    void mouseReleased(int x, int y, int button){};
+    void mouseEntered(int x, int y){};
+    void mouseExited(int x, int y){};
+    void windowResized(int w, int h){};
+    void dragEvent(ofDragInfo dragInfo){};
+    void gotMessage(ofMessage msg){};
     
     int currCableID;
     
@@ -110,8 +110,10 @@ public:
     vector<ofParameter<int>> cableTimeRx; //lx,ly,rx,ry
     vector<ofParameter<int>> cableTimeRy; //lx,ly,rx,ry
     
+    ofxPanel guiRandomTime;
+    ofParameter<int> randomCableTimeMax;
+    ofParameter<int> randomCableTimeMin;
 
-    
     
     ofParameter<int> currStyle;
     void writeStyle(int s);
@@ -120,7 +122,9 @@ public:
     
     bool is_number(const std::string& s);
 
-    
+    long nextMillis;
+    long nextTriggerMillis;
+    void setPositionTime();
 };
 
 

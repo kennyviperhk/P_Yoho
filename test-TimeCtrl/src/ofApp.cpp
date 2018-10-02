@@ -6,20 +6,17 @@ void ofApp::setup(){
     
     setupGui();
     
-   
     currStyle = 12;
     
     currCableID = 0;
     
-    
-    
-    
+    nextMillis = 0;
+    nextTriggerMillis = ofRandom(randomCableTimeMin, randomCableTimeMax);
+
     for(int i=0; i < NUM_OF_CABLES; i++){
         receivedString.push_back("");
-
     }
-    
-    
+
 }
 
 
@@ -98,6 +95,12 @@ void ofApp::writeStyle(int s){ //all same = 0, all diff = 1, specific = 2
 void ofApp::setupGui(){
     //--- Cable Position Control ---
     
+    guiRandomTime.setup("GUI Random Time", "settings.xml", ofGetWidth()/2, 0);
+    guiRandomTime.add(randomCableTimeMin.set("Min Random Time : ",15000,3000,30000));
+    guiRandomTime.add(randomCableTimeMax.set("Max Random Time : ",30000,10000,90000));
+
+
+    
     parametersCablePos.setName("cablePosition");
     guiCablePosLx.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 200, 0);
     guiCablePosLy.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 200, 400);
@@ -148,7 +151,26 @@ void ofApp::setupGui(){
         guiCableTimeRy.add(cableTimeRy[i]);
     }
     
+    int guiPosCableW = 100;
+    int guiCableH = 500;
+    guiCablePosLx.setSize(guiPosCableW, guiCableH);
+    guiCablePosLx.setWidthElements(guiPosCableW);
+    guiCablePosLy.setSize(guiPosCableW, guiCableH);
+    guiCablePosLy.setWidthElements(guiPosCableW);
+    guiCablePosRx.setSize(guiPosCableW, guiCableH);
+    guiCablePosRx.setWidthElements(guiPosCableW);
+    guiCablePosRy.setSize(guiPosCableW, guiCableH);
+    guiCablePosRy.setWidthElements(guiPosCableW);
     
+    int guiTimeCableW = 100;
+    guiCableTimeLx.setSize(guiTimeCableW, guiCableH);
+    guiCableTimeLx.setWidthElements(guiTimeCableW);
+    guiCableTimeLy.setSize(guiTimeCableW, guiCableH);
+    guiCableTimeLy.setWidthElements(guiTimeCableW);
+    guiCableTimeRx.setSize(guiTimeCableW, guiCableH);
+    guiCableTimeRx.setWidthElements(guiTimeCableW);
+    guiCableTimeRy.setSize(guiTimeCableW, guiCableH);
+    guiCableTimeRy.setWidthElements(guiTimeCableW);
 }
 
 //--------------------------------------------------------------
@@ -522,9 +544,34 @@ void ofApp::update(){
         }
     }
     */
+    
+    if(randomCableTimeMin >= randomCableTimeMax){
+        randomCableTimeMax = randomCableTimeMin;
+    }
+        if(ofGetElapsedTimeMillis()>nextMillis){
+            setPositionTime();
+            nextTriggerMillis = ofRandom(randomCableTimeMin, randomCableTimeMax);
+            nextMillis = ofGetElapsedTimeMillis()+nextTriggerMillis;
+        }
+
 }
 
-
+void ofApp::setPositionTime(){
+    for(int i = 0; i < NUM_OF_CABLES; i++){
+        cablePosLx[i] = ofRandom(0,MAX_X_POS);
+        cablePosLy[i] = ofRandom(0,MAX_Y_POS);
+        cablePosRx[i] = ofRandom(0,MAX_X_POS);
+        cablePosRy[i] = ofRandom(0,MAX_Y_POS);
+        cableTimeLx[i] = nextTriggerMillis;
+        cableTimeLy[i] = nextTriggerMillis;
+        cableTimeRx[i] = nextTriggerMillis;
+        cableTimeRy[i] = nextTriggerMillis;
+        
+    }
+    writeStyle(2);
+    
+    ofLog() << "Set Position Time, next trigger is : " << nextTriggerMillis;
+}
 
 //--------------------------------------------------------------
 //-------------------------- Utils -----------------------------
@@ -541,6 +588,18 @@ bool ofApp::is_number(const std::string& s)
 void ofApp::draw(){
     ofBackground(255);
     drawGui();
+
+    stringstream ss_info;
+    ss_info.str("");
+    
+    float countDown = -(ofGetElapsedTimeMillis() - nextMillis) / 1000.0;
+    
+    ss_info << "nextTriggerMillis : "<< nextTriggerMillis << endl;
+    ss_info << "count down "<< countDown << endl;
+
+    
+    ofSetColor(255,0,0);
+    ofDrawBitmapString(ss_info.str(), ofVec2f(20, 20));
 }
 
 
@@ -554,59 +613,14 @@ void ofApp::drawGui(){
     guiCableTimeLy.draw();
     guiCableTimeRx.draw();
     guiCableTimeRy.draw();
-
-}
-//--------------------------------------------------------------
-void ofApp::keyPressed(int key){
+    
+    guiRandomTime.draw();
 
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-
+    
 }
 
-//--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
 
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
-
-}
