@@ -249,9 +249,7 @@ void loop() {
   } else {
 
     // ============ STEPPER ================
-
-    stepper_style();
-
+    
     for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
       if(style == 12){
         if (!steppers[stepperNumber]->isCompleteTotDist()) {
@@ -261,6 +259,8 @@ void loop() {
         steppers[stepperNumber]->run();
        }
     }
+
+    stepper_style();
     // ============ ENCODER ================
 
     for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {

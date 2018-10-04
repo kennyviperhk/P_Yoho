@@ -250,7 +250,6 @@ void loop() {
 
     // ============ STEPPER ================
 
-    stepper_style();
 
     for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
       if(style == 12){
@@ -261,6 +260,9 @@ void loop() {
         steppers[stepperNumber]->run();
        }
     }
+
+    
+    stepper_style();
     // ============ ENCODER ================
 
     for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
