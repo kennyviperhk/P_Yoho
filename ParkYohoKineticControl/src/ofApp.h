@@ -16,6 +16,7 @@
 #include "DmxLight.h"
 #include "TimelinePlayer.h"
 #include "Scheduler.h"
+#include "Movements.h"
 
 #include "ofxSerial.h"
 #include "ofxGui.h"
@@ -349,12 +350,11 @@ public:
     bool isShowReady;
     void writeStyle(int s);
     void moveCommandMethod(int method, int c, int whichCurrentCable);
-    offsetHome();
+    void offsetHome();
     
     bool serialTrigger; //TO avoid ofxButton cause multiple click and send mutiple serial command;
     long prevSerialTriggerMillis; //TO avoid ofxButton cause multiple click and send mutiple serial command;
     long prevSingleCableLoopMillis;
-    long currMillis;
     
     void displayLog(vector<string> s);
     vector<string> currDisplayLog;
@@ -384,15 +384,15 @@ public:
     //================== Song 1 ==================
     
     void movement(int s);
-    int songStage;
+    int currMovementStatge;
     ofParameter<int> movementMode;
-    int prevSong;
+    int prevMovement;
     
     long currTime;
     long prevTime;
     bool setPattern;
     int timeDiff;
-    
+    void setShapes(int op0 = 4, vector<int> a = {0,0,0,0,0}, vector<int> b = {0,0,0,0,0}, int op1 = 5,vector<int> c = {0,0,0,0,0}, vector<int> d = {0,0,0,0,0});
     void setPoints();
     
     
@@ -423,5 +423,11 @@ public:
     void onSchedulerLightsToggle(bool & t);
     void onSchedulerHomeResetToggle(int & t);
     bool drawScheduler;
+    
+    
+    //================ Movements ==============
+    Movements movements;
+    void onSetPoints(bool & t);
+    
     
 };

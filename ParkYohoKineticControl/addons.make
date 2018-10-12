@@ -4,6 +4,7 @@ ofxDmx
 ofxGui
 ofxIO
 ofxInputField
+ofxJSON
 ofxOsc
 ofxSerial
 ofxXmlSettings

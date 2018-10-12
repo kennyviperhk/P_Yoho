@@ -1,0 +1,36 @@
+{
+  "movements": [
+  {
+      "cableOpA": 4,
+      "pointsA1": [1, 1, 0, 0, 0],
+      "pointsA2": [0, 1, 0, 0, 0],
+      "cableOpB": 5,
+      "pointsB1": [0, 0, 0, 0, 0],
+      "pointsB2": [1, 116, 25, 1708, 100]
+  },
+  {
+    "cableOpA": 4,
+    "pointsA1": [1, 1, 0, 0, 0],
+    "pointsA2": [0, 1, 0, 0, 0],
+    "cableOpB": 5,
+    "pointsB1": [2, 96, 18, 2666, 175],
+    "pointsB2": [3, 40, 30, 1375, 252]
+  },
+  {
+    "cableOpA": 4,
+    "pointsA1": [1, 1, 0, 0, 0],
+    "pointsA2": [0, 1, 0, 0, 0],
+    "cableOpB": 5,
+    "pointsB1": [2, 133, 30, 2500, 250],
+    "pointsB2": [3, 0, 0, 0, 0]
+  },
+  {
+    "cableOpA": 4,
+    "pointsA1": [1, 1, 0, 2500, 50],
+    "pointsA2": [0, 1, 0, 0, 0],
+    "cableOpB": 5,
+    "pointsB1": [2, 133, 30, 1541, 75],
+    "pointsB2": [3, 0, 0, 0, 0]
+  }
+  ]
+}

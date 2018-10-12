@@ -8,7 +8,7 @@
    x -> Horizontal Movement
    y -> Vertical Movement
 
-   0:Lx 1:Ly 2:Rx 3:Ry
+   0:Lx 1:Ly 2:Rx 3:Ry    
     __________________
    | 1  2  ....... 20 |
    |                  |
@@ -249,6 +249,7 @@ void loop() {
   } else {
 
     // ============ STEPPER ================
+    stepper_style();
     
     for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
       if(style == 12){
@@ -260,7 +261,7 @@ void loop() {
        }
     }
 
-    stepper_style();
+
     // ============ ENCODER ================
 
     for (int stepperNumber = 0; stepperNumber < numOfStepper; stepperNumber++) {
