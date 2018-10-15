@@ -46,6 +46,10 @@
 #define MAX_X_POS 5000
 #define MAX_Y_POS 30000
 
+
+
+#define DEFAULT_X_TIME 25000
+#define DEFAULT_Y_TIME 25000
 #define MAX_X_TIME 60000
 #define MAX_Y_TIME 60000
 
@@ -428,6 +432,7 @@ public:
     //================ Movements ==============
     Movements movements;
     void onSetPoints(bool & t);
+    long timeGap;
     
     
 };

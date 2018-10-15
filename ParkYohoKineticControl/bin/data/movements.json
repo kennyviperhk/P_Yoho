@@ -1,36 +1,92 @@
 {
-  "movements": [
-  {
+  "movements": [{
+      "cableOpA": 4,
+      "pointsA1": [1, 0, 0, 0, 0],
+      "pointsA2": [0, 1, 0, 0, 0],
+      "cableOpB": 5,
+      "pointsB1": [0, 0, 0, 0, 0],
+      "pointsB2": [1, 120, 28, 1583, 0]
+    },
+    {
+      "cableOpA": 4,
+      "pointsA1": [1, 0, 0, 0, 0],
+      "pointsA2": [0, 1, 0, 0, 0],
+      "cableOpB": 5,
+      "pointsB1": [0, 0, 0, 0, 0],
+      "pointsB2": [1, 120, 28, 1500, 2]
+    },
+    {
+      "cableOpA": 4,
+      "pointsA1": [1, 0, 0, 0, 0],
+      "pointsA2": [0, 1, 0, 0, 0],
+      "cableOpB": 5,
+      "pointsB1": [0, 0, 0, 0, 0],
+      "pointsB2": [1, 120, 28, 1500, 4]
+    },
+    {
+      "cableOpA": 4,
+      "pointsA1": [1, 0, 0, 0, 0],
+      "pointsA2": [0, 1, 0, 0, 0],
+      "cableOpB": 5,
+      "pointsB1": [0, 0, 0, 0, 0],
+      "pointsB2": [1, 120, 28, 1500, 6]
+    },
+    {
+      "cableOpA": 4,
+      "pointsA1": [1, 1, 0, 0, 0],
+      "pointsA2": [0, 1, 0, 0, 0],
+      "cableOpB": 5,
+      "pointsB1": [2, 33, 37, 2625, 150],
+      "pointsB2": [3, 33, 37, 1416, 166]
+    },
+    {
+      "cableOpA": 4,
+      "pointsA1": [1, 1, 0, 0, 0],
+      "pointsA2": [0, 1, 0, 0, 0],
+      "cableOpB": 5,
+      "pointsB1": [2, 133, 30, 2500, 250],
+      "pointsB2": [3, 0, 0, 0, 0]
+    },
+    {
       "cableOpA": 4,
       "pointsA1": [1, 1, 0, 0, 0],
       "pointsA2": [0, 1, 0, 0, 0],
       "cableOpB": 5,
       "pointsB1": [0, 0, 0, 0, 0],
-      "pointsB2": [1, 116, 25, 1708, 100]
-  },
-  {
-    "cableOpA": 4,
-    "pointsA1": [1, 1, 0, 0, 0],
-    "pointsA2": [0, 1, 0, 0, 0],
-    "cableOpB": 5,
-    "pointsB1": [2, 96, 18, 2666, 175],
-    "pointsB2": [3, 40, 30, 1375, 252]
-  },
-  {
-    "cableOpA": 4,
-    "pointsA1": [1, 1, 0, 0, 0],
-    "pointsA2": [0, 1, 0, 0, 0],
-    "cableOpB": 5,
-    "pointsB1": [2, 133, 30, 2500, 250],
-    "pointsB2": [3, 0, 0, 0, 0]
-  },
-  {
-    "cableOpA": 4,
-    "pointsA1": [1, 1, 0, 2500, 50],
-    "pointsA2": [0, 1, 0, 0, 0],
-    "cableOpB": 5,
-    "pointsB1": [2, 133, 30, 1541, 75],
-    "pointsB2": [3, 0, 0, 0, 0]
-  }
+      "pointsB2": [1, 113, 26, 1541, 75]
+    },
+
+    {
+      "cableOpA": 4,
+      "pointsA1": [1, 1, 0, 0, 0],
+      "pointsA2": [0, 1, 0, 0, 0],
+      "cableOpB": 5,
+      "pointsB1": [2, 70, 32, 2958, 66],
+      "pointsB2": [3, 0, 0, 0, 0]
+    },
+    {
+      "cableOpA": 1,
+      "pointsA1": [1, 0, 11, 3200, 250],
+      "pointsA2": [0, 1, 0, 0, 0],
+      "cableOpB": 3,
+      "pointsB1": [0, 1, 0, 0, 0],
+      "pointsB2": [1, 0, 11, 0, 250]
+    },
+    {
+      "cableOpA": 3,
+      "pointsA1": [1, 0, 11, 3200, 250],
+      "pointsA2": [0, 1, 0, 0, 0],
+      "cableOpB": 1,
+      "pointsB1": [0, 1, 0, 0, 0],
+      "pointsB2": [1, 0, 11, 0, 250]
+    },
+    {
+      "cableOpA": 4,
+      "pointsA1": [1, 0, 0, 0, 0],
+      "pointsA2": [0, 1, 0, 0, 0],
+      "cableOpB": 5,
+      "pointsB1": [0, 1, 0, 0, 0],
+      "pointsB2": [1, 113, 26, 1541, 66]
+    }
   ]
 }

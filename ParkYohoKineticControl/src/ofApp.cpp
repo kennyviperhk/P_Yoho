@@ -558,6 +558,9 @@ void ofApp::keyReleased(int key){
         case 'l': //to zero points
             movements.loadSettings();
             break;
+        case 'k': //to zero points
+            prevTime = currTime;
+            break;
             
             
         default:
@@ -739,7 +742,7 @@ void ofApp::setupGui(){
     guiDebug.add(EEPROM_loadBtn.setup(EEPROM_saveLoad_names[1]));
     EEPROM_loadBtn.addListener(this, &ofApp::loadEEPROMButtonPressed);
     guiDebug.add(textField.setup("Serial:", "0-0-0-0-0"));
-    guiDebug.add(currStyle.set("Style",11,0,NUM_OF_CABLES)); //TODO
+    guiDebug.add(currStyle.set("Style",12,0,NUM_OF_CABLES)); //TODO
     guiDebug.add(sendStyleBtn.setup("Set Pos:"));
     guiDebug.add(sendStyleBtn_all_same.setup("Set Pos ALL SAME:"));
     guiDebug.add(sendStyleBtn_all.setup("Set Pos ALL:"));
@@ -905,13 +908,13 @@ void ofApp::setupGui(){
     guiCableTimeRy.setup("EEPROMReadWrite", "settings.xml", ofGetWidth() - 300, 400);
     for(int i=0; i< NUM_OF_CABLES; i++){
         ofParameter<int> a;
-        a.set("T" + ofToString(i+1),25000,10000,MAX_X_TIME); //lx,ly,rx,ry
+        a.set("T" + ofToString(i+1),DEFAULT_X_TIME,10000,MAX_X_TIME); //lx,ly,rx,ry
         ofParameter<int> b;
-        b.set("T" + ofToString(i+1),25000,10000,MAX_Y_TIME);
+        b.set("T" + ofToString(i+1),DEFAULT_Y_TIME,10000,MAX_Y_TIME);
         ofParameter<int> c;
-        c.set("T" + ofToString(i+1),25000,10000,MAX_X_TIME);
+        c.set("T" + ofToString(i+1),DEFAULT_X_TIME,10000,MAX_X_TIME);
         ofParameter<int> d;
-        d.set("T" + ofToString(i+1),25000,10000,MAX_Y_TIME);
+        d.set("T" + ofToString(i+1),DEFAULT_Y_TIME,10000,MAX_Y_TIME);
         cableTimeLx.push_back(a);
         cableTimeLy.push_back(b);
         cableTimeRx.push_back(c);
@@ -1621,7 +1624,7 @@ void ofApp::movement(int s){
             prevTime = currTime;
             setPattern = true;
             
-            timeDiff = 6000;
+            timeDiff = 55000;
             
         }
         if(setPattern){
@@ -1663,280 +1666,9 @@ void ofApp::movement(int s){
             }
         }
         
-    }else if(s == 3){ // Light ON and 3 Shapes In LOOP
+    }else if(s == 3){ // Light ON and Many Shapes In LOOP
         //----- INFO -----
-        ofBackground(0, 0, 110);
-        currStyle = 12;
-        ss_info << "MODE : LIGHT and 3 SHAPES : " << " Stage 10 of "<< currMovementStatge << endl;
-        
-        //---- BEGIN -----
-        long timeGap = 55000;
-        
-        if(currTime - prevTime >timeDiff){
-            
-            prevTime = currTime;
-            setPattern = true;
-            
-            if(timeDiff == timeGap){
-                currCableID = -1;
-            }
-            
-            ofLog() << "currMovementStatge : " << currMovementStatge;
-            
-            if(currCableID >= NUM_OF_CABLES ){
-                
-                ofLog() << "reach cable 19";
-            }else{
-                timeDiff = 50;
-                currCableID++;
-            }
-        }
-        
-        if(setPattern){
-            
-            if(currMovementStatge == 0){
-                DmxLight.setAll((float)1.0, (float)1.0, (float)1.0, (float)1.0);
-                
-                if(currCableID == NUM_OF_CABLES ){
-                    
-                    cableOp = 4;
-                    movementController.setOption(1, 0);
-                    movementController.setPoints(0, 1, 0, 0, 0, 0);
-                    setPoints();
-                    cableOp = 5;
-                    movementController.setOption(0, 2);
-                    movementController.setPoints(0,2,96, 18, 2666, 175);
-                    movementController.setPoints(1,3,40,30,1375,252);
-                    
-                    setPoints();
-                    writeStyle(1);
-                    
-                    currMovementStatge++;
-                }else{
-                    
-                }
-                
-                setPattern = false;
-                
-            }else if(currMovementStatge == 1){
-                //take time gap
-                currMovementStatge++;
-                timeDiff = timeGap;
-                
-                setPattern = false;
-                
-                
-            }else if(currMovementStatge == 2){
-                
-                if(currCableID == NUM_OF_CABLES ){
-                    
-                    cableOp = 4;
-                    movementController.setOption(1, 0);
-                    movementController.setPoints(0, 1, 0, 0, 0, 0);
-                    setPoints();
-                    cableOp = 5;
-                    movementController.setOption(0, 2);
-                    movementController.setPoints(0,2,133,30,2500,250);
-                    movementController.setPoints(1,3,0,0, 0, 0);
-                    setPoints();
-                    writeStyle(1);
-                    
-                    currMovementStatge++;
-                }else{
-                    
-                }
-                
-                setPattern = false;
-                
-            }else if(currMovementStatge == 3){
-                //take time gap
-                currMovementStatge++;
-                timeDiff = timeGap;
-                
-                setPattern = false;
-                
-            }
-            else if(currMovementStatge == 4){
-                
-                if(currCableID == NUM_OF_CABLES ){
-                    cableOp = 4;
-                    movementController.setOption(1, 0);
-                    movementController.setPoints(0, 1, 0, 0, 2500, 50);
-                    setPoints();
-                    cableOp = 5;
-                    movementController.setOption(0, 0);
-                    movementController.setPoints(1,1,113, 26, 1541, 75);
-                    setPoints();
-                    writeStyle(1);
-                    
-                    currMovementStatge++;
-                }else{
-                    
-                }
-                
-                setPattern = false;
-                
-            }else if(currMovementStatge == 5){
-                //take time gap
-                currMovementStatge++;
-                timeDiff = timeGap;
-                
-                setPattern = false;
-                
-            }else if(currMovementStatge == 6){
-                
-                
-                if(currCableID == NUM_OF_CABLES ){
-                    
-                    cableOp = 4;
-                    movementController.setOption(1, 0);
-                    movementController.setPoints(0, 1, 0, 0, 2500, 50);
-                    setPoints();
-                    cableOp = 5;
-                    movementController.setOption(0, 0);
-                    movementController.setPoints(1,1,113, 26, 1541, 133);
-                    setPoints();
-                    writeStyle(1);
-                    
-                    currMovementStatge++;
-                }else{
-                    
-                }
-                
-                setPattern = false;
-                
-            }else if(currMovementStatge == 7){
-                //take time gap
-                currMovementStatge++;
-                timeDiff = timeGap;
-                
-                setPattern = false;
-                
-            }
-            else if(currMovementStatge == 8){
-                
-                
-                if(currCableID == NUM_OF_CABLES ){
-                    
-                    cableOp = 1;
-                    movementController.setOption(1, 0);
-                    movementController.setPoints(0, 1, 0, 11, 3200, 250);
-                    setPoints();
-                    cableOp = 3;
-                    movementController.setOption(0, 0);
-                    movementController.setPoints(1,1,0, 11, 0, 250);
-                    setPoints();
-                    writeStyle(1);
-                    
-                    currMovementStatge++;
-                }else{
-                    
-                }
-                
-                setPattern = false;
-                
-            }else if(currMovementStatge == 9){
-                //take time gap
-                currMovementStatge++;
-                timeDiff = timeGap;
-                
-                setPattern = false;
-                
-            }
-            else if(currMovementStatge == 10){
-                
-                
-                if(currCableID == NUM_OF_CABLES ){
-                    
-                    cableOp = 3;
-                    movementController.setOption(1, 0);
-                    movementController.setPoints(0, 1, 0, 11, 3200, 250);
-                    setPoints();
-                    cableOp = 1;
-                    movementController.setOption(0, 0);
-                    movementController.setPoints(1,1,0, 11, 0, 250);
-                    setPoints();
-                    writeStyle(1);
-                    
-                    currMovementStatge++;
-                }else{
-                    
-                }
-                
-                setPattern = false;
-                
-            }else if(currMovementStatge == 11){
-                //take time gap
-                currMovementStatge++;
-                timeDiff = timeGap;
-                
-                setPattern = false;
-                
-            }
-            else if(currMovementStatge == 12){
-                
-                
-                if(currCableID == NUM_OF_CABLES ){
-                    cableOp = 4;
-                    movementController.setOption(1, 0);
-                    movementController.setPoints(0, 1, 0, 0, 2500, 50);
-                    setPoints();
-                    cableOp = 5;
-                    movementController.setOption(0, 0);
-                    movementController.setPoints(1,1,113, 26, 1541, 66);
-                    setPoints();
-                    writeStyle(1);
-                    
-                    currMovementStatge++;
-                }else{
-                    
-                }
-                setPattern = false;
-                
-            }else if(currMovementStatge == 13){
-                //take time gap
-                currMovementStatge++;
-                timeDiff = timeGap;
-                
-                setPattern = false;
-                
-            }
-            else if(currMovementStatge == 14){
-                
-                
-                if(currCableID == NUM_OF_CABLES ){
-                    cableOp = 4;
-                    movementController.setOption(1, 0);
-                    movementController.setPoints(0, 1, 0, 0, 2500, 50);
-                    setPoints();
-                    cableOp = 5;
-                    movementController.setOption(0, 0);
-                    movementController.setPoints(1,1,70, 58, 291, 66);
-                    setPoints();
-                    writeStyle(1);
-                    
-                    currMovementStatge++;
-                }else{
-                    
-                }
-                setPattern = false;
-                
-            }
-            else if(currMovementStatge == 15){
-                //take time gap
-                currMovementStatge++;
-                timeDiff = timeGap;
-                
-                setPattern = false;
-                
-            }else if (currMovementStatge == 16){
-                setPattern = false;
-                currMovementStatge = 0;
-            }
-        }
-    }else if(s == 4){ // Light ON and Many Shapes In LOOP
-        //----- INFO -----
-        ofBackground(0, 0, 110);
+        ofBackground(0, 0, 150);
         currStyle = 12;
         vector<int> mA, mB;
 
@@ -1944,7 +1676,7 @@ void ofApp::movement(int s){
         ss_info << "MODE : LIGHT and Many SHAPES : " << " Stage "<< movements.getTotalShapes()-1 <<" of "<<  currMovementStatge << endl;
         
         //---- BEGIN -----
-        long timeGap = 5000;
+        timeGap = 8000;
 
         if(currTime>prevTime){
             setPattern = true;
@@ -1973,15 +1705,15 @@ void ofApp::movement(int s){
             movementController.setPoints(1,mB[6],mB[7],mB[8],mB[9],mB[10]);
             setPoints();
             
+            writeStyle(1);
+            
             movements.incrementShape();
             
-            writeStyle(1);
-                    
             setPattern = false;
             
         }
         
-    }else if(s == 5){ //MP3
+    }else if(s == 4){ //MP3
         
         //----- INFO -----
         ofBackground(120, 0, 120);
