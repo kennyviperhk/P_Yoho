@@ -15,7 +15,7 @@ void ofApp::setup(){
     movements.setup();
     ofAddListener(movements.setPointsEvent, this, &ofApp::onSetPoints);
     
-
+    
     //================== Communication ==================
     //------------------- Serial -------------------
     
@@ -267,7 +267,7 @@ void ofApp::draw(){
         
         ss_info << "Num of Arduino: " << arduino.size() << " / " << NUM_OF_CABLES << endl;
         //================== Debug Gui ==================
-
+        
         if(serialTrigger){
             if(EEPROM_saveBtn){
                 
@@ -305,7 +305,7 @@ void ofApp::draw(){
                 }else{
                     serialWrite(currCableID, "H");
                 }
-
+                
             }
             if(EEPROM_loadBtn){
                 
@@ -442,6 +442,24 @@ void ofApp::keyReleased(int key){
             
         case 'd':
             debugMode = !debugMode;
+            
+            if(debugMode){
+                for(int i=0; i < NUM_OF_CABLES; i++){
+                    cableTimeLx[i] = TEST_X_TIME;
+                    cableTimeLy[i] = TEST_Y_TIME;
+                    cableTimeRx[i] = TEST_X_TIME;
+                    cableTimeRy[i] = TEST_Y_TIME;
+                }
+            }
+            else{
+                for(int i=0; i < NUM_OF_CABLES; i++){
+                    cableTimeLx[i] = DEFAULT_X_TIME;
+                    cableTimeLy[i] = DEFAULT_Y_TIME;
+                    cableTimeRx[i] = DEFAULT_X_TIME;
+                    cableTimeRy[i] = DEFAULT_Y_TIME;
+                }
+            }
+            
             break;
             
         case 'c': //check if arduino online
@@ -485,7 +503,15 @@ void ofApp::keyReleased(int key){
             
         case '1': //Ricci Mode - Single Cable Control
             if(debugMode){
+                currStyle == 11;
                 page = 6;
+                
+                for(int i=0; i < NUM_OF_CABLES; i++){
+                    cablePosLx[i] = 0;
+                    cablePosLy[i] = 0;
+                    cablePosRx[i] = 0;
+                    cablePosRy[i] = 0;
+                }
             }
             break;
             
@@ -515,6 +541,7 @@ void ofApp::keyReleased(int key){
                 movementMode = 0;
             }
             XML.setValue("MODE", ofToString(movementMode));
+            settingsMode["mode"] = (int)movementMode;
             saveSettings();
             break;
             
@@ -558,7 +585,7 @@ void ofApp::keyReleased(int key){
         case 'l': //to zero points
             movements.loadSettings();
             break;
-        case 'k': //to zero points
+        case 'k':
             prevTime = currTime;
             break;
             
@@ -1178,6 +1205,7 @@ void ofApp::drawGui(){
     }
     if(debugMode){
         
+        
         if(page == 0){ //MoveTo Mode (style 11)
             drawDebugGui = {true,true,false};
             drawSpeedAccelGui = true;
@@ -1283,6 +1311,8 @@ void ofApp::drawGui(){
         }
     } //debug mode end
     else{ //exhibition mode
+        
+        
         if(movementMode == 0){
             
             drawDebugGui = {false,false,false};
@@ -1339,12 +1369,12 @@ void ofApp::drawGui(){
             drawDebugGui = {false,false,false};
             drawSpeedAccelGui = false;
             drawPosGui = true;
-            drawTimeGui = false;
+            drawTimeGui = true;
             drawDmx = false;
             drawMovementController = true;
             drawPosOffset = false;
             drawKineticVisualizationFbo = true;
-            drawMusicPlayer = false;
+            drawMusicPlayer = true;
             drawScheduler = false;
         }
         else if(movementMode == 5){
@@ -1555,6 +1585,8 @@ void ofApp::movement(int s){
         timeDiff = 0;
         prevTime = currTime;
         ofLog() << "Song Reset";
+        triggerTime = 0;
+        sendTrigger = false;
     }
     
     if(s == 0){ // ALL OFF
@@ -1624,7 +1656,7 @@ void ofApp::movement(int s){
             prevTime = currTime;
             setPattern = true;
             
-            timeDiff = 55000;
+            timeDiff = 30000;
             
         }
         if(setPattern){
@@ -1639,7 +1671,7 @@ void ofApp::movement(int s){
                 
                 cableOp = 4;
                 movementController.setOption(0, 0);
-                movementController.setPoints(1,1,0,0,1333,250);
+                movementController.setPoints(1,1,0,0,0,0);
                 setPoints();
                 
                 setPattern = false;
@@ -1650,8 +1682,8 @@ void ofApp::movement(int s){
             else if(currMovementStatge == 2){
                 
                 cableOp = 5;
-                movementController.setOption(1, 0);
-                movementController.setPoints(0,1,116,25,2666,100);
+                movementController.setOption(0, 1);
+                movementController.setPoints(0,1,40,56,1208,208);
                 setPoints();
                 
                 ofLog() << "stage 2";
@@ -1671,21 +1703,24 @@ void ofApp::movement(int s){
         ofBackground(0, 0, 150);
         currStyle = 12;
         vector<int> mA, mB;
-
+        int trigger = false;
+        
         currMovementStatge = movements.getCurrShape();
         ss_info << "MODE : LIGHT and Many SHAPES : " << " Stage "<< movements.getTotalShapes()-1 <<" of "<<  currMovementStatge << endl;
         
         //---- BEGIN -----
-        timeGap = 8000;
-
+        timeGap = 300000;
+        
         if(currTime>prevTime){
             setPattern = true;
             prevTime = currTime + timeGap;
         }
+        
+        
         if(setPattern){
             
             DmxLight.setAll((float)1.0, (float)1.0, (float)1.0, (float)1.0);
-
+            
             mA = movements.setShapeA();
             
             for(int i = 0 ; i < mA.size(); i++){
@@ -1705,12 +1740,18 @@ void ofApp::movement(int s){
             movementController.setPoints(1,mB[6],mB[7],mB[8],mB[9],mB[10]);
             setPoints();
             
-            writeStyle(1);
+            triggerTime = currTime + 500;
+            sendTrigger = true;
             
             movements.incrementShape();
             
             setPattern = false;
             
+        }
+        
+        if(currTime>triggerTime && sendTrigger){
+            writeStyle(1);
+            sendTrigger = false;
         }
         
     }else if(s == 4){ //MP3
@@ -1983,7 +2024,7 @@ void ofApp::writeStyle(int s){ //all same = 0, all diff = 1, specific = 2
             cableSpeedRy[i] = MIN_Y_SPEED;
         }
     }
-
+    
     if (s==0){
         moveCommandMethod(currStyle, currCableID, -1);
     }
@@ -2523,7 +2564,7 @@ void ofApp::onSetPoints(bool & t){
 void ofApp::onSchedulerLightsToggle(bool & t){
     if(t){
         currDisplayLog[NUM_OF_CABLES] = "Lights On";
-        movementMode = 2;
+        movementMode = defaultMovementMode;
     }else{
         currDisplayLog[NUM_OF_CABLES] = "Lights Off, Static Mode";
         movementMode = 0;
@@ -2561,6 +2602,36 @@ void ofApp::saveSettings()
     XML.save("XMLSettings.xml");
     
     ofLog() << "XML Setting Saved";
+    
+    
+    std::string file = "settingsMode.json";
+    
+    // Now parse the JSON
+    bool parsingSuccessful = settingsMode.open(file);
+    
+    if (parsingSuccessful)
+    {
+        
+        //settings["day"] = day;
+        
+        // now write pretty print
+        if (!settingsMode.save(file, true))
+        {
+            ofLogNotice("ofApp::setup") << "settings.json written unsuccessfully.";
+        }
+        else
+        {
+            ofLogNotice("ofApp::setup") << "settings.json written successfully.";
+        }
+    }
+    else
+    {
+        ofLogError("ofApp::setup") << "Failed to parse JSON" << endl;
+    }
+    
+    
+    
+    
 }
 void ofApp::loadSettings()
 {
@@ -2575,6 +2646,26 @@ void ofApp::loadSettings()
     movementMode = XML.getValue<int>("MODE");
     ofLog() << "MODE VAL : " << movementMode;
     ofLog() << "XML Setting Loaded";
+    
+    
+    
+    std::string file = "settingsMode.json";
+    
+    // Now parse the JSON
+    bool parsingSuccessful = settingsMode.open(file);
+    
+    if (parsingSuccessful)
+    {
+        ofLogNotice("ofApp::setup") << settingsMode.getRawString();
+        //movementMode =  settingsMode["mode"].asInt();
+        defaultMovementMode = settingsMode["mode"].asInt();
+        movementMode = defaultMovementMode;
+    }
+    else
+    {
+        ofLogError("ofApp::setup") << "Failed to parse JSON" << endl;
+    }
+    
     
 }
 

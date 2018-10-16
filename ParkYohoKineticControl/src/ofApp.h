@@ -21,6 +21,7 @@
 #include "ofxSerial.h"
 #include "ofxGui.h"
 #include "ofxInputField.h"
+#include "ofxJSON.h"
 
 #include <iostream>
 #include <string>
@@ -47,9 +48,10 @@
 #define MAX_Y_POS 30000
 
 
-
-#define DEFAULT_X_TIME 25000
-#define DEFAULT_Y_TIME 25000
+#define TEST_X_TIME 25000
+#define TEST_Y_TIME 25000
+#define DEFAULT_X_TIME 60000
+#define DEFAULT_Y_TIME 60000
 #define MAX_X_TIME 60000
 #define MAX_Y_TIME 60000
 
@@ -390,6 +392,7 @@ public:
     void movement(int s);
     int currMovementStatge;
     ofParameter<int> movementMode;
+    int defaultMovementMode;
     int prevMovement;
     
     long currTime;
@@ -433,6 +436,10 @@ public:
     Movements movements;
     void onSetPoints(bool & t);
     long timeGap;
+    long triggerTime;
+    bool sendTrigger;
+    
+    ofxJSONElement settingsMode;
     
     
 };
