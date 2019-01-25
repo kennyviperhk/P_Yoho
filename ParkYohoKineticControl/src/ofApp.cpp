@@ -357,7 +357,7 @@ void ofApp::draw(){
                 currCableID = 0;
             }
             
-            if(currTime - prevSingleCableLoopMillis > 10000){
+            if(currTime - prevSingleCableLoopMillis > 3000){
                 bool triggerAnyCable = false;
                 for(int i=0; i<4; i++){
                     if(singleCablePosLoop[i]){
@@ -2075,26 +2075,30 @@ vector<bool> ofApp::serialSetup(){ //int give the connection status of each cabl
     for(int i=0; i<NUM_OF_SERIAL_TO_INIT; i++){
         allComPort.push_back(i);
     }
-    arduino.push_back(allComPort[0]); //1
-    arduino.push_back(allComPort[1]); //2
-    arduino.push_back(allComPort[2]); //3
-    arduino.push_back(allComPort[3]); //4
-    arduino.push_back(allComPort[4]); //5
-    arduino.push_back(allComPort[5]); //6
-    arduino.push_back(allComPort[6]); //7
-    arduino.push_back(allComPort[7]); //8
-    arduino.push_back(allComPort[8]); //9
-    arduino.push_back(allComPort[9]); //10
-    arduino.push_back(allComPort[10]); //11
-    arduino.push_back(allComPort[11]); //12
-    arduino.push_back(allComPort[12]); //13
-    arduino.push_back(allComPort[13]); //14
-    arduino.push_back(allComPort[14]); //15
-    arduino.push_back(allComPort[15]); //16
-    arduino.push_back(allComPort[16]); //17
-    arduino.push_back(allComPort[19]); //18
-    arduino.push_back(allComPort[17]); //19
-    arduino.push_back(allComPort[18]); //20
+    
+    arduino.push_back(allComPort[0]); //1 ok
+    arduino.push_back(allComPort[1]); //2 ok
+    arduino.push_back(allComPort[2]); //3 ok
+    arduino.push_back(allComPort[3]); //4 ok
+    arduino.push_back(allComPort[16]); //5 ok
+    arduino.push_back(allComPort[19]); //6 ok
+    arduino.push_back(allComPort[17]); //7 ok
+    arduino.push_back(allComPort[18]); //8 ok
+    arduino.push_back(allComPort[14]); //9 ok
+    arduino.push_back(allComPort[15]); //10 ok
+    arduino.push_back(allComPort[12]); //11 ok
+    arduino.push_back(allComPort[13]); //12 ok
+    arduino.push_back(allComPort[8]); //13 ok
+    arduino.push_back(allComPort[9]); //14 ok
+    arduino.push_back(allComPort[10]); //15 ok
+    arduino.push_back(allComPort[11]); //16 ok
+    arduino.push_back(allComPort[4]); //17 ok
+    arduino.push_back(allComPort[5]); //18 ok
+    arduino.push_back(allComPort[6]); //19 ok
+    arduino.push_back(allComPort[7]); //20 ok
+    
+    
+    
     
     for(int i = 20; i < NUM_OF_SERIAL_TO_INIT; i++){
         arduino.push_back(300+i);
@@ -2108,6 +2112,7 @@ vector<bool> ofApp::serialSetup(){ //int give the connection status of each cabl
 #else
     
 #endif
+    
     
     
 #ifdef RECEIVER_IS_WINDOWS
@@ -2698,7 +2703,6 @@ void ofApp::removeSubstrs(string& s, string& p) {
          i = s.find(p))
         s.erase(i, n);
 }
-
 
 
 

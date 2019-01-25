@@ -31,9 +31,9 @@
 #include "ofxOsc.h"
 #define R_PORT 12346
 
-//#define S_HOST "192.168.0.101"
+#define S_HOST "192.168.0.101"
 
-#define S_HOST "localhost"
+//#define S_HOST "localhost"
 #define S_PORT 12345
 
 #else
