@@ -188,36 +188,101 @@ void ofApp::readOSC(){
                     // display the argument - make sure we get the right type
                     
                     ofLog() << "OFXOSC_TYPE_INT32 : " << ofToString(m.getArgType(i) == OFXOSC_TYPE_INT32);
-                    ofLog() << "m.getArgAsInt32(i) : " << i << " : "<< m.getArgAsInt32(i);
-                    if(m.getArgType(i) == OFXOSC_TYPE_INT32){
-                        //msg_string += ofToString(m.getArgAsInt32(i));
-                        currentArduinoID = m.getArgAsInt32(i);
-                        ofLog() << "currentArduinoID : " << currentArduinoID;
-                        gotMsg = true;
-                    }
-                    else if(m.getArgType(i) == OFXOSC_TYPE_FLOAT){
-                        msg_string += ofToString(m.getArgAsFloat(i));
-                        ofLog() << "currentArduinoIDF : " << currentArduinoID;
-                    }
-                    else if(m.getArgType(i) == OFXOSC_TYPE_STRING){
-                        msg_string += m.getArgAsString(i);
+                    
+                    
+                    
+                    if((m.getArgType(i) == OFXOSC_TYPE_INT32) == 1){
+                        ofLog() << "m.getArgAsInt32(i) : " << i << " : "<< m.getArgAsInt32(i);
+                        if(m.getArgType(i) == OFXOSC_TYPE_INT32){
+                            //msg_string += ofToString(m.getArgAsInt32(i));
+                            currentArduinoID = m.getArgAsInt32(i);
+                            ofLog() << "currentArduinoID_Int : " << currentArduinoID;
+                            
+                        }
+                        else if(m.getArgType(i) == OFXOSC_TYPE_FLOAT){
+                            msg_string += ofToString(m.getArgAsFloat(i));
+                            ofLog() << "currentArduinoID_Float : " << currentArduinoID;
+                        }
+                        else if(m.getArgType(i) == OFXOSC_TYPE_STRING){
+                            msg_string += m.getArgAsString(i);
+                            
+                           // OSCString = m.getArgAsString(i);
+                            ofLog() << "currentArduinoID_String : " << currentArduinoID;
+                            
+                        }
+                        else{
+                            msg_string += "unknown";
+                            ofLog() << "currentArduinoIDUN : " << currentArduinoID;
+                        }
+                       // if(debugMode){
+                      //      ofLog() << "currentArduinoID : " << currentArduinoID<< " OSCString :  "<< OSCString;
+                      //  }
                         
-                        OSCString = m.getArgAsString(i);
-                        ofLog() << "currentArduinoIDS : " << currentArduinoID;
+                        /*
+                        // if(gotMsg){
+                        
+                        
+                        receivedOSCString[currentArduinoID] = OSCString;
+                        
+                        serialWrite(currentArduinoID, OSCString);
+                        ofLog() << " >>> FINAL SENDING : "<<"currentArduinoID : " << currentArduinoID<< " OSCString :  "<< OSCString;
+                        
+                        gotMsg = false;
+                        //    }
+                        */
+                        
+                        
                     }
-                    else{
-                        msg_string += "unknown";
-                        ofLog() << "currentArduinoIDUN : " << currentArduinoID;
-                    }
-                    if(debugMode){
-                        ofLog() << "currentArduinoID : " << currentArduinoID<< " OSCString :  "<< OSCString;
-                    }
-                    receivedOSCString[currentArduinoID] = OSCString;
-                    // if(gotMsg){
-                    serialWrite(currentArduinoID, OSCString);
-                    // }
                     
                     
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    if((m.getArgType(i) == OFXOSC_TYPE_INT32) == 0){
+                        ofLog() << "m.getArgAsInt32(i) : " << i << " : "<< m.getArgAsInt32(i);
+                        if(m.getArgType(i) == OFXOSC_TYPE_INT32){
+                            //msg_string += ofToString(m.getArgAsInt32(i));
+                         //   currentArduinoID = m.getArgAsInt32(i);
+                         //   ofLog() << "currentArduinoID_Int : " << currentArduinoID;
+                            
+                        }
+                        else if(m.getArgType(i) == OFXOSC_TYPE_FLOAT){
+                            msg_string += ofToString(m.getArgAsFloat(i));
+                          //  ofLog() << "currentArduinoID_Float : " << currentArduinoID;
+                        }
+                        else if(m.getArgType(i) == OFXOSC_TYPE_STRING){
+                            msg_string += m.getArgAsString(i);
+                            
+                            OSCString = m.getArgAsString(i);
+                            ofLog() << "currentArduinoID_String : " << currentArduinoID;
+                            
+                        }
+                        else{
+                            msg_string += "unknown";
+                          //  ofLog() << "currentArduinoIDUN : " << currentArduinoID;
+                        }
+                        if(debugMode){
+                            ofLog() << "currentArduinoID : " << currentArduinoID<< " OSCString :  "<< OSCString;
+                        }
+                       // if(gotMsg){
+                            receivedOSCString[currentArduinoID] = OSCString;
+                            
+                            serialWrite(currentArduinoID, OSCString);
+                            ofLog() << " >>> FINAL SENDING : "<<"currentArduinoID : " << currentArduinoID<< " OSCString :  "<< OSCString;
+                            
+                            gotMsg = false;
+                    //    }
+                        
+                        
+                        
+                    }
+                   
                 }
                 
             }

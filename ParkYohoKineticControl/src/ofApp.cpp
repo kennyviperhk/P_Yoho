@@ -629,6 +629,7 @@ void ofApp::sendOSC(int ar, string s){
     m.addStringArg(s);
     sender.sendMessage(m, false);
     
+    ofLog() << "sending OSC : " << ar << " : " << s;
     if(debugMode){
         ofLog() << "sending OSC : " << ar << " : " << s;
     }
@@ -1710,6 +1711,7 @@ void ofApp::movement(int s){
         
         //---- BEGIN -----
         timeGap = 300000;
+        //timeGap = 10000;
         
         if(currTime>prevTime){
             setPattern = true;
