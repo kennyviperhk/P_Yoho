@@ -11,6 +11,7 @@ void ofApp::setup(){
     
     ofAddListener(scheduler.lightToggleEvent, this, &ofApp::onSchedulerLightsToggle);
     ofAddListener(scheduler.homeResetEvent, this, &ofApp::onSchedulerHomeResetToggle);
+    ofAddListener(scheduler.changeFormEvent, this, &ofApp::onSchedulerChangeFormToggle);
     //================ Movements ==============
     movements.setup();
     ofAddListener(movements.setPointsEvent, this, &ofApp::onSetPoints);
@@ -514,6 +515,33 @@ void ofApp::keyReleased(int key){
                 }
             }
             break;
+        case '2': //Ricci Mode - Maintance Mode
+            if(debugMode){
+                currStyle == 12;
+                page = 8;
+                
+                for(int i=0; i < NUM_OF_CABLES; i++){
+                    cablePosLx[i] = 0;
+                    cablePosLy[i] = MAX_Y_POS;
+                    cablePosRx[i] = 0;
+                    cablePosRy[i] = MAX_Y_POS;
+                }
+                
+                cableOp = 4;
+                movementController.setPoints(0,1,0,0,0,0);
+                movementController.setPoints(1,1,0,0,0,0);
+                setPoints();
+            
+                
+                cableOp = 5;
+                movementController.setPoints(0,0,0,0,0,0);
+                movementController.setPoints(1,1,0,100,5000,100);
+                setPoints();
+                
+                
+                writeStyle(1);
+            }
+            break;
             
         case '=': //Ricci Mode - Single Cable Control
             if(debugMode && page == 6){
@@ -536,6 +564,7 @@ void ofApp::keyReleased(int key){
             break;
             
         case 'e':
+            /*
             movementMode++;
             if(movementMode > 4){
                 movementMode = 0;
@@ -543,6 +572,8 @@ void ofApp::keyReleased(int key){
             XML.setValue("MODE", ofToString(movementMode));
             settingsMode["mode"] = (int)movementMode;
             saveSettings();
+             */
+            setPattern = true;
             break;
             
         case '3':
@@ -565,6 +596,11 @@ void ofApp::keyReleased(int key){
             movementMode = 2;
             break;
         case '8': //Mode Selection
+            if(movementMode == 3){
+                setPattern = true;
+                //movements.incrementShape();
+            }
+            /*
             if(movementMode>= 2){
                 movementMode++;
             }else{
@@ -573,9 +609,18 @@ void ofApp::keyReleased(int key){
             if(movementMode > 4){
                 movementMode = 2;
             }
+             */
             break;
             
         case '9': //Reserved
+            if(movementMode>= 2){
+                movementMode++;
+            }else{
+                movementMode = 2;
+            }
+            if(movementMode > 3){
+                movementMode = 2;
+            }
             break;
             
         case 'h': //to zero points
@@ -588,8 +633,15 @@ void ofApp::keyReleased(int key){
         case 'k':
             prevTime = currTime;
             break;
+        case ']':
+            if(movementMode == 3){
+                setPattern = true;
+                //movements.incrementShape();
+            }
             
-            
+
+            break;
+
         default:
             break;
             
@@ -629,7 +681,6 @@ void ofApp::sendOSC(int ar, string s){
     m.addStringArg(s);
     sender.sendMessage(m, false);
     
-    ofLog() << "sending OSC : " << ar << " : " << s;
     if(debugMode){
         ofLog() << "sending OSC : " << ar << " : " << s;
     }
@@ -1297,12 +1348,23 @@ void ofApp::drawGui(){
             drawMusicPlayer = false;
             drawScheduler = false;
         }
-        else{ //Page = 7 // mp3
+        else if(page == 7){ //Page = 7 // mp3
             movementMode = 4;
             drawDebugGui = {false,false,true};
             drawSpeedAccelGui = false;
             drawPosGui = true;
             drawTimeGui = true;
+            drawDmx = false;
+            drawMovementController = false;
+            drawPosOffset = false;
+            drawKineticVisualizationFbo = true;
+            drawMusicPlayer = false;
+            drawScheduler = false;
+        }else if(page == 8){ //Page = 8 // maintanance mode
+            drawDebugGui = {false,false,true};
+            drawSpeedAccelGui = false;
+            drawPosGui = true;
+            drawTimeGui = false;
             drawDmx = false;
             drawMovementController = false;
             drawPosOffset = false;
@@ -1657,7 +1719,7 @@ void ofApp::movement(int s){
             prevTime = currTime;
             setPattern = true;
             
-            timeDiff = 30000;
+            timeDiff = 10000;
             
         }
         if(setPattern){
@@ -1672,6 +1734,7 @@ void ofApp::movement(int s){
                 
                 cableOp = 4;
                 movementController.setOption(0, 0);
+                movementController.setPoints(0,1,0,0,0,0);
                 movementController.setPoints(1,1,0,0,0,0);
                 setPoints();
                 
@@ -1684,14 +1747,42 @@ void ofApp::movement(int s){
                 
                 cableOp = 5;
                 movementController.setOption(0, 1);
-                movementController.setPoints(0,1,40,56,1208,208);
+                movementController.setPoints(0,2,70,32,2958,66);
+                movementController.setPoints(1,3,0,0,0,0);
                 setPoints();
                 
                 ofLog() << "stage 2";
                 setPattern = false;
                 currMovementStatge++;
                 
-            }else if(currMovementStatge == 3){
+            }
+            
+            /*
+             if(currMovementStatge == 1){
+             
+             cableOp = 4;
+             movementController.setOption(0, 0);
+             movementController.setPoints(1,1,0,0,0,0);
+             setPoints();
+             
+             setPattern = false;
+             currMovementStatge++;
+             
+             
+             }
+             else if(currMovementStatge == 2){
+             
+             cableOp = 5;
+             movementController.setOption(0, 1);
+             movementController.setPoints(0,1,40,56,1208,208);
+             setPoints();
+             
+             ofLog() << "stage 2";
+             setPattern = false;
+             currMovementStatge++;
+             
+             }*/
+            else if(currMovementStatge == 3){
                 writeStyle(1);
                 currMovementStatge++;
             }else if(currMovementStatge == 4){
@@ -1710,13 +1801,20 @@ void ofApp::movement(int s){
         ss_info << "MODE : LIGHT and Many SHAPES : " << " Stage "<< movements.getTotalShapes()-1 <<" of "<<  currMovementStatge << endl;
         
         //---- BEGIN -----
-        timeGap = 300000;
-        //timeGap = 10000;
+#ifdef CHANGE_SHAPE_BY_LOOP_TIME
+        // timeGap = 300000;
+        timeGap = MANY_SHAPE_LOOP_TIME;
         
         if(currTime>prevTime){
             setPattern = true;
             prevTime = currTime + timeGap;
         }
+#endif
+        
+#ifdef CHANGE_SHAPE_BY_WEEKEND
+
+#endif
+
         
         
         if(setPattern){
@@ -2082,18 +2180,18 @@ vector<bool> ofApp::serialSetup(){ //int give the connection status of each cabl
     arduino.push_back(allComPort[1]); //2 ok
     arduino.push_back(allComPort[2]); //3 ok
     arduino.push_back(allComPort[3]); //4 ok
-    arduino.push_back(allComPort[16]); //5 ok
-    arduino.push_back(allComPort[19]); //6 ok
-    arduino.push_back(allComPort[17]); //7 ok
-    arduino.push_back(allComPort[18]); //8 ok
-    arduino.push_back(allComPort[14]); //9 ok
-    arduino.push_back(allComPort[15]); //10 ok
-    arduino.push_back(allComPort[12]); //11 ok
-    arduino.push_back(allComPort[13]); //12 ok
-    arduino.push_back(allComPort[8]); //13 ok
-    arduino.push_back(allComPort[9]); //14 ok
-    arduino.push_back(allComPort[10]); //15 ok
-    arduino.push_back(allComPort[11]); //16 ok
+    arduino.push_back(allComPort[8]); //5 ok
+    arduino.push_back(allComPort[9]); //6 ok
+    arduino.push_back(allComPort[10]); //7 ok
+    arduino.push_back(allComPort[11]); //8 ok
+    arduino.push_back(allComPort[18]); //9 ok
+    arduino.push_back(allComPort[19]); //10 ok
+    arduino.push_back(allComPort[16]); //11 ok
+    arduino.push_back(allComPort[17]); //12 ok
+    arduino.push_back(allComPort[12]); //13 ok
+    arduino.push_back(allComPort[13]); //14 ok
+    arduino.push_back(allComPort[14]); //15 ok
+    arduino.push_back(allComPort[15]); //16 ok
     arduino.push_back(allComPort[4]); //17 ok
     arduino.push_back(allComPort[5]); //18 ok
     arduino.push_back(allComPort[6]); //19 ok
@@ -2590,6 +2688,18 @@ void ofApp::onSchedulerHomeResetToggle(int & t){
     ofLog() << currDisplayLog[NUM_OF_CABLES];
 }
 
+void ofApp::onSchedulerChangeFormToggle(int & t){
+    if(t == 0 ){
+        currDisplayLog[NUM_OF_CABLES] = "Change Form";
+        if(movementMode == 3){
+            setPattern = true;
+        }
+    }else{
+      //  currDisplayLog[NUM_OF_CABLES] = "Change Form";
+      //  offsetHome();
+    }
+    ofLog() << currDisplayLog[NUM_OF_CABLES];
+}
 
 
 //--------------------------------------------------------------

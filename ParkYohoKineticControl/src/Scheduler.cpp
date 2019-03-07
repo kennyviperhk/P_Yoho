@@ -46,16 +46,29 @@ void Scheduler::update() {
             ofNotifyEvent(lightToggleEvent, t);
             eventIsTriggered = true;
         }
-    }else if(beginHour == ofGetHours() && (beginMin-4) == ofGetMinutes() && ofGetSeconds() == 0){ //0 reset Home 1 offest Home
+    }else if(beginHour == ofGetHours() && (beginMin-4) == ofGetMinutes() && ofGetSeconds() == 0  && (ofGetWeekday() == 5 || ofGetWeekday() == 6 || ofGetWeekday() == 0) ){ //0 reset Home 1 offest Home
         if(!eventIsTriggered){
             int t = 0;
             ofNotifyEvent(homeResetEvent, t);
             eventIsTriggered = true;
         }
-    }else if(beginHour == ofGetHours() && (beginMin-2) == ofGetMinutes() && ofGetSeconds() == 0){//0 reset Home 1 offest Home
+    }else if(beginHour == ofGetHours() && (beginMin-2) == ofGetMinutes() && ofGetSeconds() == 0  && (ofGetWeekday() == 5 || ofGetWeekday() == 6 || ofGetWeekday() == 0)  ){//0 reset Home 1 offest Home
         if(!eventIsTriggered){
             int t = 1;
             ofNotifyEvent(homeResetEvent, t);
+            eventIsTriggered = true;
+        }
+    }
+    else if(beginHour == ofGetHours() && (beginMin) == ofGetMinutes() && ofGetSeconds() == 0 && (ofGetWeekday() == 5 || ofGetWeekday() == 6 || ofGetWeekday() == 0)  ){
+        if(!eventIsTriggered){
+            int t = 0;
+            ofNotifyEvent(changeFormEvent, t);
+            eventIsTriggered = true;
+        }
+    }else if(beginHour == ofGetHours() && (beginMin) == ofGetMinutes() && ofGetSeconds() == 0 && (ofGetWeekday() == 5 || ofGetWeekday() == 6 || ofGetWeekday() == 0) ){
+        if(!eventIsTriggered){
+            int t = 1;
+            ofNotifyEvent(changeFormEvent, t);
             eventIsTriggered = true;
         }
     }

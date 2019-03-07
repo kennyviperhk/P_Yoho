@@ -65,6 +65,22 @@
       "pointsB2": [3, 0, 0, 0, 0]
     },
     {
+      "cableOpA": 1,
+      "pointsA1": [1, 0, 11, 3200, 250],
+      "pointsA2": [0, 1, 0, 0, 0],
+      "cableOpB": 3,
+      "pointsB1": [0, 1, 0, 0, 0],
+      "pointsB2": [1, 0, 11, 0, 250]
+    },
+    {
+      "cableOpA": 3,
+      "pointsA1": [1, 0, 11, 3200, 250],
+      "pointsA2": [0, 1, 0, 0, 0],
+      "cableOpB": 1,
+      "pointsB1": [0, 1, 0, 0, 0],
+      "pointsB2": [1, 0, 11, 0, 250]
+    },
+    {
       "cableOpA": 4,
       "pointsA1": [1, 0, 0, 0, 0],
       "pointsA2": [0, 1, 0, 0, 0],

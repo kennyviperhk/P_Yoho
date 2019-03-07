@@ -28,6 +28,7 @@ public:
     
     ofEvent<bool> lightToggleEvent;
     ofEvent<int> homeResetEvent;
+    ofEvent<int> changeFormEvent;
     
     bool eventIsTriggered ;
     

@@ -52,8 +52,15 @@
 #define TEST_Y_TIME 25000
 #define DEFAULT_X_TIME 60000
 #define DEFAULT_Y_TIME 60000
+//#define DEFAULT_X_TIME 40000
+//#define DEFAULT_Y_TIME 40000
 #define MAX_X_TIME 60000
 #define MAX_Y_TIME 60000
+#define MANY_SHAPE_LOOP_TIME 600000
+//#define MANY_SHAPE_LOOP_TIME 125000
+
+#define CHANGE_SHAPE_BY_WEEKEND
+//#define CHANGE_SHAPE_BY_LOOP_TIME
 
 #define MIN_X_SPEED 100
 #define MIN_Y_SPEED 400
@@ -386,7 +393,7 @@ public:
     //================== Config ==================
     
     //int numOfCables;
-
+    
     //================== Song 1 ==================
     
     void movement(int s);
@@ -429,6 +436,8 @@ public:
     Scheduler scheduler;
     void onSchedulerLightsToggle(bool & t);
     void onSchedulerHomeResetToggle(int & t);
+    void onSchedulerChangeFormToggle(int & t);
+    
     bool drawScheduler;
     
     
